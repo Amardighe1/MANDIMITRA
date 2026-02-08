@@ -31,6 +31,8 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.train_crop_risk_model import CropRiskAdvisor, CropLifecycleManager
 from scripts.train_price_model import PriceIntelligenceEngine
+from api.auth import router as auth_router, seed_admin
+from api.vet import router as vet_router
 
 logger = logging.getLogger("mandimitra-api")
 logging.basicConfig(level=logging.INFO)
@@ -778,9 +780,19 @@ async def _auto_refresh_loop():
             logger.error(f"Auto-refresh failed: {e}")
 
 
+# --- Auth & Vet routers ---
+app.include_router(auth_router)
+app.include_router(vet_router)
+
+
 @app.on_event("startup")
 async def startup_event():
     logger.info("MANDIMITRA API ready — serving real ML predictions")
+    # Seed admin account in Supabase
+    try:
+        seed_admin()
+    except Exception as e:
+        logger.warning(f"Admin seed skipped: {e}")
     # Start background auto-refresh task
     asyncio.create_task(_auto_refresh_loop())
     logger.info("📡 Live price auto-refresh scheduled (every 24h)")

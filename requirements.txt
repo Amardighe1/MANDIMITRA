@@ -24,6 +24,12 @@ PyYAML>=6.0
 # Data validation
 pandera>=0.18.0
 
+# API
+fastapi>=0.104.0
+uvicorn>=0.25.0
+python-multipart>=0.0.6
+supabase>=2.0.0
+
 # Optional: Fuzzy string matching for district normalization
 # rapidfuzz>=3.0.0
 

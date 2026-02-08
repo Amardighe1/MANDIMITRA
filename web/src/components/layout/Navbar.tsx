@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { 
+import { useAuth } from '@/contexts/AuthContext';
+import {
   Menu, 
   X, 
   Leaf,
@@ -12,6 +13,9 @@ import {
   Shield,
   Cloud,
   TrendingUp,
+  LogOut,
+  User,
+  LayoutDashboard,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -34,6 +38,22 @@ const productLinks = [
 export function Navbar({ isScrolled }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    setIsMobileMenuOpen(false);
+  };
+
+  const roleBadge = user ? {
+    farmer: 'bg-emerald-100 text-emerald-700',
+    doctor: 'bg-blue-100 text-blue-700',
+    admin: 'bg-amber-100 text-amber-700',
+  }[user.role] || 'bg-slate-100 text-slate-700' : '';
+
+  const dashboardPath = user
+    ? `/dashboard/${user.role}`
+    : '/login';
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -125,18 +145,46 @@ export function Navbar({ isScrolled }: NavbarProps) {
 
             {/* CTA Buttons */}
             <div className="hidden lg:flex items-center space-x-3">
-              <Link
-                href="/login"
-                className="px-4 py-2 text-slate-600 hover:text-emerald-600 font-medium transition-colors"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/crop-risk"
-                className="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105"
-              >
-                Get Started Free
-              </Link>
+              {user ? (
+                <>
+                  <Link
+                    href={dashboardPath}
+                    className="flex items-center gap-2 px-4 py-2 text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+                  >
+                    <LayoutDashboard className="w-4 h-4" />
+                    Dashboard
+                  </Link>
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <User className="w-4 h-4 text-slate-500" />
+                    <span className="text-sm font-medium text-slate-700 max-w-[120px] truncate">{user.full_name || user.email}</span>
+                    <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-md ${roleBadge}`}>
+                      {user.role}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="p-2.5 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                    title="Log out"
+                  >
+                    <LogOut className="w-5 h-5" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="px-4 py-2 text-slate-600 hover:text-emerald-600 font-medium transition-colors"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105"
+                  >
+                    Get Started Free
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -217,18 +265,52 @@ export function Navbar({ isScrolled }: NavbarProps) {
                 </div>
 
                 <div className="space-y-3 pt-4">
-                  <Link
-                    href="/login"
-                    className="block w-full px-4 py-3 text-center text-slate-600 font-medium border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
-                  >
-                    Log in
-                  </Link>
-                  <Link
-                    href="/crop-risk"
-                    className="block w-full px-4 py-3 text-center bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all shadow-lg shadow-emerald-500/30"
-                  >
-                    Get Started Free
-                  </Link>
+                  {user ? (
+                    <>
+                      <Link
+                        href={dashboardPath}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors"
+                      >
+                        <LayoutDashboard className="w-4 h-4" />
+                        Go to Dashboard
+                      </Link>
+                      <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-50 border border-slate-200">
+                        <User className="w-5 h-5 text-slate-500" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-slate-700 truncate">{user.full_name || user.email}</p>
+                          <p className="text-xs text-slate-400">{user.email}</p>
+                        </div>
+                        <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-md ${roleBadge}`}>
+                          {user.role}
+                        </span>
+                      </div>
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center justify-center gap-2 w-full px-4 py-3 text-red-600 font-medium border border-red-200 rounded-xl hover:bg-red-50 transition-colors"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Log out
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block w-full px-4 py-3 text-center text-slate-600 font-medium border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+                      >
+                        Log in
+                      </Link>
+                      <Link
+                        href="/signup"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block w-full px-4 py-3 text-center bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all shadow-lg shadow-emerald-500/30"
+                      >
+                        Get Started Free
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
             </motion.div>
