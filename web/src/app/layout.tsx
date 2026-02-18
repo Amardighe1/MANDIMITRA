@@ -1,8 +1,14 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
+import dynamic from 'next/dynamic';
 import './globals.css';
 import { Providers } from './providers';
-import { CapacitorInit } from '@/components/CapacitorInit';
+
+// Dynamically import CapacitorInit to prevent SSR issues
+const CapacitorInit = dynamic(
+  () => import('@/components/CapacitorInit').then((mod) => mod.CapacitorInit),
+  { ssr: false }
+);
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
