@@ -133,7 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (stored && token) {
       // Quick hydrate from cache
       setUser(stored);
-      // Background validate
+      // Background validate - gracefully handle missing backend
       fetch(apiUrl('/api/auth/me'), {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -142,12 +142,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (data?.user) {
             setUser(data.user);
             localStorage.setItem(USER_KEY, JSON.stringify(data.user));
-          } else {
+          } else if (data === null) {
+            // Token invalid, clear session
             clearSession();
             setUser(null);
           }
+          // If data is undefined (network error), keep cached user
         })
-        .catch(() => {}) // keep cached user on network error
+        .catch((err) => {
+          // Network error or backend unavailable - keep cached user
+          console.warn('[Auth] Backend unavailable, using cached session:', err.message);
+        })
         .finally(() => setLoading(false));
     } else {
       setLoading(false);

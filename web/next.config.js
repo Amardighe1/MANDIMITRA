@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 const isCapacitorBuild = process.env.CAPACITOR_BUILD === 'true';
+const backendUrl = process.env.NEXT_PUBLIC_API_URL || process.env.BACKEND_URL;
 
 const nextConfig = {
   reactStrictMode: true,
@@ -13,16 +14,18 @@ const nextConfig = {
         output: 'export',
         trailingSlash: true,
       }
-    : {
+    : backendUrl
+    ? {
         async rewrites() {
           return [
             {
               source: '/api/:path*',
-              destination: 'http://localhost:8000/api/:path*',
+              destination: `${backendUrl}/api/:path*`,
             },
           ];
         },
-      }),
+      }
+    : {}),
 };
 
 module.exports = nextConfig;
