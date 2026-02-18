@@ -2,6 +2,7 @@
 MANDIMITRA - Veterinary Service Module
 =======================================
 Handles doctor verification, bookings, and emergency SOS system.
+Emergency requests are auto-assigned to the nearest verified doctor.
 
 Admin Endpoints:
   GET  /api/vet/admin/pending-doctors       Pending doctor verifications
@@ -11,23 +12,26 @@ Admin Endpoints:
 Doctor Endpoints:
   POST /api/vet/doctor/upload-document      Upload verification document
   GET  /api/vet/doctor/profile              Doctor profile + analytics
-  GET  /api/vet/doctor/emergency-cases      Active emergency broadcast
-  POST /api/vet/doctor/accept-emergency     Claim an emergency (first-come)
+  POST /api/vet/doctor/update-location      Update doctor GPS coordinates
+  GET  /api/vet/doctor/emergency-cases      Emergencies assigned to THIS doctor
+  POST /api/vet/doctor/accept-emergency     Accept assigned emergency
+  POST /api/vet/doctor/reject-emergency     Reject → escalate to next nearest
+  POST /api/vet/doctor/complete-emergency   Mark emergency complete
   GET  /api/vet/doctor/bookings             Doctor's appointment list
   PATCH /api/vet/doctor/booking-status      Update booking status
-  POST /api/vet/doctor/complete-emergency   Mark emergency complete
 
 Farmer Endpoints:
   GET  /api/vet/doctors                     Browse verified doctors
   POST /api/vet/farmer/book                 Book appointment
-  POST /api/vet/farmer/emergency            Broadcast emergency SOS
-  GET  /api/vet/farmer/bookings             Farmer's bookings
+  POST /api/vet/farmer/emergency            Create emergency → auto-assign nearest
   GET  /api/vet/farmer/emergencies          Farmer's emergency requests
+  GET  /api/vet/farmer/bookings             Farmer's bookings
 """
 
 import logging
+import math
 import base64
-from typing import Optional
+from typing import Optional, List, Tuple
 from datetime import date
 
 from fastapi import APIRouter, HTTPException, Header, UploadFile, File, Form
@@ -62,6 +66,59 @@ async def _require_user(authorization: str = Header(None)) -> dict:
 def _require_role(profile: dict, role: str):
     if profile.get("role") != role:
         raise HTTPException(403, f"This action requires {role} role")
+
+
+# ---------------------------------------------------------------------------
+# Haversine distance calculation
+# ---------------------------------------------------------------------------
+
+def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Calculate distance in km between two GPS points using Haversine formula."""
+    R = 6371.0  # Earth radius in km
+    d_lat = math.radians(lat2 - lat1)
+    d_lon = math.radians(lon2 - lon1)
+    a = (
+        math.sin(d_lat / 2) ** 2
+        + math.cos(math.radians(lat1))
+        * math.cos(math.radians(lat2))
+        * math.sin(d_lon / 2) ** 2
+    )
+    return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+
+def _find_nearest_doctors(
+    lat: float,
+    lon: float,
+    exclude_ids: list[str] | None = None,
+    limit: int = 5,
+) -> list[tuple[dict, float]]:
+    """Return up to `limit` nearest verified doctors sorted by distance.
+
+    Returns list of (doctor_profile, distance_km) tuples.
+    Excludes doctor IDs in `exclude_ids` (already rejected / assigned).
+    """
+    exclude_ids = exclude_ids or []
+
+    # Fetch all verified doctors who have set their location
+    res = (
+        supabase_admin.table("profiles")
+        .select("id, full_name, phone, latitude, longitude, specialization")
+        .eq("role", "doctor")
+        .eq("verification_status", "active")
+        .not_.is_("latitude", "null")
+        .not_.is_("longitude", "null")
+        .execute()
+    )
+
+    doctors_with_dist: list[tuple[dict, float]] = []
+    for doc in res.data or []:
+        if doc["id"] in exclude_ids:
+            continue
+        dist = _haversine_km(lat, lon, doc["latitude"], doc["longitude"])
+        doctors_with_dist.append((doc, round(dist, 2)))
+
+    doctors_with_dist.sort(key=lambda x: x[1])
+    return doctors_with_dist[:limit]
 
 
 # ---------------------------------------------------------------------------
@@ -100,6 +157,16 @@ class EmergencyAccept(BaseModel):
 
 class EmergencyComplete(BaseModel):
     emergency_id: str
+
+
+class EmergencyReject(BaseModel):
+    emergency_id: str
+
+
+class UpdateLocationRequest(BaseModel):
+    latitude: float = Field(..., ge=-90, le=90)
+    longitude: float = Field(..., ge=-180, le=180)
+    address: Optional[str] = None
 
 
 # ===========================================================================
@@ -303,6 +370,8 @@ async def doctor_profile(authorization: str = Header(None)):
             "verification_status": user.get("verification_status", "pending_verification"),
             "verification_document_url": user.get("verification_document_url"),
             "address": user.get("address"),
+            "latitude": user.get("latitude"),
+            "longitude": user.get("longitude"),
             "total_bookings": total_bookings.count or 0,
             "completed_bookings": completed.count or 0,
             "handled_emergencies": emergencies.count or 0,
@@ -312,9 +381,31 @@ async def doctor_profile(authorization: str = Header(None)):
         raise HTTPException(500, "Failed to load profile")
 
 
+@router.post("/doctor/update-location")
+async def update_doctor_location(req: UpdateLocationRequest, authorization: str = Header(None)):
+    """Doctor updates their GPS coordinates (used for proximity matching)."""
+    user = await _require_user(authorization)
+    _require_role(user, "doctor")
+
+    try:
+        update_data: dict = {
+            "latitude": req.latitude,
+            "longitude": req.longitude,
+        }
+        if req.address is not None:
+            update_data["address"] = req.address
+
+        supabase_admin.table("profiles").update(update_data).eq("id", user["id"]).execute()
+        logger.info(f"📍 Doctor {user['id']} updated location: {req.latitude}, {req.longitude}")
+        return {"message": "Location updated", "latitude": req.latitude, "longitude": req.longitude}
+    except Exception as e:
+        logger.error(f"Update location: {e}")
+        raise HTTPException(500, "Failed to update location")
+
+
 @router.get("/doctor/emergency-cases")
 async def doctor_emergency_cases(authorization: str = Header(None)):
-    """Active emergency requests + doctor's own accepted/completed cases."""
+    """Emergencies assigned to THIS doctor + their accepted/completed ones."""
     user = await _require_user(authorization)
     _require_role(user, "doctor")
 
@@ -322,15 +413,16 @@ async def doctor_emergency_cases(authorization: str = Header(None)):
         raise HTTPException(403, "Your account is not yet verified")
 
     try:
-        # Get all active emergencies (broadcast to all doctors)
-        active = (
+        # Emergencies assigned to this doctor (pending acceptance)
+        assigned = (
             supabase_admin.table("emergency_requests")
             .select("*")
+            .eq("assigned_to", user["id"])
             .eq("status", "active")
             .order("created_at", desc=True)
             .execute()
         )
-        # Get this doctor's accepted/completed emergencies
+        # This doctor's accepted/completed emergencies
         mine = (
             supabase_admin.table("emergency_requests")
             .select("*")
@@ -340,7 +432,7 @@ async def doctor_emergency_cases(authorization: str = Header(None)):
             .execute()
         )
         # Combine and deduplicate
-        all_emergencies = (active.data or []) + (mine.data or [])
+        all_emergencies = (assigned.data or []) + (mine.data or [])
         seen = set()
         unique = []
         for e in all_emergencies:
@@ -355,7 +447,7 @@ async def doctor_emergency_cases(authorization: str = Header(None)):
 
 @router.post("/doctor/accept-emergency")
 async def accept_emergency(req: EmergencyAccept, authorization: str = Header(None)):
-    """First-come-first-serve: claim an active emergency."""
+    """Accept an emergency that was assigned to this doctor."""
     user = await _require_user(authorization)
     _require_role(user, "doctor")
 
@@ -363,7 +455,7 @@ async def accept_emergency(req: EmergencyAccept, authorization: str = Header(Non
         raise HTTPException(403, "Your account is not yet verified")
 
     try:
-        # Check if still active
+        # Fetch the emergency
         check = (
             supabase_admin.table("emergency_requests")
             .select("*")
@@ -373,22 +465,117 @@ async def accept_emergency(req: EmergencyAccept, authorization: str = Header(Non
         )
         if not check.data:
             raise HTTPException(404, "Emergency request not found")
-        if check.data["status"] != "active":
-            raise HTTPException(409, "This emergency has already been accepted by another doctor")
 
-        # Claim it
+        emergency = check.data
+
+        if emergency["status"] != "active":
+            raise HTTPException(409, "This emergency has already been handled")
+
+        # Only the assigned doctor can accept
+        if emergency.get("assigned_to") and emergency["assigned_to"] != user["id"]:
+            raise HTTPException(403, "This emergency is assigned to another doctor")
+
+        # Atomically update: set status=accepted, accepted_by=this doctor
         supabase_admin.table("emergency_requests").update({
             "status": "accepted",
             "accepted_by": user["id"],
             "doctor_name": user.get("full_name", ""),
         }).eq("id", req.emergency_id).eq("status", "active").execute()
 
+        logger.info(f"✅ Emergency {req.emergency_id} accepted by doctor {user['id']}")
         return {"message": "Emergency accepted", "emergency_id": req.emergency_id}
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Accept emergency: {e}")
         raise HTTPException(500, "Failed to accept emergency")
+
+
+@router.post("/doctor/reject-emergency")
+async def reject_emergency(req: EmergencyReject, authorization: str = Header(None)):
+    """Doctor rejects an assigned emergency → system escalates to next nearest doctor."""
+    user = await _require_user(authorization)
+    _require_role(user, "doctor")
+
+    try:
+        # Fetch the emergency
+        check = (
+            supabase_admin.table("emergency_requests")
+            .select("*")
+            .eq("id", req.emergency_id)
+            .single()
+            .execute()
+        )
+        if not check.data:
+            raise HTTPException(404, "Emergency request not found")
+
+        emergency = check.data
+
+        if emergency["status"] != "active":
+            raise HTTPException(409, "This emergency is no longer active")
+
+        if emergency.get("assigned_to") != user["id"]:
+            raise HTTPException(403, "This emergency is not assigned to you")
+
+        # Build list of already-rejected doctor IDs
+        rejected_csv = emergency.get("rejected_by", "") or ""
+        rejected_list = [r for r in rejected_csv.split(",") if r]
+        rejected_list.append(user["id"])
+        new_rejected_csv = ",".join(rejected_list)
+
+        escalation_count = (emergency.get("escalation_count") or 0) + 1
+
+        # Find next nearest doctor (excluding all who rejected)
+        farmer_lat = emergency.get("latitude")
+        farmer_lon = emergency.get("longitude")
+
+        if farmer_lat and farmer_lon:
+            candidates = _find_nearest_doctors(
+                farmer_lat, farmer_lon, exclude_ids=rejected_list, limit=1
+            )
+        else:
+            candidates = []
+
+        if candidates:
+            next_doc, dist = candidates[0]
+            # Reassign to next nearest doctor
+            supabase_admin.table("emergency_requests").update({
+                "assigned_to": next_doc["id"],
+                "assigned_doctor_name": next_doc.get("full_name", ""),
+                "distance_km": dist,
+                "escalation_count": escalation_count,
+                "rejected_by": new_rejected_csv,
+            }).eq("id", req.emergency_id).execute()
+
+            logger.info(
+                f"🔄 Emergency {req.emergency_id} escalated to doctor {next_doc['id']} "
+                f"({dist} km) after rejection by {user['id']}"
+            )
+            return {
+                "message": "Emergency escalated to the next nearest doctor",
+                "next_doctor": next_doc.get("full_name"),
+                "distance_km": dist,
+            }
+        else:
+            # No more doctors available — mark as unassigned but keep active
+            supabase_admin.table("emergency_requests").update({
+                "assigned_to": None,
+                "assigned_doctor_name": None,
+                "distance_km": None,
+                "escalation_count": escalation_count,
+                "rejected_by": new_rejected_csv,
+            }).eq("id", req.emergency_id).execute()
+
+            logger.warning(f"⚠️ Emergency {req.emergency_id}: no more doctors available after rejection")
+            return {
+                "message": "No more nearby doctors available. Emergency remains active for manual assignment.",
+                "next_doctor": None,
+            }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Reject emergency: {e}")
+        raise HTTPException(500, "Failed to reject emergency")
 
 
 @router.post("/doctor/complete-emergency")
@@ -515,12 +702,37 @@ async def book_appointment(req: BookingRequest, authorization: str = Header(None
 
 @router.post("/farmer/emergency")
 async def create_emergency(req: EmergencyRequest, authorization: str = Header(None)):
-    """Farmer broadcasts an emergency SOS to all doctors."""
+    """Farmer creates emergency → auto-assigned to nearest verified doctor."""
     user = await _require_user(authorization)
     _require_role(user, "farmer")
 
+    if not req.latitude or not req.longitude:
+        raise HTTPException(
+            400,
+            "GPS location is required for emergency requests. Please enable location services."
+        )
+
     try:
-        supabase_admin.table("emergency_requests").insert({
+        # Find nearest verified doctor
+        candidates = _find_nearest_doctors(req.latitude, req.longitude, limit=1)
+
+        assigned_to = None
+        assigned_doctor_name = None
+        distance_km = None
+
+        if candidates:
+            nearest_doc, dist = candidates[0]
+            assigned_to = nearest_doc["id"]
+            assigned_doctor_name = nearest_doc.get("full_name", "")
+            distance_km = dist
+            logger.info(
+                f"🆘 Emergency from {user['id']}: assigned to nearest doctor "
+                f"{assigned_to} ({assigned_doctor_name}) at {dist} km"
+            )
+        else:
+            logger.warning(f"⚠️ Emergency from {user['id']}: no doctors with location found")
+
+        row = {
             "farmer_id": user["id"],
             "animal_type": req.animal_type,
             "description": req.description,
@@ -529,8 +741,29 @@ async def create_emergency(req: EmergencyRequest, authorization: str = Header(No
             "longitude": req.longitude,
             "farmer_name": user.get("full_name", ""),
             "farmer_phone": user.get("phone", ""),
-        }).execute()
-        return {"message": "Emergency SOS broadcast sent to all nearby doctors"}
+            "assigned_to": assigned_to,
+            "assigned_doctor_name": assigned_doctor_name,
+            "distance_km": distance_km,
+        }
+
+        res = supabase_admin.table("emergency_requests").insert(row).execute()
+
+        if assigned_to:
+            return {
+                "message": f"Emergency sent to Dr. {assigned_doctor_name} ({distance_km} km away)",
+                "assigned_doctor": assigned_doctor_name,
+                "distance_km": distance_km,
+                "emergency_id": res.data[0]["id"] if res.data else None,
+            }
+        else:
+            return {
+                "message": "Emergency created but no doctors with location available. It will be visible to all doctors.",
+                "assigned_doctor": None,
+                "distance_km": None,
+                "emergency_id": res.data[0]["id"] if res.data else None,
+            }
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Create emergency: {e}")
         raise HTTPException(500, "Failed to create emergency request")

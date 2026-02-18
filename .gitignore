@@ -10,6 +10,23 @@
 secrets/
 **/secrets/**
 !.env.example
+kaggle.json
+
+# Build artifacts
+*.apk
+*.aab
+*.ipa
+
+# Model files (large binary files)
+models/
+*.h5
+*.pkl
+*.pth
+*.onnx
+*.tflite
+
+# Training datasets (large image folders)
+Crop Diseases/
 
 # Data directories (raw data + processed should not be committed)
 data/raw/

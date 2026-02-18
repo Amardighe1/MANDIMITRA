@@ -33,6 +33,8 @@ from scripts.train_crop_risk_model import CropRiskAdvisor, CropLifecycleManager
 from scripts.train_price_model import PriceIntelligenceEngine
 from api.auth import router as auth_router, seed_admin
 from api.vet import router as vet_router
+from api.crop_disease import router as crop_disease_router
+from api.weather_market import router as weather_market_router
 
 logger = logging.getLogger("mandimitra-api")
 logging.basicConfig(level=logging.INFO)
@@ -783,6 +785,8 @@ async def _auto_refresh_loop():
 # --- Auth & Vet routers ---
 app.include_router(auth_router)
 app.include_router(vet_router)
+app.include_router(crop_disease_router)
+app.include_router(weather_market_router)
 
 
 @app.on_event("startup")

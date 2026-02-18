@@ -9,6 +9,7 @@ import {
   ReactNode,
 } from 'react';
 import { useRouter } from 'next/navigation';
+import { apiUrl } from '@/lib/api-config';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -27,7 +28,7 @@ export interface User {
 interface AuthState {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, role?: string) => Promise<void>;
   signup: (data: SignupData) => Promise<void>;
   adminVerify: (adminId: string) => Promise<boolean>;
   adminLogin: (adminId: string, email: string, password: string) => Promise<void>;
@@ -98,13 +99,13 @@ function getDashboardPath(role: string): string {
   switch (role) {
     case 'admin': return '/dashboard/admin';
     case 'doctor': return '/dashboard/doctor';
-    case 'farmer': return '/dashboard/farmer';
+    case 'farmer': return '/';
     default: return '/';
   }
 }
 
 async function apiFetch(path: string, body: object) {
-  const res = await fetch(path, {
+  const res = await fetch(apiUrl(path), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -133,7 +134,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Quick hydrate from cache
       setUser(stored);
       // Background validate
-      fetch('/api/auth/me', {
+      fetch(apiUrl('/api/auth/me'), {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((r) => (r.ok ? r.json() : null))
@@ -154,8 +155,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(
-    async (email: string, password: string) => {
-      const data = await apiFetch('/api/auth/login', { email, password });
+    async (email: string, password: string, role?: string) => {
+      console.log(`[Auth] login called: email=${email}, role=${role}`);
+      const data = await apiFetch('/api/auth/login', { email, password, role });
+      console.log(`[Auth] login response role: ${data.user?.role}`);
       storeSession(data.access_token, data.refresh_token, data.user);
       setUser(data.user);
       router.push(getDashboardPath(data.user.role));
@@ -165,7 +168,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signup = useCallback(
     async (body: SignupData) => {
+      console.log(`[Auth] signup called: email=${body.email}, role=${body.role}`);
       const data = await apiFetch('/api/auth/signup', body);
+      console.log(`[Auth] signup response role: ${data.user?.role}`);
+      if (data.user?.role !== body.role) {
+        console.error(`[Auth] ROLE MISMATCH! Expected=${body.role}, Got=${data.user?.role}`);
+      }
       storeSession(data.access_token, data.refresh_token, data.user);
       setUser(data.user);
       router.push(getDashboardPath(data.user.role));
@@ -195,7 +203,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(() => {
     clearSession();
     setUser(null);
-    fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+    fetch(apiUrl('/api/auth/logout'), { method: 'POST' }).catch(() => {});
     router.push('/login');
   }, [router]);
 
@@ -203,7 +211,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const token = getToken();
     if (!token) return;
     try {
-      const res = await fetch('/api/auth/me', {
+      const res = await fetch(apiUrl('/api/auth/me'), {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {

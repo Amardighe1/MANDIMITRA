@@ -33,6 +33,7 @@ import {
   ComposedChart,
   Legend
 } from 'recharts';
+import { apiUrl } from '@/lib/api-config';
 
 interface PriceResult {
   commodity: string;
@@ -75,7 +76,7 @@ export default function PriceForecastPage() {
 
   // Fetch real commodity list from API
   useEffect(() => {
-    fetch('/api/price/commodities')
+    fetch(apiUrl('/api/price/commodities'))
       .then((r) => r.json())
       .then((data) => setCommodities(data.commodities ?? []))
       .catch(() => setCommodities(['Onion', 'Tomato', 'Soyabean', 'Wheat']));
@@ -86,7 +87,7 @@ export default function PriceForecastPage() {
     const url = selectedCommodity
       ? `/api/price/markets?commodity=${encodeURIComponent(selectedCommodity)}`
       : '/api/price/markets';
-    fetch(url)
+    fetch(apiUrl(url))
       .then((r) => r.json())
       .then((data) => {
         setMarkets(data.markets ?? []);
@@ -103,7 +104,7 @@ export default function PriceForecastPage() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/price/forecast', {
+      const response = await fetch(apiUrl('/api/price/forecast'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -138,17 +139,18 @@ export default function PriceForecastPage() {
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
+      // payload has multiple series (upper_bound Area, lower_bound Area, predicted_price Line)
+      // Use the underlying data row to get the correct predicted_price
+      const dataRow = payload[0]?.payload;
       return (
         <div className="bg-white p-4 rounded-xl shadow-lg border border-slate-100">
           <p className="font-medium text-slate-900 mb-2">{label}</p>
           <p className="text-emerald-600 text-sm">
-            Predicted: {formatPrice(payload[0]?.value)}
+            Predicted: {formatPrice(dataRow?.predicted_price)}
           </p>
-          {payload[1] && (
-            <p className="text-slate-400 text-xs mt-1">
-              Range: {formatPrice(payload[1]?.payload?.lower_bound)} - {formatPrice(payload[1]?.payload?.upper_bound)}
-            </p>
-          )}
+          <p className="text-slate-400 text-xs mt-1">
+            Range: {formatPrice(dataRow?.lower_bound)} - {formatPrice(dataRow?.upper_bound)}
+          </p>
         </div>
       );
     }

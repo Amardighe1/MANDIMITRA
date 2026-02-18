@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,7 +15,7 @@ const roles = [
 ];
 
 export default function LoginPage() {
-  const { login, adminVerify, adminLogin } = useAuth();
+  const { login, adminVerify, adminLogin, user, logout } = useAuth();
   const [role, setRole] = useState<Role>('farmer');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,6 +24,14 @@ export default function LoginPage() {
   const [adminStep, setAdminStep] = useState<1 | 2>(1);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Clear any existing session when visiting login page
+  useEffect(() => {
+    if (user) {
+      logout();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const resetForm = () => {
     setEmail('');
@@ -44,7 +52,8 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
+      console.log(`[Login] Submitting: email=${email}, role=${role}`);
+      await login(email, password, role);
     } catch (err: any) {
       setError(err.message || 'Login failed');
     } finally {

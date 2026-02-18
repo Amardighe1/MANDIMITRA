@@ -30,6 +30,7 @@ from supabase import create_client, Client
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(PROJECT_ROOT / ".env")
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mandimitra-auth")
 
 # ---------------------------------------------------------------------------
@@ -68,6 +69,7 @@ class SignupRequest(BaseModel):
 class LoginRequest(BaseModel):
     email: str
     password: str
+    role: Optional[str] = None  # "farmer" or "doctor" — from selected tab
 
 
 class AdminVerifyRequest(BaseModel):
@@ -101,14 +103,16 @@ def _get_profile(user_id: str) -> Optional[dict]:
 
 def _build_user_response(user_id: str, email: str, profile: Optional[dict]) -> dict:
     """Standard user dict for API responses."""
+    if not profile:
+        raise HTTPException(404, "User profile not found. Please sign up first.")
     return {
         "id": user_id,
         "email": email,
-        "role": profile["role"] if profile else "farmer",
-        "full_name": profile.get("full_name", "") if profile else "",
-        "is_verified": profile.get("is_verified", True) if profile else True,
-        "verification_status": profile.get("verification_status", "active") if profile else "active",
-        "phone": profile.get("phone", "") if profile else "",
+        "role": profile["role"],
+        "full_name": profile.get("full_name", ""),
+        "is_verified": profile.get("is_verified", False),
+        "verification_status": profile.get("verification_status", "pending_verification"),
+        "phone": profile.get("phone", ""),
     }
 
 
@@ -119,10 +123,13 @@ def _build_user_response(user_id: str, email: str, profile: Optional[dict]) -> d
 @router.post("/signup")
 async def signup(req: SignupRequest):
     """Register a new farmer or doctor."""
+    logger.info(f"📝 Signup request: email={req.email}, role={req.role}")
+
     # Validate doctor-specific fields
     if req.role == "doctor" and not req.veterinary_license:
         raise HTTPException(400, "Veterinary license number is required for doctors")
 
+    uid = None
     try:
         # Create auth user (service_role bypasses email confirmation)
         user_res = supabase_admin.auth.admin.create_user(
@@ -134,6 +141,7 @@ async def signup(req: SignupRequest):
             }
         )
         uid = user_res.user.id
+        logger.info(f"✅ Auth user created: uid={uid}, role={req.role}")
 
         # Build profile row
         profile = {
@@ -154,7 +162,23 @@ async def signup(req: SignupRequest):
                 }
             )
 
-        supabase_admin.table("profiles").insert(profile).execute()
+        logger.info(f"📦 Inserting profile: role={profile['role']}, name={profile['full_name']}")
+
+        # Use upsert to handle edge cases (e.g. trigger pre-created row)
+        supabase_admin.table("profiles").upsert(profile, on_conflict="id").execute()
+
+        # Verify the profile was saved correctly
+        saved = _get_profile(uid)
+        if not saved:
+            logger.error(f"❌ Profile not found after upsert for uid={uid}")
+            raise HTTPException(500, "Failed to create user profile")
+        if saved["role"] != req.role:
+            logger.error(f"❌ Role mismatch! Expected={req.role}, Got={saved['role']}")
+            # Force-fix the role
+            supabase_admin.table("profiles").update({"role": req.role}).eq("id", uid).execute()
+            saved["role"] = req.role
+
+        logger.info(f"✅ Profile saved: role={saved['role']}")
 
         # Sign in to obtain session tokens
         session = supabase.auth.sign_in_with_password(
@@ -164,20 +188,30 @@ async def signup(req: SignupRequest):
         return {
             "access_token": session.session.access_token,
             "refresh_token": session.session.refresh_token,
-            "user": _build_user_response(uid, req.email, profile),
+            "user": _build_user_response(uid, req.email, saved),
         }
 
+    except HTTPException:
+        raise
     except Exception as e:
         msg = str(e).lower()
         if "already" in msg or "duplicate" in msg:
             raise HTTPException(409, "An account with this email already exists")
-        logger.error(f"Signup error: {e}")
+        logger.error(f"❌ Signup error: {e}")
+        # Clean up orphan auth user if profile insert failed
+        if uid:
+            try:
+                supabase_admin.auth.admin.delete_user(uid)
+                logger.info(f"🧹 Cleaned up orphan auth user {uid}")
+            except Exception:
+                pass
         raise HTTPException(500, f"Registration failed: {e}")
 
 
 @router.post("/login")
 async def login(req: LoginRequest):
     """Login for farmer / doctor."""
+    logger.info(f"🔐 Login request: email={req.email}, selected_role={req.role}")
     try:
         result = supabase.auth.sign_in_with_password(
             {"email": req.email, "password": req.password}
@@ -185,16 +219,35 @@ async def login(req: LoginRequest):
         uid = result.user.id
         profile = _get_profile(uid)
 
+        if not profile:
+            raise HTTPException(404, "User profile not found. Please sign up first.")
+
+        db_role = profile.get("role", "unknown")
+        logger.info(f"✅ Login: uid={uid}, db_role={db_role}, selected_role={req.role}")
+
+        # Prevent admin from logging in through the farmer/doctor form
+        if db_role == "admin":
+            raise HTTPException(403, "Admin accounts must use the Admin login tab")
+
+        # If frontend sent a role, validate it matches the stored profile role
+        if req.role and db_role != req.role:
+            raise HTTPException(
+                403,
+                f"This account is registered as a {db_role}. Please use the {db_role.title()} tab to log in."
+            )
+
         return {
             "access_token": result.session.access_token,
             "refresh_token": result.session.refresh_token,
             "user": _build_user_response(uid, req.email, profile),
         }
+    except HTTPException:
+        raise
     except Exception as e:
         msg = str(e).lower()
         if "invalid" in msg or "credentials" in msg:
             raise HTTPException(401, "Invalid email or password")
-        logger.error(f"Login error: {e}")
+        logger.error(f"❌ Login error: {e}")
         raise HTTPException(500, f"Login failed: {e}")
 
 
@@ -251,6 +304,7 @@ async def get_me(authorization: str = Header(None)):
         raise HTTPException(401, "Invalid or expired token")
 
     profile = _get_profile(user.id)
+    logger.info(f"👤 /me: uid={user.id}, role={profile.get('role') if profile else 'NO_PROFILE'}")
     return {"user": _build_user_response(user.id, user.email, profile)}
 
 

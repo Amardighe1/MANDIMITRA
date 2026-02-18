@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth, getToken } from '@/contexts/AuthContext';
+import { apiUrl } from '@/lib/api-config';
 import {
   Leaf,
   Stethoscope,
@@ -59,7 +60,7 @@ interface Emergency {
 
 async function apiFetch(path: string, opts?: RequestInit) {
   const token = getToken();
-  const res = await fetch(path, {
+  const res = await fetch(apiUrl(path), {
     ...opts,
     headers: {
       'Content-Type': 'application/json',
@@ -241,7 +242,7 @@ export default function FarmerDashboard() {
   const tabItems = [
     { key: 'doctors' as Tab, label: 'Find Doctors', icon: Stethoscope },
     { key: 'bookings' as Tab, label: 'My Bookings', icon: Calendar },
-    { key: 'emergencies' as Tab, label: 'My Emergencies', icon: AlertTriangle },
+    { key: 'emergencies' as Tab, label: 'Emergencies', icon: AlertTriangle },
   ];
 
   const todayStr = new Date().toISOString().split('T')[0];
@@ -622,9 +623,9 @@ export default function FarmerDashboard() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md"
+              className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
             >
-              <div className="p-6 space-y-4">
+              <div className="p-5 sm:p-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-bold text-red-700 flex items-center gap-2">
                     <Siren className="w-5 h-5" />

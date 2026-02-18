@@ -1,15 +1,16 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useAuth, SignupData, getToken } from '@/contexts/AuthContext';
+import { apiUrl } from '@/lib/api-config';
 import { Leaf, User, Stethoscope, ArrowRight, Loader2, Eye, EyeOff, Upload, FileCheck } from 'lucide-react';
 
 type Role = 'farmer' | 'doctor';
 
 export default function SignupPage() {
-  const { signup } = useAuth();
+  const { signup, user, logout } = useAuth();
   const [role, setRole] = useState<Role>('farmer');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
@@ -27,6 +28,14 @@ export default function SignupPage() {
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Clear any existing session when visiting signup page
+  useEffect(() => {
+    if (user) {
+      logout();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +65,7 @@ export default function SignupPage() {
       }
 
       // 1. Create account
+      console.log(`[Signup] Submitting with role=${data.role}, email=${data.email}`);
       await signup(data);
 
       // 2. Upload document if doctor (token is now stored after signup)
@@ -64,7 +74,7 @@ export default function SignupPage() {
           const token = getToken();
           const fd = new FormData();
           fd.append('file', docFile);
-          await fetch('/api/vet/doctor/upload-document', {
+          await fetch(apiUrl('/api/vet/doctor/upload-document'), {
             method: 'POST',
             headers: { Authorization: `Bearer ${token}` },
             body: fd,
@@ -245,7 +255,7 @@ export default function SignupPage() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1.5">Specialization</label>
                       <select

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth, getToken } from '@/contexts/AuthContext';
+import { apiUrl } from '@/lib/api-config';
 import {
   Shield,
   Users,
@@ -79,7 +80,7 @@ type Tab = 'overview' | 'verifications' | 'doctors' | 'bookings' | 'emergencies'
 
 async function apiFetch(path: string, opts?: RequestInit) {
   const token = getToken();
-  const res = await fetch(path, {
+  const res = await fetch(apiUrl(path), {
     ...opts,
     headers: {
       'Content-Type': 'application/json',
@@ -480,7 +481,7 @@ export default function AdminDashboard() {
                               </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                               <div className="flex items-center gap-2">
                                 <FileText className="w-4 h-4 text-slate-400" />
                                 <div>

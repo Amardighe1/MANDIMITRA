@@ -1,10 +1,17 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth, getToken } from '@/contexts/AuthContext';
+import { apiUrl } from '@/lib/api-config';
+
+const FarmerLocationMap = dynamic(
+  () => import('@/components/map/FarmerLocationMap'),
+  { ssr: false }
+);
 import {
   Stethoscope,
   AlertTriangle,
@@ -29,6 +36,7 @@ import {
   BellRing,
   Zap,
   MessageCircle,
+  Navigation,
 } from 'lucide-react';
 
 interface Emergency {
@@ -42,6 +50,9 @@ interface Emergency {
   latitude: number | null;
   longitude: number | null;
   status: string;
+  assigned_to: string | null;
+  assigned_doctor_name: string | null;
+  distance_km: number | null;
   created_at: string;
 }
 
@@ -69,6 +80,8 @@ interface Profile {
   verification_status: string;
   verification_document_url: string | null;
   address: string | null;
+  latitude: number | null;
+  longitude: number | null;
   total_bookings: number;
   completed_bookings: number;
   handled_emergencies: number;
@@ -78,7 +91,7 @@ type Tab = 'emergencies' | 'bookings' | 'profile';
 
 async function apiFetch(path: string, opts?: RequestInit) {
   const token = getToken();
-  const res = await fetch(path, {
+  const res = await fetch(apiUrl(path), {
     ...opts,
     headers: {
       'Content-Type': 'application/json',
@@ -126,6 +139,9 @@ export default function DoctorDashboard() {
   const [newEmergencyCount, setNewEmergencyCount] = useState(0);
   const prevEmergenciesRef = useRef<string[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationAddress, setLocationAddress] = useState('');
+  const [mapEmergency, setMapEmergency] = useState<Emergency | null>(null);
 
   // Notification sound setup
   useEffect(() => {
@@ -229,6 +245,61 @@ export default function DoctorDashboard() {
     }
   };
 
+  // Reject emergency → escalate to next nearest doctor
+  const handleRejectEmergency = async (emergencyId: string) => {
+    setActionLoading(`reject-${emergencyId}`);
+    try {
+      const result = await apiFetch('/api/vet/doctor/reject-emergency', {
+        method: 'POST',
+        body: JSON.stringify({ emergency_id: emergencyId }),
+      });
+      if (result.next_doctor) {
+        alert(`Emergency escalated to Dr. ${result.next_doctor} (${result.distance_km} km away)`);
+      } else {
+        alert('No more nearby doctors available. Emergency remains active for manual assignment.');
+      }
+      await fetchEmergencies();
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // Update doctor location via GPS
+  const handleUpdateLocation = async () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser');
+      return;
+    }
+    setLocationLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          await apiFetch('/api/vet/doctor/update-location', {
+            method: 'POST',
+            body: JSON.stringify({
+              latitude: pos.coords.latitude,
+              longitude: pos.coords.longitude,
+              address: locationAddress || null,
+            }),
+          });
+          await fetchProfile();
+          alert('Location updated successfully!');
+        } catch (e: any) {
+          alert(e.message);
+        } finally {
+          setLocationLoading(false);
+        }
+      },
+      (err) => {
+        alert('Could not detect your location. Please enable GPS.');
+        setLocationLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
+
   // Complete emergency
   const handleCompleteEmergency = async (emergencyId: string) => {
     setActionLoading(`complete-${emergencyId}`);
@@ -274,7 +345,7 @@ export default function DoctorDashboard() {
       formData.append('file', file);
 
       const token = getToken();
-      const res = await fetch('/api/vet/doctor/upload-document', {
+      const res = await fetch(apiUrl('/api/vet/doctor/upload-document'), {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -481,6 +552,28 @@ export default function DoctorDashboard() {
         {/* ==================== VERIFIED DOCTOR CONTENT ==================== */}
         {isVerified && (
           <>
+            {/* Location Warning Banner */}
+            {!profile?.latitude && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col sm:flex-row sm:items-center gap-3"
+              >
+                <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-5 h-5 text-amber-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-amber-800">Set your location to receive emergencies</p>
+                  <p className="text-sm text-amber-600">Go to Profile tab → Emergency Location to enable GPS-based emergency matching</p>
+                </div>
+                <button
+                  onClick={() => setTab('profile')}
+                  className="px-4 py-2 bg-amber-600 text-white font-medium rounded-xl hover:bg-amber-700 transition-colors text-sm flex-shrink-0"
+                >
+                  Set Location
+                </button>
+              </motion.div>
+            )}
             {/* ==================== EMERGENCIES TAB ==================== */}
             {tab === 'emergencies' && (
               <div className="space-y-6">
@@ -530,6 +623,11 @@ export default function DoctorDashboard() {
                                     🚨 SOS
                                   </span>
                                   <span className="text-xs text-slate-400">{timeAgo(emg.created_at)}</span>
+                                  {emg.distance_km != null && (
+                                    <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
+                                      📍 {emg.distance_km} km away
+                                    </span>
+                                  )}
                                 </div>
                                 <h3 className="font-bold text-lg text-slate-900">{emg.animal_type}</h3>
                                 <p className="text-slate-600 mt-1">{emg.description}</p>
@@ -555,20 +653,36 @@ export default function DoctorDashboard() {
                                   )}
                                 </div>
                               </div>
-                              <button
-                                onClick={() => handleAcceptEmergency(emg.id)}
-                                disabled={actionLoading === emg.id}
-                                className="flex items-center justify-center gap-2 px-6 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50 text-lg"
-                              >
-                                {actionLoading === emg.id ? (
-                                  <Loader2 className="w-6 h-6 animate-spin" />
-                                ) : (
-                                  <>
-                                    <Zap className="w-6 h-6" />
-                                    Accept Now
-                                  </>
-                                )}
-                              </button>
+                              <div className="flex flex-col gap-2">
+                                <button
+                                  onClick={() => handleAcceptEmergency(emg.id)}
+                                  disabled={actionLoading === emg.id}
+                                  className="flex items-center justify-center gap-2 px-6 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50 text-lg"
+                                >
+                                  {actionLoading === emg.id ? (
+                                    <Loader2 className="w-6 h-6 animate-spin" />
+                                  ) : (
+                                    <>
+                                      <Zap className="w-6 h-6" />
+                                      Accept
+                                    </>
+                                  )}
+                                </button>
+                                <button
+                                  onClick={() => handleRejectEmergency(emg.id)}
+                                  disabled={actionLoading === `reject-${emg.id}`}
+                                  className="flex items-center justify-center gap-2 px-6 py-2 border-2 border-slate-300 text-slate-600 font-medium rounded-xl hover:bg-slate-100 transition-colors disabled:opacity-50 text-sm"
+                                >
+                                  {actionLoading === `reject-${emg.id}` ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                  ) : (
+                                    <>
+                                      <XCircle className="w-4 h-4" />
+                                      Decline
+                                    </>
+                                  )}
+                                </button>
+                              </div>
                             </div>
                           </motion.div>
                         ))}
@@ -616,7 +730,16 @@ export default function DoctorDashboard() {
                               </p>
                             </div>
                             {emg.status === 'accepted' && (
-                              <div className="flex gap-2">
+                              <div className="flex flex-wrap gap-2">
+                                {emg.latitude && emg.longitude && (
+                                  <button
+                                    onClick={() => setMapEmergency(emg)}
+                                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-bold shadow-lg shadow-blue-600/25"
+                                  >
+                                    <Navigation className="w-4 h-4" />
+                                    Start Map
+                                  </button>
+                                )}
                                 {emg.farmer_phone && (
                                   <a
                                     href={`tel:${emg.farmer_phone}`}
@@ -957,11 +1080,76 @@ export default function DoctorDashboard() {
                     )}
                   </div>
                 </div>
+
+                {/* Location Setup for Emergency Proximity */}
+                <div className={`bg-white rounded-2xl border shadow-sm p-6 ${
+                  !profile.latitude ? 'border-amber-200 ring-2 ring-amber-100' : 'border-slate-100'
+                }`}>
+                  <h3 className="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <MapPin className="w-5 h-5 text-blue-600" />
+                    Emergency Location
+                  </h3>
+                  <p className="text-sm text-slate-500 mb-4">
+                    {profile.latitude
+                      ? 'Your location is set. Emergency requests from nearby farmers will be sent to you.'
+                      : 'Set your location so farmers can find you for emergencies. This is required to receive emergency SOS requests.'}
+                  </p>
+
+                  {profile.latitude && profile.longitude && (
+                    <div className="bg-emerald-50 rounded-xl p-3 mb-4 flex items-center gap-2 text-sm text-emerald-700">
+                      <CheckCircle className="w-4 h-4 flex-shrink-0" />
+                      <span>Current: {profile.latitude.toFixed(4)}, {profile.longitude.toFixed(4)}</span>
+                      {profile.address && <span className="text-emerald-500">({profile.address})</span>}
+                    </div>
+                  )}
+
+                  {!profile.latitude && (
+                    <div className="bg-amber-50 rounded-xl p-3 mb-4 flex items-center gap-2 text-sm text-amber-700">
+                      <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                      <span>Location not set — you won&apos;t receive emergency requests!</span>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input
+                      type="text"
+                      value={locationAddress}
+                      onChange={(e) => setLocationAddress(e.target.value)}
+                      placeholder="Clinic / area name (optional)"
+                      className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all text-slate-900 placeholder-slate-400 text-sm"
+                    />
+                    <button
+                      onClick={handleUpdateLocation}
+                      disabled={locationLoading}
+                      className="flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 text-sm"
+                    >
+                      {locationLoading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                          <MapPin className="w-4 h-4" />
+                          {profile.latitude ? 'Update Location' : 'Set My Location'}
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </>
         )}
       </main>
+
+      {/* Farmer Location Map Modal */}
+      {mapEmergency && mapEmergency.latitude && mapEmergency.longitude && (
+        <FarmerLocationMap
+          farmerLat={mapEmergency.latitude}
+          farmerLon={mapEmergency.longitude}
+          farmerName={mapEmergency.farmer_name || 'Farmer'}
+          animalType={mapEmergency.animal_type}
+          onClose={() => setMapEmergency(null)}
+        />
+      )}
     </div>
   );
 }

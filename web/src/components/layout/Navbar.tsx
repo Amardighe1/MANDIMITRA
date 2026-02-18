@@ -16,6 +16,8 @@ import {
   LogOut,
   User,
   LayoutDashboard,
+  Stethoscope,
+  Camera,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -52,7 +54,7 @@ export function Navbar({ isScrolled }: NavbarProps) {
   }[user.role] || 'bg-slate-100 text-slate-700' : '';
 
   const dashboardPath = user
-    ? `/dashboard/${user.role}`
+    ? user.role === 'farmer' ? '/' : `/dashboard/${user.role}`
     : '/login';
 
   // Lock body scroll when mobile menu is open
@@ -147,13 +149,32 @@ export function Navbar({ isScrolled }: NavbarProps) {
             <div className="hidden lg:flex items-center space-x-3">
               {user ? (
                 <>
-                  <Link
-                    href={dashboardPath}
-                    className="flex items-center gap-2 px-4 py-2 text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
-                  >
-                    <LayoutDashboard className="w-4 h-4" />
-                    Dashboard
-                  </Link>
+                  {user.role === 'farmer' ? (
+                    <>
+                      <Link
+                        href="/crop-analysis"
+                        className="flex items-center gap-2 px-4 py-2 text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+                      >
+                        <Camera className="w-4 h-4" />
+                        Crop Analysis
+                      </Link>
+                      <Link
+                        href="/veterinary"
+                        className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                      >
+                        <Stethoscope className="w-4 h-4" />
+                        Vet Services
+                      </Link>
+                    </>
+                  ) : (
+                    <Link
+                      href={dashboardPath}
+                      className="flex items-center gap-2 px-4 py-2 text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+                    >
+                      <LayoutDashboard className="w-4 h-4" />
+                      Dashboard
+                    </Link>
+                  )}
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200">
                     <User className="w-4 h-4 text-slate-500" />
                     <span className="text-sm font-medium text-slate-700 max-w-[120px] truncate">{user.full_name || user.email}</span>
@@ -267,14 +288,35 @@ export function Navbar({ isScrolled }: NavbarProps) {
                 <div className="space-y-3 pt-4">
                   {user ? (
                     <>
-                      <Link
-                        href={dashboardPath}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors"
-                      >
-                        <LayoutDashboard className="w-4 h-4" />
-                        Go to Dashboard
-                      </Link>
+                      {user.role === 'farmer' ? (
+                        <>
+                          <Link
+                            href="/crop-analysis"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors"
+                          >
+                            <Camera className="w-4 h-4" />
+                            Crop Analysis
+                          </Link>
+                          <Link
+                            href="/veterinary"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+                          >
+                            <Stethoscope className="w-4 h-4" />
+                            Vet Services
+                          </Link>
+                        </>
+                      ) : (
+                        <Link
+                          href={dashboardPath}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors"
+                        >
+                          <LayoutDashboard className="w-4 h-4" />
+                          Go to Dashboard
+                        </Link>
+                      )}
                       <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-50 border border-slate-200">
                         <User className="w-5 h-5 text-slate-500" />
                         <div className="flex-1 min-w-0">
