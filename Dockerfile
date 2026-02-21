@@ -14,6 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy backend code
 COPY api/ ./api/
 COPY src/ ./src/
+COPY scripts/ ./scripts/
 COPY configs/ ./configs/
 
 # Copy ML models (~73 MB - must be tracked by Git LFS)
