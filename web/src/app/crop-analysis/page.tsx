@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth, getToken } from '@/contexts/AuthContext';
 import { apiUrl } from '@/lib/api-config';
+import { analyzeLocally, preloadModel, isModelLoaded } from '@/lib/crop-disease-local';
 import {
   Leaf,
   Camera,
@@ -69,6 +70,14 @@ export default function CropAnalysisPage() {
   const [error, setError] = useState('');
   const [showDetails, setShowDetails] = useState(true);
   const [dragOver, setDragOver] = useState(false);
+  const [inferenceMode, setInferenceMode] = useState<'cloud' | 'on-device' | ''>('');
+
+  // Preload TF.js model in background on mount
+  useEffect(() => {
+    preloadModel().then((ok) => {
+      if (ok) console.log('[CropDisease] On-device model ready');
+    });
+  }, []);
 
   useEffect(() => {
     if (!authLoading && (!user || user.role !== 'farmer')) {
@@ -110,24 +119,54 @@ export default function CropAnalysisPage() {
     setLoading(true);
     setError('');
     setResult(null);
-    try {
-      const token = getToken();
-      const formData = new FormData();
-      formData.append('file', file);
-      const res = await fetch(apiUrl('/api/crop-disease/analyze'), {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Analysis failed');
-      setResult(data);
-      setShowDetails(true);
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
+    setInferenceMode('');
+
+    // Strategy: try cloud API first (has Gemini advice), fall back to on-device
+    const baseUrl = apiUrl('/api/crop-disease/analyze');
+    let usedCloud = false;
+
+    if (baseUrl) {
+      try {
+        const token = getToken();
+        const formData = new FormData();
+        formData.append('file', file);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000); // 15s timeout
+        const res = await fetch(baseUrl, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+          signal: controller.signal,
+        });
+        clearTimeout(timeout);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Analysis failed');
+        setResult(data);
+        setInferenceMode('cloud');
+        setShowDetails(true);
+        usedCloud = true;
+      } catch (cloudErr: any) {
+        console.warn('[CropDisease] Cloud API unavailable, falling back to on-device:', cloudErr.message);
+      }
     }
+
+    // Fallback: on-device inference with TF.js
+    if (!usedCloud) {
+      try {
+        const localResult = await analyzeLocally(file);
+        setResult(localResult as any);
+        setInferenceMode('on-device');
+        setShowDetails(true);
+      } catch (localErr: any) {
+        setError(
+          baseUrl
+            ? `Cloud server unavailable and on-device analysis failed: ${localErr.message}`
+            : `On-device analysis failed: ${localErr.message}`
+        );
+      }
+    }
+
+    setLoading(false);
   };
 
   const resetAll = () => {
@@ -429,6 +468,15 @@ export default function CropAnalysisPage() {
                       </div>
                       <p className="text-base font-medium text-slate-700 mb-2">
                         {result.crop} • <span className="font-bold">{result.confidence}%</span> confidence
+                        {inferenceMode && (
+                          <span className={`ml-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                            inferenceMode === 'cloud'
+                              ? 'bg-blue-100 text-blue-700'
+                              : 'bg-amber-100 text-amber-700'
+                          }`}>
+                            {inferenceMode === 'cloud' ? '☁️ Cloud AI' : '📱 On-Device'}
+                          </span>
+                        )}
                       </p>
                       <p className="text-sm text-slate-600 leading-relaxed">{result.advice.summary}</p>
                     </div>

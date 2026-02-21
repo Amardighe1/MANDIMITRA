@@ -2,14 +2,14 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# System deps for TensorFlow & LightGBM
+# System deps for LightGBM
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgomp1 libglib2.0-0 libsm6 libxrender1 libxext6 \
+    libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python deps (cached layer)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python deps — server-only (no TensorFlow, saves ~400MB)
+COPY requirements-server.txt .
+RUN pip install --no-cache-dir -r requirements-server.txt
 
 # Copy backend code
 COPY api/ ./api/
@@ -17,10 +17,11 @@ COPY src/ ./src/
 COPY scripts/ ./scripts/
 COPY configs/ ./configs/
 
-# Copy ML models (~73 MB - must be tracked by Git LFS)
-COPY models/ ./models/
+# Copy ML models (only LightGBM — crop risk + price intelligence, ~24 MB)
+COPY models/crop_risk_advisor/ ./models/crop_risk_advisor/
+COPY models/price_intelligence/ ./models/price_intelligence/
 
-# Copy only the data files the API needs at runtime (~41 MB)
+# Copy only the data files the API needs at runtime
 COPY data/processed/model/mandi_weather_optimized.parquet ./data/processed/model/mandi_weather_optimized.parquet
 COPY data/processed/weather/forecast_maharashtra.parquet ./data/processed/weather/forecast_maharashtra.parquet
 

@@ -9,6 +9,18 @@ const nextConfig = {
     unoptimized: true,
     domains: ['images.unsplash.com'],
   },
+  // TF.js needs these webpack settings to work in browser builds
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        crypto: false,
+      };
+    }
+    return config;
+  },
   ...(isCapacitorBuild
     ? {
         output: 'export',

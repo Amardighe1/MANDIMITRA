@@ -33,8 +33,16 @@ from scripts.train_crop_risk_model import CropRiskAdvisor, CropLifecycleManager
 from scripts.train_price_model import PriceIntelligenceEngine
 from api.auth import router as auth_router, seed_admin
 from api.vet import router as vet_router
-from api.crop_disease import router as crop_disease_router
 from api.weather_market import router as weather_market_router
+
+# Crop disease router is optional — on Render we skip it (runs on-device via TF.js)
+try:
+    from api.crop_disease import router as crop_disease_router
+    _HAS_CROP_DISEASE = True
+except (ImportError, RuntimeError):
+    _HAS_CROP_DISEASE = False
+    logger = logging.getLogger("mandimitra-api")
+    logger.info("Crop disease detection disabled (TensorFlow not installed — runs on-device)")
 
 logger = logging.getLogger("mandimitra-api")
 logging.basicConfig(level=logging.INFO)
@@ -85,9 +93,17 @@ weather_forecast_df["t2m_mean"] = (
     weather_forecast_df["t2m_max"] + weather_forecast_df["t2m_min"]
 ) / 2
 
-# --- Mandi price data (for price model features) ---
-mandi_df = pd.read_parquet(DATA_DIR / "model" / "mandi_weather_optimized.parquet")
-mandi_df = mandi_df.sort_values("arrival_date")
+# --- Mandi price data (lazy-loaded on first request to save startup RAM) ---
+_mandi_df_cache = None
+
+def _get_mandi_df():
+    global _mandi_df_cache
+    if _mandi_df_cache is None:
+        logger.info("Lazy-loading mandi price data...")
+        _mandi_df_cache = pd.read_parquet(DATA_DIR / "model" / "mandi_weather_optimized.parquet")
+        _mandi_df_cache = _mandi_df_cache.sort_values("arrival_date")
+        logger.info(f"Mandi data loaded: {len(_mandi_df_cache):,} rows")
+    return _mandi_df_cache
 
 # ============================================================================
 # LIVE MANDI PRICE SYSTEM (Auto-download from Data.gov.in)
@@ -288,8 +304,9 @@ def get_current_price(commodity: str, market: str) -> Tuple[float, str]:
             return price, date_str
 
     # 2. Fallback: last price in historical parquet
-    mask = (mandi_df["commodity"] == commodity) & (mandi_df["market"] == market)
-    hist = mandi_df.loc[mask]
+    df = _get_mandi_df()
+    mask = (df["commodity"] == commodity) & (df["market"] == market)
+    hist = df.loc[mask]
     if not hist.empty:
         row = hist.sort_values("arrival_date").iloc[-1]
         price = float(row["modal_price"])
@@ -300,12 +317,22 @@ def get_current_price(commodity: str, market: str) -> Tuple[float, str]:
     return 0.0, "unknown"
 
 
-# --- Initial load of live prices at startup ---
-refresh_live_prices()
+# Precompute lookups (lazy for mandi, eager for weather/crops)
+_AVAILABLE_COMMODITIES = None
+_AVAILABLE_MARKETS = None
 
-# Precompute lookups
-AVAILABLE_COMMODITIES = sorted(mandi_df["commodity"].unique().tolist())
-AVAILABLE_MARKETS = sorted(mandi_df["market"].unique().tolist())
+def _get_available_commodities():
+    global _AVAILABLE_COMMODITIES
+    if _AVAILABLE_COMMODITIES is None:
+        _AVAILABLE_COMMODITIES = sorted(_get_mandi_df()["commodity"].unique().tolist())
+    return _AVAILABLE_COMMODITIES
+
+def _get_available_markets():
+    global _AVAILABLE_MARKETS
+    if _AVAILABLE_MARKETS is None:
+        _AVAILABLE_MARKETS = sorted(_get_mandi_df()["market"].unique().tolist())
+    return _AVAILABLE_MARKETS
+
 AVAILABLE_DISTRICTS = sorted(
     weather_forecast_df["district"].unique().tolist()
 )
@@ -318,13 +345,10 @@ logger.info(f"  Crop Risk Advisor : {len(crop_advisor.feature_cols)} features, "
             f"{len(AVAILABLE_CROPS)} crops")
 logger.info(f"  Price Engine      : horizons {price_engine.horizons}, "
             f"{len(price_engine.features)} features")
-logger.info(f"  Mandi data        : {len(mandi_df):,} rows, "
-            f"{len(AVAILABLE_COMMODITIES)} commodities, "
-            f"{len(AVAILABLE_MARKETS)} markets")
+logger.info(f"  Mandi data        : lazy-loaded on first request")
 logger.info(f"  Weather forecast  : {len(weather_forecast_df)} rows, "
             f"{len(AVAILABLE_DISTRICTS)} districts")
-logger.info(f"  Live prices       : {len(live_prices_df) if live_prices_df is not None else 0} rows "
-            f"(date: {live_prices_date or 'N/A'})")
+logger.info(f"  Crop disease      : {'server (TF)' if _HAS_CROP_DISEASE else 'on-device (TF.js)'}")
 logger.info("=" * 60)
 
 # ============================================================================
@@ -569,7 +593,7 @@ async def forecast_price(request: PriceForecastRequest):
     forecast_days = request.forecast_days or 14
 
     # Build feature vector from actual price history
-    X = build_price_features(commodity, market, mandi_df, price_engine.encoders)
+    X = build_price_features(commodity, market, _get_mandi_df(), price_engine.encoders)
 
     if X is None:
         raise HTTPException(
@@ -591,8 +615,9 @@ async def forecast_price(request: PriceForecastRequest):
 
     if current_price == 0.0:
         # Last resort: try from the feature data we already built
-        mask = (mandi_df["commodity"] == commodity) & (mandi_df["market"] == market)
-        latest_row = mandi_df.loc[mask].sort_values("arrival_date").iloc[-1]
+        _df = _get_mandi_df()
+        mask = (_df["commodity"] == commodity) & (_df["market"] == market)
+        latest_row = _df.loc[mask].sort_values("arrival_date").iloc[-1]
         current_price = float(latest_row["modal_price"])
         price_date_str = str(latest_row["arrival_date"].date())
         price_source = "historical"
@@ -702,7 +727,7 @@ async def forecast_price(request: PriceForecastRequest):
 async def get_commodities():
     # Return top 30 by data availability
     top = (
-        mandi_df.groupby("commodity")
+        _get_mandi_df().groupby("commodity")
         .size()
         .sort_values(ascending=False)
         .head(30)
@@ -712,10 +737,11 @@ async def get_commodities():
 
 @app.get("/api/price/markets")
 async def get_markets(commodity: Optional[str] = None):
+    df = _get_mandi_df()
     if commodity:
-        mask = mandi_df["commodity"] == commodity
+        mask = df["commodity"] == commodity
         mkts = (
-            mandi_df.loc[mask]
+            df.loc[mask]
             .groupby("market")
             .size()
             .sort_values(ascending=False)
@@ -724,7 +750,7 @@ async def get_markets(commodity: Optional[str] = None):
         )
     else:
         mkts = (
-            mandi_df.groupby("market")
+            df.groupby("market")
             .size()
             .sort_values(ascending=False)
             .head(50)
@@ -738,10 +764,11 @@ async def get_markets(commodity: Optional[str] = None):
 
 @app.get("/api/dashboard/stats", response_model=DashboardStats)
 async def get_dashboard_stats():
+    df = _get_mandi_df()
     return DashboardStats(
-        total_records=f"{len(mandi_df) / 1_000_000:.1f}M+",
-        total_markets=mandi_df["market"].nunique(),
-        total_commodities=mandi_df["commodity"].nunique(),
+        total_records=f"{len(df) / 1_000_000:.1f}M+",
+        total_markets=df["market"].nunique(),
+        total_commodities=df["commodity"].nunique(),
         total_districts=len(AVAILABLE_DISTRICTS),
         model_accuracy=93.3,
         high_risk_alerts=0,
@@ -749,11 +776,12 @@ async def get_dashboard_stats():
 
 @app.get("/api/dashboard/price-trends")
 async def get_price_trends(commodity: str = "Onion", days: int = 30):
-    cutoff = mandi_df["arrival_date"].max() - timedelta(days=days)
+    df = _get_mandi_df()
+    cutoff = df["arrival_date"].max() - timedelta(days=days)
     trend_data = (
-        mandi_df.loc[
-            (mandi_df["commodity"] == commodity)
-            & (mandi_df["arrival_date"] >= cutoff)
+        df.loc[
+            (df["commodity"] == commodity)
+            & (df["arrival_date"] >= cutoff)
         ]
         .groupby("arrival_date")["modal_price"]
         .mean()
@@ -785,7 +813,8 @@ async def _auto_refresh_loop():
 # --- Auth & Vet routers ---
 app.include_router(auth_router)
 app.include_router(vet_router)
-app.include_router(crop_disease_router)
+if _HAS_CROP_DISEASE:
+    app.include_router(crop_disease_router)
 app.include_router(weather_market_router)
 
 
