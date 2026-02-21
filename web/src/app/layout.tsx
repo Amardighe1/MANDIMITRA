@@ -4,9 +4,13 @@ import dynamic from 'next/dynamic';
 import './globals.css';
 import { Providers } from './providers';
 
-// Dynamically import CapacitorInit to prevent SSR issues
+// Dynamically import Capacitor-only components to prevent SSR issues
 const CapacitorInit = dynamic(
   () => import('@/components/CapacitorInit').then((mod) => mod.CapacitorInit),
+  { ssr: false }
+);
+const ConnectionSetup = dynamic(
+  () => import('@/components/ConnectionSetup').then((mod) => mod.ConnectionSetup),
   { ssr: false }
 );
 
@@ -41,6 +45,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <CapacitorInit />
+        <ConnectionSetup />
         <Providers>{children}</Providers>
       </body>
     </html>

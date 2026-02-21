@@ -1,0 +1,21 @@
+# render.yaml - Render Blueprint for MANDIMITRA Backend
+# This file auto-configures the service when you connect the repo
+
+services:
+  - type: web
+    name: mandimitra-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: DATAGOV_API_KEY
+        sync: false  # You'll set this manually in Render dashboard
+      - key: Gemini_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+    healthCheckPath: /health

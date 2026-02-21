@@ -1,4 +1,4 @@
-# MANDIMITRA - Data Pipeline Requirements
+# MANDIMITRA - Backend Requirements
 # Python 3.10+ recommended
 
 # Core data handling
@@ -8,12 +8,13 @@ numpy>=1.24.0
 # Parquet support
 pyarrow>=14.0.0
 
-# In-memory SQL engine for deduplication (handles 6M+ rows efficiently)
+# In-memory SQL engine
 duckdb>=0.10.0
 
-# HTTP requests with retry support
+# HTTP requests
 requests>=2.31.0
 urllib3>=2.0.0
+httpx>=0.25.0
 
 # Environment variables
 python-dotenv>=1.0.0
@@ -26,14 +27,18 @@ pandera>=0.18.0
 
 # API
 fastapi>=0.104.0
-uvicorn>=0.25.0
+uvicorn[standard]>=0.25.0
 python-multipart>=0.0.6
 supabase>=2.0.0
 
-# Optional: Fuzzy string matching for district normalization
-# rapidfuzz>=3.0.0
+# ML - Crop Disease Detection
+tensorflow>=2.15.0
+Pillow>=10.0.0
 
-# Optional: For enhanced type checking (development)
-# mypy>=1.0.0
-# types-requests>=2.31.0
-# types-PyYAML>=6.0
+# ML - Crop Risk & Price Intelligence
+lightgbm>=4.0.0
+scikit-learn>=1.3.0
+joblib>=1.3.0
+
+# Gemini AI for disease advice
+google-genai>=1.0.0

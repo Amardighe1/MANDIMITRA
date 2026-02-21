@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "build:mobile": "cross-env CAPACITOR_BUILD=true NEXT_PUBLIC_API_URL=http://10.0.2.2:8000 next build",
+    "build:mobile:emulator": "cross-env CAPACITOR_BUILD=true NEXT_PUBLIC_API_URL=http://10.0.2.2:8000 next build",
+    "build:mobile": "cross-env CAPACITOR_BUILD=true next build",
     "cap:sync": "npx cap sync android",
     "cap:open": "npx cap open android",
+    "mobile:emulator": "npm run build:mobile:emulator && npm run cap:sync",
     "mobile": "npm run build:mobile && npm run cap:sync"
   },
   "dependencies": {

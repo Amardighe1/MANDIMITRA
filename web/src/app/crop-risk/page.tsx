@@ -18,6 +18,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import Link from 'next/link';
+import { apiUrl } from '@/lib/api-config';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 
@@ -53,11 +54,11 @@ export default function CropRiskPage() {
 
   // Fetch real crop and district lists from API
   useEffect(() => {
-    fetch('/api/crop-risk/crops')
+    fetch(apiUrl('/api/crop-risk/crops'))
       .then((r) => r.json())
       .then((data) => setCrops(data.crops ?? []))
       .catch(() => setCrops(['Soybean', 'Cotton', 'Tur', 'Urad', 'Onion', 'Wheat', 'Jowar', 'Bajra', 'Maize', 'Gram', 'Tomato']));
-    fetch('/api/crop-risk/districts')
+    fetch(apiUrl('/api/crop-risk/districts'))
       .then((r) => r.json())
       .then((data) => setDistricts(data.districts ?? []))
       .catch(() => setDistricts(['Pune', 'Nashik', 'Nagpur', 'Solapur', 'Kolhapur']));
@@ -70,7 +71,7 @@ export default function CropRiskPage() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/crop-risk/assess', {
+      const response = await fetch(apiUrl('/api/crop-risk/assess'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
