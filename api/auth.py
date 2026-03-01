@@ -1,7 +1,8 @@
 """
-MANDIMITRA - Authentication Module
-===================================
-All auth handled server-side via Supabase. Frontend NEVER talks to Supabase.
+MANDIMITRA - Authentication Module (MongoDB + JWT)
+====================================================
+All auth handled server-side via MongoDB + JWT tokens.
+Frontend NEVER talks to the database directly.
 
 Roles:
   farmer  – Standard user, immediate access
@@ -19,13 +20,18 @@ Endpoints:
 
 import os
 import logging
+import uuid
 from pathlib import Path
 from typing import Optional
+from datetime import datetime, timedelta, timezone
 
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel, Field
-from supabase import create_client, Client
+from passlib.hash import bcrypt
+import jwt as pyjwt
+
+from api.database import get_db, utcnow
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(PROJECT_ROOT / ".env")
@@ -34,20 +40,41 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mandimitra-auth")
 
 # ---------------------------------------------------------------------------
-# Supabase clients
+# Config
 # ---------------------------------------------------------------------------
-SUPABASE_URL = os.getenv("SUPABASE_URL", "")
-SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY", "")
-SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
+JWT_SECRET = os.getenv("JWT_SECRET", "mandimitra-jwt-secret-2025-xK9pL3mQ7vR1wZ4y")
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRY_HOURS = 24 * 7  # 7 days
+
 ADMIN_ID = os.getenv("ADMIN_ID", "8830217352")
 
-if not SUPABASE_URL or not SUPABASE_ANON_KEY:
-    logger.error("Supabase credentials missing in .env")
-
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
-supabase_admin: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
-
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
+
+# ---------------------------------------------------------------------------
+# JWT helpers
+# ---------------------------------------------------------------------------
+
+def _create_token(user_id: str, email: str, role: str) -> str:
+    """Create a signed JWT access token."""
+    payload = {
+        "sub": user_id,
+        "email": email,
+        "role": role,
+        "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_EXPIRY_HOURS),
+        "iat": datetime.now(timezone.utc),
+    }
+    return pyjwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+
+def _decode_token(token: str) -> dict:
+    """Decode and verify a JWT token. Raises on invalid/expired."""
+    try:
+        return pyjwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+    except pyjwt.ExpiredSignatureError:
+        raise HTTPException(401, "Token has expired")
+    except pyjwt.InvalidTokenError:
+        raise HTTPException(401, "Invalid token")
+
 
 # ---------------------------------------------------------------------------
 # Pydantic Models
@@ -58,12 +85,16 @@ class SignupRequest(BaseModel):
     password: str = Field(..., min_length=6)
     full_name: str
     phone: str
-    role: str = Field(..., pattern="^(farmer|doctor)$")
+    role: str = Field(..., pattern="^(farmer|doctor|buyer)$")
     # Doctor-specific (required when role=doctor)
     veterinary_license: Optional[str] = None
     veterinary_college: Optional[str] = None
     specialization: Optional[str] = None
     years_of_experience: Optional[int] = None
+    # Buyer-specific (required when role=buyer)
+    business_name: Optional[str] = None
+    market_name: Optional[str] = None
+    district: Optional[str] = None
 
 
 class LoginRequest(BaseModel):
@@ -86,18 +117,14 @@ class AdminLoginRequest(BaseModel):
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _get_profile(user_id: str) -> Optional[dict]:
-    """Fetch profile from Supabase profiles table."""
+async def _get_profile(user_id: str) -> Optional[dict]:
+    """Fetch profile from MongoDB profiles collection."""
     try:
-        res = (
-            supabase_admin.table("profiles")
-            .select("*")
-            .eq("id", user_id)
-            .single()
-            .execute()
-        )
-        return res.data
-    except Exception:
+        db = await get_db()
+        profile = await db.profiles.find_one({"id": user_id}, {"_id": 0})
+        return profile
+    except Exception as e:
+        logger.error(f"Get profile error: {e}")
         return None
 
 
@@ -129,82 +156,72 @@ async def signup(req: SignupRequest):
     if req.role == "doctor" and not req.veterinary_license:
         raise HTTPException(400, "Veterinary license number is required for doctors")
 
-    uid = None
-    try:
-        # Create auth user (service_role bypasses email confirmation)
-        user_res = supabase_admin.auth.admin.create_user(
-            {
-                "email": req.email,
-                "password": req.password,
-                "email_confirm": True,
-                "user_metadata": {"full_name": req.full_name, "role": req.role},
-            }
-        )
-        uid = user_res.user.id
-        logger.info(f"✅ Auth user created: uid={uid}, role={req.role}")
+    # Validate buyer-specific fields
+    if req.role == "buyer":
+        if not req.business_name:
+            raise HTTPException(400, "Business name is required for buyers")
+        if not req.market_name:
+            raise HTTPException(400, "Market name is required for buyers")
 
-        # Build profile row
+    db = await get_db()
+
+    # Check duplicate email
+    existing = await db.profiles.find_one({"email": req.email})
+    if existing:
+        raise HTTPException(409, "An account with this email already exists")
+
+    try:
+        uid = str(uuid.uuid4())
+        password_hash = bcrypt.hash(req.password)
+
+        # Build profile document
         profile = {
             "id": uid,
+            "email": req.email,
+            "password_hash": password_hash,
             "role": req.role,
             "full_name": req.full_name,
             "phone": req.phone,
-            "is_verified": req.role == "farmer",  # Farmers auto-verified
-            "verification_status": "active" if req.role == "farmer" else "pending_verification",
+            "is_verified": req.role in ("farmer", "buyer"),  # Farmers & buyers auto-verified
+            "verification_status": "active" if req.role in ("farmer", "buyer") else "pending_verification",
+            "created_at": utcnow(),
         }
         if req.role == "doctor":
-            profile.update(
-                {
-                    "veterinary_license": req.veterinary_license,
-                    "veterinary_college": req.veterinary_college,
-                    "specialization": req.specialization,
-                    "years_of_experience": req.years_of_experience,
-                }
-            )
+            profile.update({
+                "veterinary_license": req.veterinary_license,
+                "veterinary_college": req.veterinary_college,
+                "specialization": req.specialization,
+                "years_of_experience": req.years_of_experience,
+            })
+        elif req.role == "buyer":
+            profile.update({
+                "business_name": req.business_name,
+                "market_name": req.market_name,
+                "district": req.district,
+            })
 
-        logger.info(f"📦 Inserting profile: role={profile['role']}, name={profile['full_name']}")
+        await db.profiles.insert_one(profile)
+        logger.info(f"✅ User created: uid={uid}, role={req.role}")
 
-        # Use upsert to handle edge cases (e.g. trigger pre-created row)
-        supabase_admin.table("profiles").upsert(profile, on_conflict="id").execute()
+        # Generate tokens
+        access_token = _create_token(uid, req.email, req.role)
+        refresh_token = _create_token(uid, req.email, req.role)
 
-        # Verify the profile was saved correctly
-        saved = _get_profile(uid)
-        if not saved:
-            logger.error(f"❌ Profile not found after upsert for uid={uid}")
-            raise HTTPException(500, "Failed to create user profile")
-        if saved["role"] != req.role:
-            logger.error(f"❌ Role mismatch! Expected={req.role}, Got={saved['role']}")
-            # Force-fix the role
-            supabase_admin.table("profiles").update({"role": req.role}).eq("id", uid).execute()
-            saved["role"] = req.role
-
-        logger.info(f"✅ Profile saved: role={saved['role']}")
-
-        # Sign in to obtain session tokens
-        session = supabase.auth.sign_in_with_password(
-            {"email": req.email, "password": req.password}
-        )
+        saved = await _get_profile(uid)
 
         return {
-            "access_token": session.session.access_token,
-            "refresh_token": session.session.refresh_token,
+            "access_token": access_token,
+            "refresh_token": refresh_token,
             "user": _build_user_response(uid, req.email, saved),
         }
 
     except HTTPException:
         raise
     except Exception as e:
-        msg = str(e).lower()
-        if "already" in msg or "duplicate" in msg:
+        msg = str(e)
+        if "duplicate" in msg.lower() or "E11000" in msg:
             raise HTTPException(409, "An account with this email already exists")
         logger.error(f"❌ Signup error: {e}")
-        # Clean up orphan auth user if profile insert failed
-        if uid:
-            try:
-                supabase_admin.auth.admin.delete_user(uid)
-                logger.info(f"🧹 Cleaned up orphan auth user {uid}")
-            except Exception:
-                pass
         raise HTTPException(500, f"Registration failed: {e}")
 
 
@@ -213,16 +230,18 @@ async def login(req: LoginRequest):
     """Login for farmer / doctor."""
     logger.info(f"🔐 Login request: email={req.email}, selected_role={req.role}")
     try:
-        result = supabase.auth.sign_in_with_password(
-            {"email": req.email, "password": req.password}
-        )
-        uid = result.user.id
-        profile = _get_profile(uid)
+        db = await get_db()
+        user_doc = await db.profiles.find_one({"email": req.email}, {"_id": 0})
 
-        if not profile:
-            raise HTTPException(404, "User profile not found. Please sign up first.")
+        if not user_doc:
+            raise HTTPException(401, "Invalid email or password")
 
-        db_role = profile.get("role", "unknown")
+        # Verify password
+        if not bcrypt.verify(req.password, user_doc.get("password_hash", "")):
+            raise HTTPException(401, "Invalid email or password")
+
+        uid = user_doc["id"]
+        db_role = user_doc.get("role", "unknown")
         logger.info(f"✅ Login: uid={uid}, db_role={db_role}, selected_role={req.role}")
 
         # Prevent admin from logging in through the farmer/doctor form
@@ -236,17 +255,17 @@ async def login(req: LoginRequest):
                 f"This account is registered as a {db_role}. Please use the {db_role.title()} tab to log in."
             )
 
+        access_token = _create_token(uid, req.email, db_role)
+        refresh_token = _create_token(uid, req.email, db_role)
+
         return {
-            "access_token": result.session.access_token,
-            "refresh_token": result.session.refresh_token,
-            "user": _build_user_response(uid, req.email, profile),
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "user": _build_user_response(uid, req.email, user_doc),
         }
     except HTTPException:
         raise
     except Exception as e:
-        msg = str(e).lower()
-        if "invalid" in msg or "credentials" in msg:
-            raise HTTPException(401, "Invalid email or password")
         logger.error(f"❌ Login error: {e}")
         raise HTTPException(500, f"Login failed: {e}")
 
@@ -266,26 +285,30 @@ async def admin_login(req: AdminLoginRequest):
         raise HTTPException(403, "Invalid Admin ID")
 
     try:
-        result = supabase.auth.sign_in_with_password(
-            {"email": req.email, "password": req.password}
-        )
-        uid = result.user.id
-        profile = _get_profile(uid)
+        db = await get_db()
+        user_doc = await db.profiles.find_one({"email": req.email}, {"_id": 0})
 
-        if not profile or profile.get("role") != "admin":
+        if not user_doc:
+            raise HTTPException(401, "Invalid admin credentials")
+
+        if not bcrypt.verify(req.password, user_doc.get("password_hash", "")):
+            raise HTTPException(401, "Invalid admin credentials")
+
+        if user_doc.get("role") != "admin":
             raise HTTPException(403, "This account is not an admin")
 
+        uid = user_doc["id"]
+        access_token = _create_token(uid, req.email, "admin")
+        refresh_token = _create_token(uid, req.email, "admin")
+
         return {
-            "access_token": result.session.access_token,
-            "refresh_token": result.session.refresh_token,
-            "user": _build_user_response(uid, req.email, profile),
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "user": _build_user_response(uid, req.email, user_doc),
         }
     except HTTPException:
         raise
     except Exception as e:
-        msg = str(e).lower()
-        if "invalid" in msg or "credentials" in msg:
-            raise HTTPException(401, "Invalid admin credentials")
         logger.error(f"Admin login error: {e}")
         raise HTTPException(500, f"Login failed: {e}")
 
@@ -297,15 +320,14 @@ async def get_me(authorization: str = Header(None)):
         raise HTTPException(401, "Missing or invalid authorization header")
 
     token = authorization.split(" ", 1)[1]
-    try:
-        user_res = supabase_admin.auth.get_user(token)
-        user = user_res.user
-    except Exception:
-        raise HTTPException(401, "Invalid or expired token")
+    payload = _decode_token(token)
 
-    profile = _get_profile(user.id)
-    logger.info(f"👤 /me: uid={user.id}, role={profile.get('role') if profile else 'NO_PROFILE'}")
-    return {"user": _build_user_response(user.id, user.email, profile)}
+    user_id = payload["sub"]
+    email = payload.get("email", "")
+
+    profile = await _get_profile(user_id)
+    logger.info(f"👤 /me: uid={user_id}, role={profile.get('role') if profile else 'NO_PROFILE'}")
+    return {"user": _build_user_response(user_id, email, profile)}
 
 
 @router.post("/logout")
@@ -318,33 +340,42 @@ async def logout():
 # Admin seed – ensures admin account exists on first startup
 # ---------------------------------------------------------------------------
 
-def seed_admin() -> None:
+async def seed_admin() -> None:
     """Create the admin account + profile if it doesn't already exist."""
     email = os.getenv("ADMIN_EMAIL", "amardighe16@gmail.com")
     password = os.getenv("ADMIN_PASSWORD", "amar@1845")
 
+    db = await get_db()
+    existing = await db.profiles.find_one({"email": email})
+    if existing:
+        # Ensure role is admin
+        if existing.get("role") != "admin":
+            await db.profiles.update_one(
+                {"email": email},
+                {"$set": {"role": "admin", "is_verified": True, "verification_status": "active"}}
+            )
+            logger.info("Admin role fixed for existing account")
+        else:
+            logger.info("Admin account already exists")
+        return
+
     try:
-        user_res = supabase_admin.auth.admin.create_user(
-            {
-                "email": email,
-                "password": password,
-                "email_confirm": True,
-                "user_metadata": {"full_name": "Admin", "role": "admin"},
-            }
-        )
-        # Create admin profile
-        supabase_admin.table("profiles").insert(
-            {
-                "id": user_res.user.id,
-                "role": "admin",
-                "full_name": "Admin",
-                "phone": ADMIN_ID,
-                "is_verified": True,
-            }
-        ).execute()
+        uid = str(uuid.uuid4())
+        password_hash = bcrypt.hash(password)
+        await db.profiles.insert_one({
+            "id": uid,
+            "email": email,
+            "password_hash": password_hash,
+            "role": "admin",
+            "full_name": "Admin",
+            "phone": ADMIN_ID,
+            "is_verified": True,
+            "verification_status": "active",
+            "created_at": utcnow(),
+        })
         logger.info("✅ Admin account created")
     except Exception as e:
-        if "already" in str(e).lower() or "duplicate" in str(e).lower():
+        if "duplicate" in str(e).lower() or "E11000" in str(e):
             logger.info("Admin account already exists")
         else:
             logger.warning(f"Admin seed: {e}")

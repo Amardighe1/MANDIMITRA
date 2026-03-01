@@ -25,13 +25,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'MANDIMITRA | AI-Powered Agricultural Intelligence',
-  description: 'Empowering Indian Farmers with AI-driven crop risk assessment and price intelligence for smarter farming decisions.',
-  keywords: ['agriculture', 'farming', 'crop risk', 'price prediction', 'AI', 'machine learning', 'India', 'mandi'],
-  authors: [{ name: 'MANDIMITRA Team' }],
+  title: 'मंडीमित्र | AI-आधारित शेती बुद्धिमत्ता',
+  description: 'भारतीय शेतकऱ्यांना AI-आधारित पीक जोखीम मूल्यांकन आणि बाजारभाव बुद्धिमत्तेच्या माध्यमातून सक्षम करणे.',
+  keywords: ['शेती', 'पीक जोखीम', 'भाव अंदाज', 'AI', 'मशीन लर्निंग', 'भारत', 'मंडी', 'महाराष्ट्र'],
+  authors: [{ name: 'मंडीमित्र टीम' }],
   openGraph: {
-    title: 'MANDIMITRA | AI-Powered Agricultural Intelligence',
-    description: 'Empowering Indian Farmers with AI-driven crop risk assessment and price intelligence',
+    title: 'मंडीमित्र | AI-आधारित शेती बुद्धिमत्ता',
+    description: 'भारतीय शेतकऱ्यांना AI-आधारित पीक जोखीम मूल्यांकन आणि बाजारभाव बुद्धिमत्ता',
     type: 'website',
   },
 };
@@ -42,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="mr" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <CapacitorInit />
         <ConnectionSetup />

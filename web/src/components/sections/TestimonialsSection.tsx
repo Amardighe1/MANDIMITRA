@@ -5,31 +5,31 @@ import { Star, Quote } from 'lucide-react';
 
 const testimonials = [
   {
-    name: 'Rajesh Patil',
-    role: 'Soybean Farmer, Pune',
+    name: 'राजेश पाटील',
+    role: 'सोयाबीन शेतकरी, पुणे',
     avatar: '👨‍🌾',
-    content: 'MANDIMITRA helped me understand when to sell my soybean crop. The price forecast was accurate, and I earned ₹15,000 more than last year!',
+    content: 'मंडीमित्रमुळे मला सोयाबीन केव्हा विकायचा हे समजले. भाव अंदाज अचूक होता आणि मला गेल्या वर्षीपेक्षा ₹15,000 जास्त मिळाले!',
     rating: 5,
   },
   {
-    name: 'Sunita Deshmukh',
-    role: 'Cotton Farmer, Nashik',
+    name: 'सुनीता देशमुख',
+    role: 'कापूस शेतकरी, नाशिक',
     avatar: '👩‍🌾',
-    content: 'The crop risk alerts saved my cotton crop from pest damage. I got the warning 3 days before the problem would have spread.',
+    content: 'पीक जोखीम सूचनेमुळे माझा कापूस पीक कीटकांच्या नुकसानीपासून वाचला. समस्या पसरण्याच्या 3 दिवस आधी मला इशारा मिळाला.',
     rating: 5,
   },
   {
-    name: 'Manoj Jadhav',
-    role: 'Onion Farmer, Ahmednagar',
+    name: 'मनोज जाधव',
+    role: 'कांदा शेतकरी, अहमदनगर',
     avatar: '👨‍🌾',
-    content: 'Simple to use even for someone like me who doesn\'t know much about technology. The Hindi language support is very helpful.',
+    content: 'माझ्यासारख्या ज्याला तंत्रज्ञान फारसे कळत नाही त्यांनाही वापरण्यास सोपे. मराठी भाषेची सोय खूप मदत करते.',
     rating: 5,
   },
   {
-    name: 'Priya Kulkarni',
-    role: 'Wheat Farmer, Solapur',
+    name: 'प्रिया कुलकर्णी',
+    role: 'गहू शेतकरी, सोलापूर',
     avatar: '👩‍🌾',
-    content: 'Market comparison feature helped me find a mandi where I got ₹200 more per quintal. Transport cost calculation was very accurate.',
+    content: 'बाजार तुलना वैशिष्ट्यामुळे मला प्रति क्विंटल ₹200 जास्त मिळाला असा बाजार सापडला. वाहतूक खर्चाचा हिशोब खूप अचूक होता.',
     rating: 5,
   },
 ];
@@ -46,15 +46,15 @@ export function TestimonialsSection() {
           className="text-center mb-16"
         >
           <span className="inline-flex items-center px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-4">
-            Testimonials
+            अनुभव
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
-            Loved by Farmers
+            शेतकऱ्यांना आवडले
             <br />
-            <span className="text-gradient">Across Maharashtra</span>
+            <span className="text-gradient">संपूर्ण महाराष्ट्रात</span>
           </h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            See what farmers are saying about MANDIMITRA
+            शेतकरी मंडीमित्रबद्दल काय म्हणतात ते पाहा
           </p>
         </motion.div>
 

@@ -31,8 +31,10 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.train_crop_risk_model import CropRiskAdvisor, CropLifecycleManager
 from scripts.train_price_model import PriceIntelligenceEngine
+from api.database import connect_db, close_db
 from api.auth import router as auth_router, seed_admin
 from api.vet import router as vet_router
+from api.buyer import router as buyer_router
 from api.weather_market import router as weather_market_router
 
 # Crop disease router is optional — on Render we skip it (runs on-device via TF.js)
@@ -66,6 +68,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Static file serving for upload documents
+from fastapi.staticfiles import StaticFiles
+_uploads_dir = PROJECT_ROOT / "uploads"
+_uploads_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(_uploads_dir)), name="uploads")
 
 # ============================================================================
 # LOAD MODELS + DATA (once at startup)
@@ -810,9 +818,10 @@ async def _auto_refresh_loop():
             logger.error(f"Auto-refresh failed: {e}")
 
 
-# --- Auth & Vet routers ---
+# --- Auth, Vet, Buyer routers ---
 app.include_router(auth_router)
 app.include_router(vet_router)
+app.include_router(buyer_router)
 if _HAS_CROP_DISEASE:
     app.include_router(crop_disease_router)
 app.include_router(weather_market_router)
@@ -820,15 +829,27 @@ app.include_router(weather_market_router)
 
 @app.on_event("startup")
 async def startup_event():
-    logger.info("MANDIMITRA API ready — serving real ML predictions")
-    # Seed admin account in Supabase
+    logger.info("MANDIMITRA API starting up…")
+    # Connect to MongoDB
     try:
-        seed_admin()
+        await connect_db()
+    except Exception as e:
+        logger.error(f"MongoDB connection failed: {e}")
+    # Seed admin account in MongoDB
+    try:
+        await seed_admin()
     except Exception as e:
         logger.warning(f"Admin seed skipped: {e}")
     # Start background auto-refresh task
     asyncio.create_task(_auto_refresh_loop())
+    logger.info("✅ MANDIMITRA API ready — serving real ML predictions")
     logger.info("📡 Live price auto-refresh scheduled (every 24h)")
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    await close_db()
+    logger.info("MANDIMITRA API shut down")
 
 
 @app.post("/api/price/refresh")

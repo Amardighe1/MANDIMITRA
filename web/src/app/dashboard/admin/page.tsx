@@ -96,11 +96,11 @@ async function apiFetch(path: string, opts?: RequestInit) {
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'Just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return 'आत्ताच';
+  if (mins < 60) return `${mins} मि. पूर्वी`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
+  if (hrs < 24) return `${hrs} ता. पूर्वी`;
+  return `${Math.floor(hrs / 24)} दि. पूर्वी`;
 }
 
 export default function AdminDashboard() {
@@ -212,12 +212,12 @@ export default function AdminDashboard() {
 
   const statCards = stats
     ? [
-        { label: 'Total Farmers', value: stats.total_farmers, icon: Users, color: 'emerald', trend: '+12%' },
-        { label: 'Active Doctors', value: stats.active_doctors, icon: UserCheck, color: 'blue', trend: '+5%' },
-        { label: 'Pending Verification', value: stats.pending_doctors, icon: Clock, color: 'amber', alert: stats.pending_doctors > 0 },
-        { label: 'Total Bookings', value: stats.total_bookings, icon: Calendar, color: 'violet', trend: '+23%' },
-        { label: 'Active Emergencies', value: stats.active_emergencies, icon: AlertTriangle, color: 'red', alert: stats.active_emergencies > 0 },
-        { label: 'Resolved Cases', value: stats.total_emergencies - stats.active_emergencies, icon: CheckCircle, color: 'slate' },
+        { label: 'एकूण शेतकरी', value: stats.total_farmers, icon: Users, color: 'emerald', trend: '+12%' },
+        { label: 'सक्रिय डॉक्टर', value: stats.active_doctors, icon: UserCheck, color: 'blue', trend: '+5%' },
+        { label: 'पडताळणी प्रतीक्षेत', value: stats.pending_doctors, icon: Clock, color: 'amber', alert: stats.pending_doctors > 0 },
+        { label: 'एकूण बुकिंग्ज', value: stats.total_bookings, icon: Calendar, color: 'violet', trend: '+23%' },
+        { label: 'सक्रिय आपत्कालीन', value: stats.active_emergencies, icon: AlertTriangle, color: 'red', alert: stats.active_emergencies > 0 },
+        { label: 'निकाली प्रकरणे', value: stats.total_emergencies - stats.active_emergencies, icon: CheckCircle, color: 'slate' },
       ]
     : [];
 
@@ -242,11 +242,11 @@ export default function AdminDashboard() {
   };
 
   const tabs = [
-    { key: 'overview' as Tab, label: 'Overview', icon: Activity },
-    { key: 'verifications' as Tab, label: 'Verifications', icon: Clock, badge: stats?.pending_doctors },
-    { key: 'doctors' as Tab, label: 'All Doctors', icon: Stethoscope },
-    { key: 'bookings' as Tab, label: 'Bookings', icon: Calendar },
-    { key: 'emergencies' as Tab, label: 'Emergencies', icon: AlertTriangle, badge: stats?.active_emergencies },
+    { key: 'overview' as Tab, label: 'आढावा', icon: Activity },
+    { key: 'verifications' as Tab, label: 'पडताळणी', icon: Clock, badge: stats?.pending_doctors },
+    { key: 'doctors' as Tab, label: 'सर्व डॉक्टर', icon: Stethoscope },
+    { key: 'bookings' as Tab, label: 'बुकिंग्ज', icon: Calendar },
+    { key: 'emergencies' as Tab, label: 'आपत्कालीन विनंत्या', icon: AlertTriangle, badge: stats?.active_emergencies },
   ];
 
   return (
@@ -260,7 +260,7 @@ export default function AdminDashboard() {
                 <Shield className="w-5 h-5 text-white" />
               </div>
               <div>
-                <span className="font-bold text-lg text-slate-900">Admin Panel</span>
+                <span className="font-bold text-lg text-slate-900">अॅडमिन पॅनेल</span>
                 <span className="hidden sm:inline text-xs text-slate-400 ml-2">MANDIMITRA</span>
               </div>
             </Link>
@@ -269,7 +269,7 @@ export default function AdminDashboard() {
                 onClick={handleRefresh}
                 disabled={refreshing}
                 className="p-2 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
-                title="Refresh"
+                title="रिफ्रेश"
               >
                 <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
               </button>
@@ -278,7 +278,7 @@ export default function AdminDashboard() {
                 className="flex items-center gap-2 text-sm text-slate-500 hover:text-red-500 transition-colors"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">लॉग आउट</span>
               </button>
             </div>
           </div>
@@ -352,13 +352,13 @@ export default function AdminDashboard() {
                 <div className="p-4 border-b border-slate-100 flex items-center justify-between">
                   <h3 className="font-bold text-slate-900 flex items-center gap-2">
                     <Clock className="w-5 h-5 text-amber-500" />
-                    Pending Verifications
+                    प्रलंबित डॉक्टर पडताळणी
                   </h3>
                   <button
                     onClick={() => setTab('verifications')}
                     className="text-sm text-amber-600 hover:text-amber-700 font-medium"
                   >
-                    View All →
+                    सर्व पहा →
                   </button>
                 </div>
                 <div className="p-4">
@@ -367,7 +367,7 @@ export default function AdminDashboard() {
                   ) : pendingDoctors.length === 0 ? (
                     <div className="text-center py-8">
                       <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
-                      <p className="text-sm text-slate-500">All verifications complete</p>
+                      <p className="text-sm text-slate-500">सर्व पडताळणी पूर्ण</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -378,7 +378,7 @@ export default function AdminDashboard() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-slate-900 truncate">{doc.full_name}</p>
-                            <p className="text-xs text-slate-500">{doc.specialization || 'General'}</p>
+                            <p className="text-xs text-slate-500">{doc.specialization || 'सामान्य'}</p>
                           </div>
                           <span className="text-xs text-amber-600">{timeAgo(doc.created_at)}</span>
                         </div>
@@ -393,30 +393,30 @@ export default function AdminDashboard() {
                 <div className="p-4 border-b border-slate-100 flex items-center justify-between">
                   <h3 className="font-bold text-slate-900 flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-red-500" />
-                    Active Emergencies
+                    सक्रिय आपत्कालीन
                   </h3>
                   <button
                     onClick={() => setTab('emergencies')}
                     className="text-sm text-red-600 hover:text-red-700 font-medium"
                   >
-                    View All →
+                    सर्व पहा →
                   </button>
                 </div>
                 <div className="p-4">
                   {stats?.active_emergencies === 0 ? (
                     <div className="text-center py-8">
                       <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
-                      <p className="text-sm text-slate-500">No active emergencies</p>
+                      <p className="text-sm text-slate-500">सध्या कोणतीही सक्रिय आपत्कालीन नाही</p>
                     </div>
                   ) : (
                     <div className="text-center py-6">
                       <div className="text-4xl font-bold text-red-600 mb-1">{stats?.active_emergencies}</div>
-                      <p className="text-sm text-slate-500">Awaiting response</p>
+                      <p className="text-sm text-slate-500">प्रतिसादाची प्रतीक्षा</p>
                       <button
                         onClick={() => setTab('emergencies')}
                         className="mt-3 px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors"
                       >
-                        View Details
+                        तपशील पहा
                       </button>
                     </div>
                   )}
@@ -431,7 +431,7 @@ export default function AdminDashboard() {
           <div className="space-y-4">
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <Clock className="w-5 h-5 text-amber-500" />
-              Pending Doctor Verifications
+              प्रलंबित डॉक्टर पडताळणी
               {pendingDoctors.length > 0 && (
                 <span className="px-2 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full font-semibold">
                   {pendingDoctors.length}
@@ -448,8 +448,8 @@ export default function AdminDashboard() {
             ) : pendingDoctors.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
                 <CheckCircle className="w-16 h-16 mx-auto text-emerald-400 mb-4" />
-                <h3 className="text-lg font-semibold text-slate-900 mb-1">All Caught Up!</h3>
-                <p className="text-slate-500">No pending doctor verifications</p>
+                <h3 className="text-lg font-semibold text-slate-900 mb-1">सर्व पूर्ण!</h3>
+                <p className="text-slate-500">कोणतीही प्रलंबित डॉक्टर पडताळणी नाही</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -477,7 +477,7 @@ export default function AdminDashboard() {
                                   <Phone className="w-3.5 h-3.5" />
                                   {doc.phone || 'N/A'}
                                 </p>
-                                <p className="text-xs text-slate-400 mt-1">Applied {timeAgo(doc.created_at)}</p>
+                                <p className="text-xs text-slate-400 mt-1">अर्ज केला {timeAgo(doc.created_at)}</p>
                               </div>
                             </div>
 
@@ -485,30 +485,30 @@ export default function AdminDashboard() {
                               <div className="flex items-center gap-2">
                                 <FileText className="w-4 h-4 text-slate-400" />
                                 <div>
-                                  <p className="text-slate-400 text-xs">License No.</p>
+                                  <p className="text-slate-400 text-xs">परवाना क्र.</p>
                                   <p className="text-slate-700 font-medium">{doc.veterinary_license || 'N/A'}</p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
                                 <Award className="w-4 h-4 text-slate-400" />
                                 <div>
-                                  <p className="text-slate-400 text-xs">Specialization</p>
-                                  <p className="text-slate-700 font-medium">{doc.specialization || 'General'}</p>
+                                  <p className="text-slate-400 text-xs">विशेषज्ञता</p>
+                                  <p className="text-slate-700 font-medium">{doc.specialization || 'सामान्य'}</p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
                                 <Building className="w-4 h-4 text-slate-400" />
                                 <div>
-                                  <p className="text-slate-400 text-xs">College</p>
+                                  <p className="text-slate-400 text-xs">महाविद्यालय</p>
                                   <p className="text-slate-700 font-medium truncate">{doc.veterinary_college || 'N/A'}</p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
                                 <Clock className="w-4 h-4 text-slate-400" />
                                 <div>
-                                  <p className="text-slate-400 text-xs">Experience</p>
+                                  <p className="text-slate-400 text-xs">अनुभव</p>
                                   <p className="text-slate-700 font-medium">
-                                    {doc.years_of_experience != null ? `${doc.years_of_experience} years` : 'N/A'}
+                                    {doc.years_of_experience != null ? `${doc.years_of_experience} वर्षे` : 'N/A'}
                                   </p>
                                 </div>
                               </div>
@@ -523,12 +523,12 @@ export default function AdminDashboard() {
                                 className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
                               >
                                 <Eye className="w-4 h-4" />
-                                View Verification Document
+                                पडताळणी दस्तऐवज पहा
                                 <ExternalLink className="w-3 h-3" />
                               </a>
                             ) : (
                               <p className="text-sm text-amber-600 bg-amber-50 px-3 py-2 rounded-lg">
-                                ⚠️ No document uploaded yet
+                                ⚠️ अजून दस्तऐवज अपलोड केले नाही
                               </p>
                             )}
                           </div>
@@ -545,7 +545,7 @@ export default function AdminDashboard() {
                               ) : (
                                 <>
                                   <UserCheck className="w-5 h-5" />
-                                  Accept
+                                  स्वीकारा
                                 </>
                               )}
                             </button>
@@ -555,7 +555,7 @@ export default function AdminDashboard() {
                               className="flex-1 flex items-center justify-center gap-2 px-5 py-3 border-2 border-red-200 text-red-600 font-semibold rounded-xl hover:bg-red-50 transition-colors disabled:opacity-50"
                             >
                               <UserX className="w-5 h-5" />
-                              Reject
+                              नाकारा
                             </button>
                           </div>
                         </div>
@@ -573,13 +573,13 @@ export default function AdminDashboard() {
           <div className="space-y-4">
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <Stethoscope className="w-5 h-5 text-blue-500" />
-              All Registered Doctors
+              सर्व नोंदणीकृत डॉक्टर
             </h2>
 
             {allDoctors.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
                 <Stethoscope className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                <p className="text-slate-600 font-medium">No doctors registered yet</p>
+                <p className="text-slate-600 font-medium">अजून कोणतेही डॉक्टर नोंदणीकृत नाहीत</p>
               </div>
             ) : (
               <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
@@ -587,11 +587,11 @@ export default function AdminDashboard() {
                   <table className="w-full">
                     <thead className="bg-slate-50 border-b border-slate-100">
                       <tr>
-                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Doctor</th>
-                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Specialization</th>
-                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">License</th>
-                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
-                        <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Actions</th>
+                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">डॉक्टर</th>
+                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">विशेषज्ञता</th>
+                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">परवाना</th>
+                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">स्थिती</th>
+                        <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 uppercase">कृती</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -608,7 +608,7 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-slate-600">{doc.specialization || 'General'}</td>
+                          <td className="px-6 py-4 text-sm text-slate-600">{doc.specialization || 'सामान्य'}</td>
                           <td className="px-6 py-4 text-sm text-slate-600 font-mono">{doc.veterinary_license || 'N/A'}</td>
                           <td className="px-6 py-4">
                             <span className={`inline-flex px-2 py-1 text-xs font-bold rounded-md uppercase ${
@@ -624,7 +624,7 @@ export default function AdminDashboard() {
                                   onClick={() => handleVerify(doc.id, 'accept')}
                                   disabled={actionLoading === doc.id}
                                   className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                                  title="Accept"
+                                  title="स्वीकारा"
                                 >
                                   <CheckCircle className="w-5 h-5" />
                                 </button>
@@ -632,7 +632,7 @@ export default function AdminDashboard() {
                                   onClick={() => handleVerify(doc.id, 'reject')}
                                   disabled={actionLoading === doc.id}
                                   className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                  title="Reject"
+                                  title="नाकारा"
                                 >
                                   <XCircle className="w-5 h-5" />
                                 </button>
@@ -644,7 +644,7 @@ export default function AdminDashboard() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors inline-block"
-                                title="View Document"
+                                title="दस्तऐवज पहा"
                               >
                                 <FileText className="w-5 h-5" />
                               </a>
@@ -665,13 +665,13 @@ export default function AdminDashboard() {
           <div className="space-y-4">
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <Calendar className="w-5 h-5 text-violet-500" />
-              All Bookings
+              सर्व बुकिंग्ज
             </h2>
 
             {bookings.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
                 <Calendar className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                <p className="text-slate-600 font-medium">No bookings yet</p>
+                <p className="text-slate-600 font-medium">अजून बुकिंग नाही</p>
               </div>
             ) : (
               <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
@@ -679,18 +679,18 @@ export default function AdminDashboard() {
                   <table className="w-full">
                     <thead className="bg-slate-50 border-b border-slate-100">
                       <tr>
-                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Farmer</th>
-                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Doctor</th>
-                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Date & Time</th>
-                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Animal</th>
-                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
+                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">शेतकरी</th>
+                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">डॉक्टर</th>
+                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">तारीख आणि वेळ</th>
+                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">प्राणी</th>
+                        <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">स्थिती</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                       {bookings.map((b) => (
                         <tr key={b.id} className="hover:bg-slate-50 transition-colors">
-                          <td className="px-6 py-4 text-sm font-medium text-slate-900">{b.farmer_name || 'Unknown'}</td>
-                          <td className="px-6 py-4 text-sm text-slate-600">Dr. {b.doctor_name || 'Unknown'}</td>
+                          <td className="px-6 py-4 text-sm font-medium text-slate-900">{b.farmer_name || 'अज्ञात'}</td>
+                          <td className="px-6 py-4 text-sm text-slate-600">डॉ. {b.doctor_name || 'अज्ञात'}</td>
                           <td className="px-6 py-4 text-sm text-slate-600">
                             {b.booking_date} <span className="text-slate-400">•</span> {b.time_slot}
                           </td>
@@ -715,13 +715,13 @@ export default function AdminDashboard() {
           <div className="space-y-4">
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-red-500" />
-              All Emergency Requests
+              सर्व आपत्कालीन विनंत्या
             </h2>
 
             {emergencies.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
                 <AlertTriangle className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                <p className="text-slate-600 font-medium">No emergency requests</p>
+                <p className="text-slate-600 font-medium">कोणत्याही आपत्कालीन विनंत्या नाहीत</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -753,12 +753,12 @@ export default function AdminDashboard() {
                           {emg.animal_type} • {emg.description}
                         </h3>
                         <p className="text-sm text-slate-500 mt-1">
-                          By: {emg.farmer_name || 'Unknown'}
+                          शेतकरी: {emg.farmer_name || 'अज्ञात'}
                           {emg.location && <> • {emg.location}</>}
                         </p>
                         {emg.doctor_name && (
                           <p className="text-sm text-blue-600 font-medium mt-1">
-                            Accepted by Dr. {emg.doctor_name}
+                            डॉ. {emg.doctor_name} यांनी स्वीकारले
                           </p>
                         )}
                       </div>

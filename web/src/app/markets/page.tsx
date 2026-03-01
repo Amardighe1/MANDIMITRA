@@ -214,10 +214,10 @@ export default function MarketsPage() {
               <div>
                 <h1 className="text-2xl font-bold text-white flex items-center gap-2">
                   <Store className="w-7 h-7 text-emerald-400" />
-                  Market Analytics
+                  बाजार विश्लेषण
                 </h1>
                 <p className="text-white/50 text-sm">
-                  Live mandi prices from AGMARKNET • Maharashtra
+                  AGMARKNET एक्सचे थेट मंडी भाव • महाराष्ट्र
                 </p>
               </div>
             </div>
@@ -242,22 +242,22 @@ export default function MarketsPage() {
             <div className="rounded-xl bg-white/5 border border-white/10 p-4">
               <Database className="w-5 h-5 text-blue-400 mb-2" />
               <p className="text-2xl font-bold text-white">{summary.total_records.toLocaleString()}</p>
-              <p className="text-white/40 text-xs">Total Records</p>
+              <p className="text-white/40 text-xs">ऐकूण नोंदी</p>
             </div>
             <div className="rounded-xl bg-white/5 border border-white/10 p-4">
               <Package className="w-5 h-5 text-emerald-400 mb-2" />
               <p className="text-2xl font-bold text-white">{summary.total_commodities}</p>
-              <p className="text-white/40 text-xs">Commodities</p>
+              <p className="text-white/40 text-xs">माल</p>
             </div>
             <div className="rounded-xl bg-white/5 border border-white/10 p-4">
               <Store className="w-5 h-5 text-orange-400 mb-2" />
               <p className="text-2xl font-bold text-white">{summary.total_markets}</p>
-              <p className="text-white/40 text-xs">Markets</p>
+              <p className="text-white/40 text-xs">बाजार</p>
             </div>
             <div className="rounded-xl bg-white/5 border border-white/10 p-4">
               <MapPin className="w-5 h-5 text-purple-400 mb-2" />
               <p className="text-2xl font-bold text-white">{summary.total_districts}</p>
-              <p className="text-white/40 text-xs">Districts</p>
+              <p className="text-white/40 text-xs">जिल्हे</p>
             </div>
           </motion.div>
         )}
@@ -273,7 +273,7 @@ export default function MarketsPage() {
             }`}
           >
             <IndianRupee className="w-4 h-4 inline mr-1" />
-            Live Prices
+            थेट भाव
           </button>
           <button
             onClick={() => setActiveTab('commodities')}
@@ -284,7 +284,7 @@ export default function MarketsPage() {
             }`}
           >
             <Wheat className="w-4 h-4 inline mr-1" />
-            Commodities
+            माल यादी
           </button>
         </div>
 
@@ -298,7 +298,7 @@ export default function MarketsPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
                 <input
                   type="text"
-                  placeholder="Search commodity, market, or district..."
+                  placeholder="माल, बाजार किंवा जिल्हा शोधा..."
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:outline-none focus:border-emerald-500/50"
@@ -324,7 +324,7 @@ export default function MarketsPage() {
                   }`}
                 >
                   <Filter className="w-4 h-4" />
-                  {selectedCommodity || 'All Commodities'}
+                  {selectedCommodity || 'सर्व माल'}
                   <ChevronDown className={`w-3.5 h-3.5 transition ${showCommodityFilter ? 'rotate-180' : ''}`} />
                 </button>
 
@@ -339,7 +339,7 @@ export default function MarketsPage() {
                       <div className="p-3 border-b border-white/10">
                         <input
                           type="text"
-                          placeholder="Search commodities..."
+                          placeholder="माल शोधा..."
                           value={commoditySearch}
                           onChange={e => setCommoditySearch(e.target.value)}
                           className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-white/40 focus:outline-none focus:border-emerald-500/50"
@@ -353,7 +353,7 @@ export default function MarketsPage() {
                             !selectedCommodity ? 'bg-emerald-500/20 text-emerald-300' : 'text-white/60 hover:bg-white/5'
                           }`}
                         >
-                          All Commodities
+                          सर्व माल
                         </button>
                       </div>
                       <div className="max-h-60 overflow-y-auto p-2 pt-0">
@@ -368,7 +368,7 @@ export default function MarketsPage() {
                             }`}
                           >
                             <span>{c.name}</span>
-                            <span className="text-white/20 text-xs">{c.records} records</span>
+                            <span className="text-white/20 text-xs">{c.records} नोंदी</span>
                           </button>
                         ))}
                       </div>
@@ -384,7 +384,7 @@ export default function MarketsPage() {
                   className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-sm hover:bg-red-500/20 transition whitespace-nowrap"
                 >
                   <X className="w-4 h-4" />
-                  Clear
+                  मिटवा
                 </button>
               )}
             </div>
@@ -392,7 +392,7 @@ export default function MarketsPage() {
             {/* Results Info */}
             <div className="flex items-center justify-between mb-3 text-sm">
               <p className="text-white/40">
-                Showing {prices.length} of {totalRecords.toLocaleString()} records
+                Showing {prices.length} of {totalRecords.toLocaleString()} नोंदी
                 {selectedCommodity && <span className="text-emerald-400"> • {selectedCommodity}</span>}
               </p>
             </div>
@@ -420,13 +420,13 @@ export default function MarketsPage() {
                       <thead>
                         <tr className="border-b border-white/10">
                           {[
-                            { key: 'commodity', label: 'Commodity' },
-                            { key: 'variety', label: 'Variety' },
-                            { key: 'market', label: 'Market' },
-                            { key: 'district', label: 'District' },
-                            { key: 'min_price', label: 'Min ₹' },
-                            { key: 'max_price', label: 'Max ₹' },
-                            { key: 'modal_price', label: 'Modal ₹' },
+                            { key: 'commodity', label: 'माल' },
+                            { key: 'variety', label: 'जात' },
+                            { key: 'market', label: 'बाजार' },
+                            { key: 'district', label: 'जिल्हा' },
+                            { key: 'min_price', label: 'कमी ₹' },
+                            { key: 'max_price', label: 'कमाल ₹' },
+                            { key: 'modal_price', label: 'मोडल ₹' },
                           ].map(col => (
                             <th
                               key={col.key}
@@ -482,7 +482,7 @@ export default function MarketsPage() {
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between mt-4">
                     <p className="text-white/30 text-sm">
-                      Page {page} of {totalPages}
+                      पान {page} / {totalPages}
                     </p>
                     <div className="flex gap-2">
                       <button
@@ -535,12 +535,12 @@ export default function MarketsPage() {
             {!loading && prices.length === 0 && !error && (
               <div className="text-center py-16">
                 <ShoppingCart className="w-12 h-12 text-white/10 mx-auto mb-3" />
-                <p className="text-white/40 text-sm">No prices found matching your filters</p>
+                <p className="text-white/40 text-sm">तुमच्या फिल्टरनुसार कोणतेही भाव सापडले नाहीत</p>
                 <button
                   onClick={clearFilters}
                   className="mt-3 text-emerald-400 text-sm hover:underline"
                 >
-                  Clear all filters
+                  सर्व फिल्टर मिटवा
                 </button>
               </div>
             )}
@@ -570,13 +570,13 @@ export default function MarketsPage() {
                         <h3 className="text-white font-semibold text-sm group-hover:text-emerald-300 transition">
                           {c.name}
                         </h3>
-                        <p className="text-white/30 text-xs mt-0.5">{c.records} records • {c.markets} markets</p>
+                        <p className="text-white/30 text-xs mt-0.5">{c.records} नोंदी • {c.markets} बाजार</p>
                       </div>
                       <Package className="w-4 h-4 text-white/20 group-hover:text-emerald-500/50 transition" />
                     </div>
                     <div className="flex items-end gap-4">
                       <div>
-                        <p className="text-white/30 text-[10px] uppercase tracking-wider">Avg Price</p>
+                        <p className="text-white/30 text-[10px] uppercase tracking-wider">सरासरी भाव</p>
                         <p className={`text-lg font-bold ${getPriceColor(c.avg_price)}`}>
                           {formatPrice(c.avg_price)}
                         </p>
@@ -601,7 +601,7 @@ export default function MarketsPage() {
 
         {/* Source Attribution */}
         <div className="text-center text-white/30 text-xs py-6 mt-4">
-          Data powered by Data.gov.in (AGMARKNET) • Prices in ₹ per Quintal
+          माहिती स्रोत: Data.gov.in (AGMARKNET) • भाव ₹ प्रति क्विंटल
         </div>
       </div>
     </div>

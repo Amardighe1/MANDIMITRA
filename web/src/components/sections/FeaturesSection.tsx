@@ -6,43 +6,43 @@ import { Shield, TrendingUp, Cloud, BarChart3, Zap, Globe } from 'lucide-react';
 const features = [
   {
     icon: Shield,
-    title: 'Crop Risk Assessment',
-    description: 'AI-powered risk analysis based on weather patterns, growth stages, and historical data. Get early warnings for pest attacks, diseases, and adverse weather.',
+    title: 'पीक जोखीम मूल्यांकन',
+    description: 'हवामान, वाढीचे टप्पे आणि ऐतिहासिक माहितीवर आधारित AI-आधारित जोखीम विश्लेषण. कीटक, रोग आणि प्रतिकूल हवामानाची आगाऊ सूचना मिळवा.',
     color: 'emerald',
     gradient: 'from-emerald-500 to-emerald-600',
   },
   {
     icon: TrendingUp,
-    title: 'Price Intelligence',
-    description: '15-day price forecasting with 93% accuracy. Know when to HOLD or SELL with confidence intervals and market trends.',
+    title: 'भाव बुद्धिमत्ता',
+    description: '93% अचूकतेसह 15-दिवसांचा भाव अंदाज. विश्वासाने केव्हा धरा किंवा विका हे जाणून घ्या.',
     color: 'amber',
     gradient: 'from-amber-500 to-orange-500',
   },
   {
     icon: Cloud,
-    title: 'Weather Insights',
-    description: 'Hyperlocal weather predictions integrated with crop lifecycle. Get irrigation and harvesting recommendations.',
+    title: 'हवामान माहिती',
+    description: 'पीक जीवनचक्राशी जोडलेले स्थानिक हवामान अंदाज. सिंचन आणि कापणीच्या शिफारसी मिळवा.',
     color: 'blue',
     gradient: 'from-blue-500 to-blue-600',
   },
   {
     icon: BarChart3,
-    title: 'Market Comparison',
-    description: 'Compare prices across 400+ mandis in real-time. Find the best market for your produce considering transport costs.',
+    title: 'बाजार तुलना',
+    description: '400+ मंड्यांमध्ये रिअल-टाइम भावांची तुलना करा. वाहतूक खर्च लक्षात घेउन तुमच्या मालाला सर्वोत्तम बाजार शोधा.',
     color: 'purple',
     gradient: 'from-purple-500 to-purple-600',
   },
   {
     icon: Zap,
-    title: 'Instant Alerts',
-    description: 'Real-time notifications for price changes, weather warnings, and risk alerts delivered to your phone.',
+    title: 'तात्काळ सूचना',
+    description: 'भाव बदल, हवामान इशारा आणि जोखीम सूचना तुमच्या फोनवर तात्काळ मिळवा.',
     color: 'pink',
     gradient: 'from-pink-500 to-rose-500',
   },
   {
     icon: Globe,
-    title: 'Multi-Language Support',
-    description: 'Available in Hindi, Marathi, and English. Designed for Indian farmers with local context.',
+    title: 'बहुभाषिक समर्थन',
+    description: 'मराठी, हिंदी आणि इंग्रजी मध्ये उपलब्ध. भारतीय शेतकऱ्यांसाठी स्थानिक संदर्भानुसार तयार केलेले.',
     color: 'teal',
     gradient: 'from-teal-500 to-teal-600',
   },
@@ -69,16 +69,16 @@ export function FeaturesSection() {
           className="text-center mb-16"
         >
           <span className="inline-flex items-center px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-4">
-            Features
+            वैशिष्ट्ये
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
-            Everything You Need for
+            हुशार शेतीसाठी लागणारे
             <br />
-            <span className="text-gradient">Smarter Farming</span>
+            <span className="text-gradient">सर्व काही</span>
           </h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Comprehensive agricultural intelligence tools designed specifically for Indian farmers, 
-            powered by cutting-edge AI and real-time data.
+            भारतीय शेतकऱ्यांसाठी खास तयार केलेली संपूर्ण शेती बुद्धिमत्ता साधने, 
+            अत्याधुनिक AI आणि रिअल-टाइम माहितीद्वारे संचालित.
           </p>
         </motion.div>
 

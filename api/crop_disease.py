@@ -264,25 +264,14 @@ async def _require_user(authorization: Optional[str]) -> dict:
 
     token = authorization.replace("Bearer ", "")
 
-    from supabase import create_client
+    from api.auth import _decode_token, _get_profile
 
-    supabase_url = os.getenv("SUPABASE_URL")
-    service_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-    supabase_admin = create_client(supabase_url, service_key)
-
-    try:
-        auth_res = supabase_admin.auth.get_user(token)
-        user_id = auth_res.user.id
-        profile = (
-            supabase_admin.table("profiles")
-            .select("*")
-            .eq("id", user_id)
-            .single()
-            .execute()
-        )
-        return profile.data
-    except Exception:
+    payload = _decode_token(token)
+    uid = payload.get("sub")
+    profile = await _get_profile(uid)
+    if not profile:
         raise HTTPException(401, "Invalid or expired token")
+    return profile
 
 
 # ============================================================================

@@ -7,29 +7,29 @@ const steps = [
   {
     number: '01',
     icon: Smartphone,
-    title: 'Enter Your Details',
-    description: 'Tell us about your crop, district, and sowing date. Our AI needs just a few inputs to get started.',
+    title: 'तुमची माहिती भरा',
+    description: 'तुमचा पीक, जिल्हा आणि पेरणीची तारीख सांगा. आमच्या AI ला फक्त थोड्या माहितीची गरज आहे.',
     color: 'emerald',
   },
   {
     number: '02',
     icon: Cloud,
-    title: 'AI Analyzes Data',
-    description: 'We process weather forecasts, historical patterns, and market data using advanced machine learning models.',
+    title: 'AI माहितीचे विश्लेषण करतो',
+    description: 'आम्ही हवामान अंदाज, ऐतिहासिक नमुने आणि बाजार माहितीवर प्रगत मशीन लर्निंग मॉडेल्सनी प्रक्रिया करतो.',
     color: 'blue',
   },
   {
     number: '03',
     icon: BarChart3,
-    title: 'Get Smart Insights',
-    description: 'Receive crop risk assessments, price forecasts, and actionable recommendations within seconds.',
+    title: 'हुशार माहिती मिळवा',
+    description: 'पीक जोखीम मूल्यांकन, भाव अंदाज आणि कृतीयोग्य शिफारसी काही सेकंदात मिळवा.',
     color: 'amber',
   },
   {
     number: '04',
     icon: CheckCircle2,
-    title: 'Make Better Decisions',
-    description: 'Use our insights to time your harvest, choose the best market, and maximize your profits.',
+    title: 'चांगले निर्णय घ्या',
+    description: 'आमच्या माहितीचा वापर करून कापणीची वेळ ठरवा, सर्वोत्तम बाजार निवडा आणि नफा वाढवा.',
     color: 'purple',
   },
 ];
@@ -46,15 +46,15 @@ export function HowItWorksSection() {
           className="text-center mb-16"
         >
           <span className="inline-flex items-center px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-4">
-            How It Works
+            कसे काम करते
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
-            Simple Steps to
+            सोप्या पायऱ्यांमध्ये
             <br />
-            <span className="text-gradient">Smarter Farming</span>
+            <span className="text-gradient">हुशार शेती</span>
           </h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Get started in minutes. No technical knowledge required.
+            काही मिनिटांत सुरू करा. कुठल्याही तंत्रज्ञानाची गरज नाही.
           </p>
         </motion.div>
 

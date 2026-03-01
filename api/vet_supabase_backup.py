@@ -1,6 +1,6 @@
-﻿"""
-MANDIMITRA - Veterinary Service Module (MongoDB)
-==================================================
+"""
+MANDIMITRA - Veterinary Service Module
+=======================================
 Handles doctor verification, bookings, and emergency SOS system.
 Emergency requests are auto-assigned to the nearest verified doctor.
 
@@ -30,17 +30,14 @@ Farmer Endpoints:
 
 import logging
 import math
-import uuid
 import base64
-import os
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from datetime import date
 
 from fastapi import APIRouter, HTTPException, Header, UploadFile, File, Form
 from pydantic import BaseModel, Field
 
-from api.auth import _decode_token, _get_profile
-from api.database import get_db, utcnow
+from api.auth import supabase_admin, _get_profile
 
 logger = logging.getLogger("mandimitra-vet")
 
@@ -55,12 +52,15 @@ async def _require_user(authorization: str = Header(None)) -> dict:
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(401, "Missing or invalid authorization header")
     token = authorization.split(" ", 1)[1]
-    payload = _decode_token(token)
-    user_id = payload["sub"]
-    profile = await _get_profile(user_id)
+    try:
+        user_res = supabase_admin.auth.get_user(token)
+        user = user_res.user
+    except Exception:
+        raise HTTPException(401, "Invalid or expired token")
+    profile = _get_profile(user.id)
     if not profile:
         raise HTTPException(404, "Profile not found")
-    return {**profile, "email": payload.get("email", "")}
+    return {**profile, "email": user.email}
 
 
 def _require_role(profile: dict, role: str):
@@ -74,7 +74,7 @@ def _require_role(profile: dict, role: str):
 
 def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """Calculate distance in km between two GPS points using Haversine formula."""
-    R = 6371.0
+    R = 6371.0  # Earth radius in km
     d_lat = math.radians(lat2 - lat1)
     d_lon = math.radians(lon2 - lon1)
     a = (
@@ -86,33 +86,33 @@ def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 
-async def _find_nearest_doctors(
+def _find_nearest_doctors(
     lat: float,
     lon: float,
     exclude_ids: list[str] | None = None,
     limit: int = 5,
 ) -> list[tuple[dict, float]]:
-    """Return up to `limit` nearest verified doctors sorted by distance."""
+    """Return up to `limit` nearest verified doctors sorted by distance.
+
+    Returns list of (doctor_profile, distance_km) tuples.
+    Excludes doctor IDs in `exclude_ids` (already rejected / assigned).
+    """
     exclude_ids = exclude_ids or []
-    db = await get_db()
 
-    query = {
-        "role": "doctor",
-        "verification_status": "active",
-        "latitude": {"$ne": None},
-        "longitude": {"$ne": None},
-    }
-    if exclude_ids:
-        query["id"] = {"$nin": exclude_ids}
-
-    cursor = db.profiles.find(
-        query,
-        {"_id": 0, "id": 1, "full_name": 1, "phone": 1, "latitude": 1, "longitude": 1, "specialization": 1}
+    # Fetch all verified doctors who have set their location
+    res = (
+        supabase_admin.table("profiles")
+        .select("id, full_name, phone, latitude, longitude, specialization")
+        .eq("role", "doctor")
+        .eq("verification_status", "active")
+        .not_.is_("latitude", "null")
+        .not_.is_("longitude", "null")
+        .execute()
     )
 
     doctors_with_dist: list[tuple[dict, float]] = []
-    async for doc in cursor:
-        if doc.get("latitude") is None or doc.get("longitude") is None:
+    for doc in res.data or []:
+        if doc["id"] in exclude_ids:
             continue
         dist = _haversine_km(lat, lon, doc["latitude"], doc["longitude"])
         doctors_with_dist.append((doc, round(dist, 2)))
@@ -132,8 +132,8 @@ class VerifyDoctorRequest(BaseModel):
 
 class BookingRequest(BaseModel):
     doctor_id: str
-    booking_date: str
-    time_slot: str
+    booking_date: str          # YYYY-MM-DD
+    time_slot: str             # e.g. "10:00 AM - 11:00 AM"
     animal_type: Optional[str] = None
     description: Optional[str] = None
 
@@ -180,12 +180,15 @@ async def get_pending_doctors(authorization: str = Header(None)):
     _require_role(user, "admin")
 
     try:
-        db = await get_db()
-        docs = await db.profiles.find(
-            {"role": "doctor", "verification_status": "pending_verification"},
-            {"_id": 0, "password_hash": 0}
-        ).sort("created_at", 1).to_list(100)
-        return {"doctors": docs}
+        res = (
+            supabase_admin.table("profiles")
+            .select("*")
+            .eq("role", "doctor")
+            .eq("verification_status", "pending_verification")
+            .order("created_at", desc=False)
+            .execute()
+        )
+        return {"doctors": res.data or []}
     except Exception as e:
         logger.error(f"Fetch pending doctors: {e}")
         raise HTTPException(500, "Failed to fetch pending doctors")
@@ -201,11 +204,10 @@ async def verify_doctor(req: VerifyDoctorRequest, authorization: str = Header(No
     is_verified = req.action == "accept"
 
     try:
-        db = await get_db()
-        await db.profiles.update_one(
-            {"id": req.doctor_id},
-            {"$set": {"verification_status": new_status, "is_verified": is_verified}}
-        )
+        supabase_admin.table("profiles").update({
+            "verification_status": new_status,
+            "is_verified": is_verified,
+        }).eq("id", req.doctor_id).execute()
         return {"status": new_status, "doctor_id": req.doctor_id}
     except Exception as e:
         logger.error(f"Verify doctor: {e}")
@@ -219,21 +221,20 @@ async def admin_stats(authorization: str = Header(None)):
     _require_role(user, "admin")
 
     try:
-        db = await get_db()
-        farmers = await db.profiles.count_documents({"role": "farmer"})
-        doctors_active = await db.profiles.count_documents({"role": "doctor", "verification_status": "active"})
-        doctors_pending = await db.profiles.count_documents({"role": "doctor", "verification_status": "pending_verification"})
-        bookings_total = await db.bookings.count_documents({})
-        emergencies_active = await db.emergency_requests.count_documents({"status": "active"})
-        emergencies_total = await db.emergency_requests.count_documents({})
+        farmers = supabase_admin.table("profiles").select("id", count="exact").eq("role", "farmer").execute()
+        doctors_active = supabase_admin.table("profiles").select("id", count="exact").eq("role", "doctor").eq("verification_status", "active").execute()
+        doctors_pending = supabase_admin.table("profiles").select("id", count="exact").eq("role", "doctor").eq("verification_status", "pending_verification").execute()
+        bookings_total = supabase_admin.table("bookings").select("id", count="exact").execute()
+        emergencies_active = supabase_admin.table("emergency_requests").select("id", count="exact").eq("status", "active").execute()
+        emergencies_total = supabase_admin.table("emergency_requests").select("id", count="exact").execute()
 
         return {
-            "total_farmers": farmers,
-            "active_doctors": doctors_active,
-            "pending_doctors": doctors_pending,
-            "total_bookings": bookings_total,
-            "active_emergencies": emergencies_active,
-            "total_emergencies": emergencies_total,
+            "total_farmers": farmers.count or 0,
+            "active_doctors": doctors_active.count or 0,
+            "pending_doctors": doctors_pending.count or 0,
+            "total_bookings": bookings_total.count or 0,
+            "active_emergencies": emergencies_active.count or 0,
+            "total_emergencies": emergencies_total.count or 0,
         }
     except Exception as e:
         logger.error(f"Admin stats: {e}")
@@ -247,12 +248,14 @@ async def get_all_doctors(authorization: str = Header(None)):
     _require_role(user, "admin")
 
     try:
-        db = await get_db()
-        docs = await db.profiles.find(
-            {"role": "doctor"},
-            {"_id": 0, "password_hash": 0}
-        ).sort("created_at", -1).to_list(200)
-        return {"doctors": docs}
+        res = (
+            supabase_admin.table("profiles")
+            .select("*")
+            .eq("role", "doctor")
+            .order("created_at", desc=True)
+            .execute()
+        )
+        return {"doctors": res.data or []}
     except Exception as e:
         logger.error(f"Fetch all doctors: {e}")
         raise HTTPException(500, "Failed to fetch doctors")
@@ -265,11 +268,14 @@ async def get_all_bookings(authorization: str = Header(None)):
     _require_role(user, "admin")
 
     try:
-        db = await get_db()
-        docs = await db.bookings.find(
-            {}, {"_id": 0}
-        ).sort("created_at", -1).to_list(100)
-        return {"bookings": docs}
+        res = (
+            supabase_admin.table("bookings")
+            .select("*")
+            .order("created_at", desc=True)
+            .limit(100)
+            .execute()
+        )
+        return {"bookings": res.data or []}
     except Exception as e:
         logger.error(f"Fetch all bookings: {e}")
         raise HTTPException(500, "Failed to fetch bookings")
@@ -282,11 +288,14 @@ async def get_all_emergencies(authorization: str = Header(None)):
     _require_role(user, "admin")
 
     try:
-        db = await get_db()
-        docs = await db.emergency_requests.find(
-            {}, {"_id": 0}
-        ).sort("created_at", -1).to_list(100)
-        return {"emergencies": docs}
+        res = (
+            supabase_admin.table("emergency_requests")
+            .select("*")
+            .order("created_at", desc=True)
+            .limit(100)
+            .execute()
+        )
+        return {"emergencies": res.data or []}
     except Exception as e:
         logger.error(f"Fetch all emergencies: {e}")
         raise HTTPException(500, "Failed to fetch emergencies")
@@ -301,7 +310,7 @@ async def upload_document(
     file: UploadFile = File(...),
     authorization: str = Header(None),
 ):
-    """Upload verification document (stored as base64 in MongoDB)."""
+    """Upload verification document (called after signup or later)."""
     user = await _require_user(authorization)
     _require_role(user, "doctor")
 
@@ -314,54 +323,28 @@ async def upload_document(
         raise HTTPException(400, "File size must be under 5 MB")
 
     try:
-        db = await get_db()
         ext = file.filename.split(".")[-1] if file.filename else "pdf"
+        path = f"{user['id']}/license.{ext}"
 
-        # Store document metadata in a documents collection
-        doc_id = str(uuid.uuid4())
-        doc_b64 = base64.b64encode(content).decode("utf-8")
-
-        await db.verification_docs.update_one(
-            {"user_id": user["id"]},
-            {"$set": {
-                "user_id": user["id"],
-                "filename": f"license.{ext}",
-                "content_type": file.content_type,
-                "data": doc_b64,
-                "uploaded_at": utcnow(),
-            }},
-            upsert=True
+        # Upload to Supabase Storage
+        supabase_admin.storage.from_("verification-docs").upload(
+            path=path,
+            file=content,
+            file_options={"content-type": file.content_type, "upsert": "true"},
         )
 
-        # Update profile with a reference
-        doc_url = f"/api/vet/doctor/document/{user['id']}"
-        await db.profiles.update_one(
-            {"id": user["id"]},
-            {"$set": {"verification_document_url": doc_url}}
-        )
+        # Get public URL
+        public_url = supabase_admin.storage.from_("verification-docs").get_public_url(path)
 
-        return {"url": doc_url}
+        # Update profile
+        supabase_admin.table("profiles").update({
+            "verification_document_url": public_url,
+        }).eq("id", user["id"]).execute()
+
+        return {"url": public_url}
     except Exception as e:
         logger.error(f"Upload document: {e}")
         raise HTTPException(500, f"Upload failed: {e}")
-
-
-@router.get("/doctor/document/{user_id}")
-async def get_document(user_id: str, authorization: str = Header(None)):
-    """Serve a stored verification document."""
-    user = await _require_user(authorization)
-    # Only admin or the doctor themselves can access
-    if user["id"] != user_id and user.get("role") != "admin":
-        raise HTTPException(403, "Access denied")
-
-    from fastapi.responses import Response
-    db = await get_db()
-    doc = await db.verification_docs.find_one({"user_id": user_id})
-    if not doc:
-        raise HTTPException(404, "Document not found")
-
-    content = base64.b64decode(doc["data"])
-    return Response(content=content, media_type=doc.get("content_type", "application/pdf"))
 
 
 @router.get("/doctor/profile")
@@ -371,10 +354,9 @@ async def doctor_profile(authorization: str = Header(None)):
     _require_role(user, "doctor")
 
     try:
-        db = await get_db()
-        total_bookings = await db.bookings.count_documents({"doctor_id": user["id"]})
-        completed = await db.bookings.count_documents({"doctor_id": user["id"], "status": "completed"})
-        emergencies = await db.emergency_requests.count_documents({"accepted_by": user["id"]})
+        total_bookings = supabase_admin.table("bookings").select("id", count="exact").eq("doctor_id", user["id"]).execute()
+        completed = supabase_admin.table("bookings").select("id", count="exact").eq("doctor_id", user["id"]).eq("status", "completed").execute()
+        emergencies = supabase_admin.table("emergency_requests").select("id", count="exact").eq("accepted_by", user["id"]).execute()
 
         return {
             "id": user["id"],
@@ -390,9 +372,9 @@ async def doctor_profile(authorization: str = Header(None)):
             "address": user.get("address"),
             "latitude": user.get("latitude"),
             "longitude": user.get("longitude"),
-            "total_bookings": total_bookings,
-            "completed_bookings": completed,
-            "handled_emergencies": emergencies,
+            "total_bookings": total_bookings.count or 0,
+            "completed_bookings": completed.count or 0,
+            "handled_emergencies": emergencies.count or 0,
         }
     except Exception as e:
         logger.error(f"Doctor profile: {e}")
@@ -406,7 +388,6 @@ async def update_doctor_location(req: UpdateLocationRequest, authorization: str 
     _require_role(user, "doctor")
 
     try:
-        db = await get_db()
         update_data: dict = {
             "latitude": req.latitude,
             "longitude": req.longitude,
@@ -414,7 +395,7 @@ async def update_doctor_location(req: UpdateLocationRequest, authorization: str 
         if req.address is not None:
             update_data["address"] = req.address
 
-        await db.profiles.update_one({"id": user["id"]}, {"$set": update_data})
+        supabase_admin.table("profiles").update(update_data).eq("id", user["id"]).execute()
         logger.info(f"📍 Doctor {user['id']} updated location: {req.latitude}, {req.longitude}")
         return {"message": "Location updated", "latitude": req.latitude, "longitude": req.longitude}
     except Exception as e:
@@ -432,26 +413,31 @@ async def doctor_emergency_cases(authorization: str = Header(None)):
         raise HTTPException(403, "Your account is not yet verified")
 
     try:
-        db = await get_db()
         # Emergencies assigned to this doctor (pending acceptance)
-        assigned = await db.emergency_requests.find(
-            {"assigned_to": user["id"], "status": "active"},
-            {"_id": 0}
-        ).sort("created_at", -1).to_list(50)
-
+        assigned = (
+            supabase_admin.table("emergency_requests")
+            .select("*")
+            .eq("assigned_to", user["id"])
+            .eq("status", "active")
+            .order("created_at", desc=True)
+            .execute()
+        )
         # This doctor's accepted/completed emergencies
-        mine = await db.emergency_requests.find(
-            {"accepted_by": user["id"], "status": {"$in": ["accepted", "completed"]}},
-            {"_id": 0}
-        ).sort("created_at", -1).to_list(50)
-
+        mine = (
+            supabase_admin.table("emergency_requests")
+            .select("*")
+            .eq("accepted_by", user["id"])
+            .in_("status", ["accepted", "completed"])
+            .order("created_at", desc=True)
+            .execute()
+        )
         # Combine and deduplicate
+        all_emergencies = (assigned.data or []) + (mine.data or [])
         seen = set()
         unique = []
-        for e in assigned + mine:
-            eid = e.get("id")
-            if eid and eid not in seen:
-                seen.add(eid)
+        for e in all_emergencies:
+            if e["id"] not in seen:
+                seen.add(e["id"])
                 unique.append(e)
         return {"emergencies": unique}
     except Exception as e:
@@ -469,25 +455,32 @@ async def accept_emergency(req: EmergencyAccept, authorization: str = Header(Non
         raise HTTPException(403, "Your account is not yet verified")
 
     try:
-        db = await get_db()
-        emergency = await db.emergency_requests.find_one({"id": req.emergency_id}, {"_id": 0})
-        if not emergency:
+        # Fetch the emergency
+        check = (
+            supabase_admin.table("emergency_requests")
+            .select("*")
+            .eq("id", req.emergency_id)
+            .single()
+            .execute()
+        )
+        if not check.data:
             raise HTTPException(404, "Emergency request not found")
+
+        emergency = check.data
 
         if emergency["status"] != "active":
             raise HTTPException(409, "This emergency has already been handled")
 
+        # Only the assigned doctor can accept
         if emergency.get("assigned_to") and emergency["assigned_to"] != user["id"]:
             raise HTTPException(403, "This emergency is assigned to another doctor")
 
-        await db.emergency_requests.update_one(
-            {"id": req.emergency_id, "status": "active"},
-            {"$set": {
-                "status": "accepted",
-                "accepted_by": user["id"],
-                "doctor_name": user.get("full_name", ""),
-            }}
-        )
+        # Atomically update: set status=accepted, accepted_by=this doctor
+        supabase_admin.table("emergency_requests").update({
+            "status": "accepted",
+            "accepted_by": user["id"],
+            "doctor_name": user.get("full_name", ""),
+        }).eq("id", req.emergency_id).eq("status", "active").execute()
 
         logger.info(f"✅ Emergency {req.emergency_id} accepted by doctor {user['id']}")
         return {"message": "Emergency accepted", "emergency_id": req.emergency_id}
@@ -505,10 +498,18 @@ async def reject_emergency(req: EmergencyReject, authorization: str = Header(Non
     _require_role(user, "doctor")
 
     try:
-        db = await get_db()
-        emergency = await db.emergency_requests.find_one({"id": req.emergency_id}, {"_id": 0})
-        if not emergency:
+        # Fetch the emergency
+        check = (
+            supabase_admin.table("emergency_requests")
+            .select("*")
+            .eq("id", req.emergency_id)
+            .single()
+            .execute()
+        )
+        if not check.data:
             raise HTTPException(404, "Emergency request not found")
+
+        emergency = check.data
 
         if emergency["status"] != "active":
             raise HTTPException(409, "This emergency is no longer active")
@@ -529,7 +530,7 @@ async def reject_emergency(req: EmergencyReject, authorization: str = Header(Non
         farmer_lon = emergency.get("longitude")
 
         if farmer_lat and farmer_lon:
-            candidates = await _find_nearest_doctors(
+            candidates = _find_nearest_doctors(
                 farmer_lat, farmer_lon, exclude_ids=rejected_list, limit=1
             )
         else:
@@ -537,16 +538,14 @@ async def reject_emergency(req: EmergencyReject, authorization: str = Header(Non
 
         if candidates:
             next_doc, dist = candidates[0]
-            await db.emergency_requests.update_one(
-                {"id": req.emergency_id},
-                {"$set": {
-                    "assigned_to": next_doc["id"],
-                    "assigned_doctor_name": next_doc.get("full_name", ""),
-                    "distance_km": dist,
-                    "escalation_count": escalation_count,
-                    "rejected_by": new_rejected_csv,
-                }}
-            )
+            # Reassign to next nearest doctor
+            supabase_admin.table("emergency_requests").update({
+                "assigned_to": next_doc["id"],
+                "assigned_doctor_name": next_doc.get("full_name", ""),
+                "distance_km": dist,
+                "escalation_count": escalation_count,
+                "rejected_by": new_rejected_csv,
+            }).eq("id", req.emergency_id).execute()
 
             logger.info(
                 f"🔄 Emergency {req.emergency_id} escalated to doctor {next_doc['id']} "
@@ -558,16 +557,14 @@ async def reject_emergency(req: EmergencyReject, authorization: str = Header(Non
                 "distance_km": dist,
             }
         else:
-            await db.emergency_requests.update_one(
-                {"id": req.emergency_id},
-                {"$set": {
-                    "assigned_to": None,
-                    "assigned_doctor_name": None,
-                    "distance_km": None,
-                    "escalation_count": escalation_count,
-                    "rejected_by": new_rejected_csv,
-                }}
-            )
+            # No more doctors available — mark as unassigned but keep active
+            supabase_admin.table("emergency_requests").update({
+                "assigned_to": None,
+                "assigned_doctor_name": None,
+                "distance_km": None,
+                "escalation_count": escalation_count,
+                "rejected_by": new_rejected_csv,
+            }).eq("id", req.emergency_id).execute()
 
             logger.warning(f"⚠️ Emergency {req.emergency_id}: no more doctors available after rejection")
             return {
@@ -588,11 +585,9 @@ async def complete_emergency(req: EmergencyComplete, authorization: str = Header
     _require_role(user, "doctor")
 
     try:
-        db = await get_db()
-        await db.emergency_requests.update_one(
-            {"id": req.emergency_id, "accepted_by": user["id"]},
-            {"$set": {"status": "completed"}}
-        )
+        supabase_admin.table("emergency_requests").update({
+            "status": "completed",
+        }).eq("id", req.emergency_id).eq("accepted_by", user["id"]).execute()
         return {"message": "Emergency completed"}
     except Exception as e:
         logger.error(f"Complete emergency: {e}")
@@ -606,12 +601,14 @@ async def doctor_bookings(authorization: str = Header(None)):
     _require_role(user, "doctor")
 
     try:
-        db = await get_db()
-        docs = await db.bookings.find(
-            {"doctor_id": user["id"]},
-            {"_id": 0}
-        ).sort("booking_date", -1).to_list(100)
-        return {"bookings": docs}
+        res = (
+            supabase_admin.table("bookings")
+            .select("*")
+            .eq("doctor_id", user["id"])
+            .order("booking_date", desc=True)
+            .execute()
+        )
+        return {"bookings": res.data or []}
     except Exception as e:
         logger.error(f"Doctor bookings: {e}")
         raise HTTPException(500, "Failed to fetch bookings")
@@ -624,11 +621,9 @@ async def update_booking_status(req: BookingStatusUpdate, authorization: str = H
     _require_role(user, "doctor")
 
     try:
-        db = await get_db()
-        await db.bookings.update_one(
-            {"id": req.booking_id, "doctor_id": user["id"]},
-            {"$set": {"status": req.status}}
-        )
+        supabase_admin.table("bookings").update({
+            "status": req.status,
+        }).eq("id", req.booking_id).eq("doctor_id", user["id"]).execute()
         return {"message": f"Booking {req.status}", "booking_id": req.booking_id}
     except Exception as e:
         logger.error(f"Update booking: {e}")
@@ -642,11 +637,9 @@ async def update_booking_status_post(req: BookingStatusUpdate, authorization: st
     _require_role(user, "doctor")
 
     try:
-        db = await get_db()
-        await db.bookings.update_one(
-            {"id": req.booking_id, "doctor_id": user["id"]},
-            {"$set": {"status": req.status}}
-        )
+        supabase_admin.table("bookings").update({
+            "status": req.status,
+        }).eq("id", req.booking_id).eq("doctor_id", user["id"]).execute()
         return {"message": f"Booking {req.status}", "booking_id": req.booking_id}
     except Exception as e:
         logger.error(f"Update booking: {e}")
@@ -664,13 +657,15 @@ async def list_verified_doctors(authorization: str = Header(None)):
     _require_role(user, "farmer")
 
     try:
-        db = await get_db()
-        docs = await db.profiles.find(
-            {"role": "doctor", "verification_status": "active"},
-            {"_id": 0, "password_hash": 0, "id": 1, "full_name": 1, "specialization": 1,
-             "years_of_experience": 1, "veterinary_college": 1, "phone": 1, "address": 1}
-        ).sort("full_name", 1).to_list(200)
-        return {"doctors": docs}
+        res = (
+            supabase_admin.table("profiles")
+            .select("id, full_name, specialization, years_of_experience, veterinary_college, phone, address")
+            .eq("role", "doctor")
+            .eq("verification_status", "active")
+            .order("full_name")
+            .execute()
+        )
+        return {"doctors": res.data or []}
     except Exception as e:
         logger.error(f"List doctors: {e}")
         raise HTTPException(500, "Failed to fetch doctors")
@@ -683,15 +678,12 @@ async def book_appointment(req: BookingRequest, authorization: str = Header(None
     _require_role(user, "farmer")
 
     # Verify the doctor is active
-    doctor = await _get_profile(req.doctor_id)
+    doctor = _get_profile(req.doctor_id)
     if not doctor or doctor.get("role") != "doctor" or doctor.get("verification_status") != "active":
         raise HTTPException(400, "Selected doctor is not available")
 
     try:
-        db = await get_db()
-        booking_id = str(uuid.uuid4())
-        await db.bookings.insert_one({
-            "id": booking_id,
+        supabase_admin.table("bookings").insert({
             "farmer_id": user["id"],
             "doctor_id": req.doctor_id,
             "booking_date": req.booking_date,
@@ -701,9 +693,7 @@ async def book_appointment(req: BookingRequest, authorization: str = Header(None
             "farmer_name": user.get("full_name", ""),
             "farmer_phone": user.get("phone", ""),
             "doctor_name": doctor.get("full_name", ""),
-            "status": "pending",
-            "created_at": utcnow(),
-        })
+        }).execute()
         return {"message": "Appointment booked successfully"}
     except Exception as e:
         logger.error(f"Book appointment: {e}")
@@ -724,7 +714,7 @@ async def create_emergency(req: EmergencyRequest, authorization: str = Header(No
 
     try:
         # Find nearest verified doctor
-        candidates = await _find_nearest_doctors(req.latitude, req.longitude, limit=1)
+        candidates = _find_nearest_doctors(req.latitude, req.longitude, limit=1)
 
         assigned_to = None
         assigned_doctor_name = None
@@ -742,10 +732,7 @@ async def create_emergency(req: EmergencyRequest, authorization: str = Header(No
         else:
             logger.warning(f"⚠️ Emergency from {user['id']}: no doctors with location found")
 
-        db = await get_db()
-        emergency_id = str(uuid.uuid4())
         row = {
-            "id": emergency_id,
             "farmer_id": user["id"],
             "animal_type": req.animal_type,
             "description": req.description,
@@ -757,25 +744,23 @@ async def create_emergency(req: EmergencyRequest, authorization: str = Header(No
             "assigned_to": assigned_to,
             "assigned_doctor_name": assigned_doctor_name,
             "distance_km": distance_km,
-            "status": "active",
-            "created_at": utcnow(),
         }
 
-        await db.emergency_requests.insert_one(row)
+        res = supabase_admin.table("emergency_requests").insert(row).execute()
 
         if assigned_to:
             return {
                 "message": f"Emergency sent to Dr. {assigned_doctor_name} ({distance_km} km away)",
                 "assigned_doctor": assigned_doctor_name,
                 "distance_km": distance_km,
-                "emergency_id": emergency_id,
+                "emergency_id": res.data[0]["id"] if res.data else None,
             }
         else:
             return {
                 "message": "Emergency created but no doctors with location available. It will be visible to all doctors.",
                 "assigned_doctor": None,
                 "distance_km": None,
-                "emergency_id": emergency_id,
+                "emergency_id": res.data[0]["id"] if res.data else None,
             }
     except HTTPException:
         raise
@@ -791,12 +776,14 @@ async def farmer_bookings(authorization: str = Header(None)):
     _require_role(user, "farmer")
 
     try:
-        db = await get_db()
-        docs = await db.bookings.find(
-            {"farmer_id": user["id"]},
-            {"_id": 0}
-        ).sort("booking_date", -1).to_list(100)
-        return {"bookings": docs}
+        res = (
+            supabase_admin.table("bookings")
+            .select("*")
+            .eq("farmer_id", user["id"])
+            .order("booking_date", desc=True)
+            .execute()
+        )
+        return {"bookings": res.data or []}
     except Exception as e:
         logger.error(f"Farmer bookings: {e}")
         raise HTTPException(500, "Failed to fetch bookings")
@@ -809,12 +796,14 @@ async def farmer_emergencies(authorization: str = Header(None)):
     _require_role(user, "farmer")
 
     try:
-        db = await get_db()
-        docs = await db.emergency_requests.find(
-            {"farmer_id": user["id"]},
-            {"_id": 0}
-        ).sort("created_at", -1).to_list(50)
-        return {"emergencies": docs}
+        res = (
+            supabase_admin.table("emergency_requests")
+            .select("*")
+            .eq("farmer_id", user["id"])
+            .order("created_at", desc=True)
+            .execute()
+        )
+        return {"emergencies": res.data or []}
     except Exception as e:
         logger.error(f"Farmer emergencies: {e}")
         raise HTTPException(500, "Failed to fetch emergencies")

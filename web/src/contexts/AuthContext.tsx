@@ -18,7 +18,7 @@ import { apiUrl } from '@/lib/api-config';
 export interface User {
   id: string;
   email: string;
-  role: 'farmer' | 'doctor' | 'admin';
+  role: 'farmer' | 'doctor' | 'admin' | 'buyer';
   full_name: string;
   is_verified: boolean;
   verification_status: 'pending_verification' | 'active' | 'rejected';
@@ -41,11 +41,14 @@ export interface SignupData {
   password: string;
   full_name: string;
   phone: string;
-  role: 'farmer' | 'doctor';
+  role: 'farmer' | 'doctor' | 'buyer';
   veterinary_license?: string;
   veterinary_college?: string;
   specialization?: string;
   years_of_experience?: number;
+  business_name?: string;
+  market_name?: string;
+  district?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -99,6 +102,7 @@ function getDashboardPath(role: string): string {
   switch (role) {
     case 'admin': return '/dashboard/admin';
     case 'doctor': return '/dashboard/doctor';
+    case 'buyer': return '/dashboard/buyer';
     case 'farmer': return '/';
     default: return '/';
   }

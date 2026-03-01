@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useAuth, SignupData, getToken } from '@/contexts/AuthContext';
 import { apiUrl } from '@/lib/api-config';
-import { Leaf, User, Stethoscope, ArrowRight, Loader2, Eye, EyeOff, Upload, FileCheck } from 'lucide-react';
+import { Leaf, User, Stethoscope, ShoppingCart, ArrowRight, Loader2, Eye, EyeOff, Upload, FileCheck } from 'lucide-react';
 
-type Role = 'farmer' | 'doctor';
+type Role = 'farmer' | 'doctor' | 'buyer';
 
 export default function SignupPage() {
   const { signup, user, logout } = useAuth();
@@ -25,6 +25,11 @@ export default function SignupPage() {
   const [experience, setExperience] = useState('');
   const [docFile, setDocFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Buyer fields
+  const [businessName, setBusinessName] = useState('');
+  const [marketName, setMarketName] = useState('');
+  const [district, setDistrict] = useState('');
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -44,7 +49,19 @@ export default function SignupPage() {
 
     try {
       if (role === 'doctor' && !docFile) {
-        setError('Please upload your veterinary license / ID document');
+        setError('कृपया तुमचा पशुवैद्यकीय परवाना / ओळखपत्र अपलोड करा');
+        setLoading(false);
+        return;
+      }
+
+      if (role === 'buyer' && !businessName) {
+        setError('कृपया तुमच्या व्यवसायाचे नाव टाका');
+        setLoading(false);
+        return;
+      }
+
+      if (role === 'buyer' && !marketName) {
+        setError('कृपया मंडीचे नाव निवडा');
         setLoading(false);
         return;
       }
@@ -62,6 +79,12 @@ export default function SignupPage() {
         data.veterinary_college = vetCollege || undefined;
         data.specialization = specialization || undefined;
         data.years_of_experience = experience ? parseInt(experience) : undefined;
+      }
+
+      if (role === 'buyer') {
+        data.business_name = businessName;
+        data.market_name = marketName;
+        data.district = district || undefined;
       }
 
       // 1. Create account
@@ -84,7 +107,7 @@ export default function SignupPage() {
         }
       }
     } catch (err: any) {
-      setError(err.message || 'Registration failed');
+      setError(err.message || 'नोंदणी अयशस्वी झाली');
     } finally {
       setLoading(false);
     }
@@ -105,23 +128,24 @@ export default function SignupPage() {
             </div>
             <span className="text-2xl font-bold text-gradient">MANDIMITRA</span>
           </Link>
-          <p className="mt-2 text-slate-500">Create your account</p>
+          <p className="mt-2 text-slate-500">तुमचे खाते तयार करा</p>
         </div>
 
         {/* Card */}
         <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
           {/* Role Tabs */}
-          <div className="grid grid-cols-2 border-b border-slate-100">
+          <div className="grid grid-cols-3 border-b border-slate-100">
             {([
-              { key: 'farmer' as Role, label: 'Farmer', icon: User },
-              { key: 'doctor' as Role, label: 'Veterinary Doctor', icon: Stethoscope },
+              { key: 'farmer' as Role, label: 'शेतकरी', icon: User },
+              { key: 'doctor' as Role, label: 'पशुवैद्यकीय डॉक्टर', icon: Stethoscope },
+              { key: 'buyer' as Role, label: 'खरेदीदार', icon: ShoppingCart },
             ]).map((r) => (
               <button
                 key={r.key}
                 onClick={() => { setRole(r.key); setError(''); }}
                 className={`relative flex items-center justify-center gap-2 py-4 text-sm font-medium transition-colors ${
                   role === r.key
-                    ? r.key === 'farmer' ? 'text-emerald-600' : 'text-blue-600'
+                    ? r.key === 'farmer' ? 'text-emerald-600' : r.key === 'doctor' ? 'text-blue-600' : 'text-purple-600'
                     : 'text-slate-400 hover:text-slate-600'
                 }`}
               >
@@ -131,7 +155,7 @@ export default function SignupPage() {
                   <motion.div
                     layoutId="signupTab"
                     className={`absolute bottom-0 left-0 right-0 h-0.5 ${
-                      r.key === 'farmer' ? 'bg-emerald-500' : 'bg-blue-500'
+                      r.key === 'farmer' ? 'bg-emerald-500' : r.key === 'doctor' ? 'bg-blue-500' : 'bg-purple-500'
                     }`}
                   />
                 )}
@@ -156,32 +180,32 @@ export default function SignupPage() {
 
             {/* Common Fields */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Full Name</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">पूर्ण नाव</label>
               <input
                 type="text"
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-slate-900 placeholder-slate-400"
-                placeholder="Enter your full name"
+                placeholder="तुमचे पूर्ण नाव टाका"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Phone Number</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">फोन नंबर</label>
               <input
                 type="tel"
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-slate-900 placeholder-slate-400"
-                placeholder="10-digit mobile number"
+                placeholder="१० अंकी मोबाईल नंबर"
                 pattern="[0-9]{10}"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">ईमेल</label>
               <input
                 type="email"
                 required
@@ -193,7 +217,7 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">पासवर्ड</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -202,7 +226,7 @@ export default function SignupPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-slate-900 pr-12"
-                  placeholder="Min 6 characters"
+                  placeholder="किमान ६ अक्षरे"
                 />
                 <button
                   type="button"
@@ -226,13 +250,13 @@ export default function SignupPage() {
                 >
                   <div className="pt-2 border-t border-slate-100">
                     <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-3">
-                      Veterinary Verification
+                      पशुवैद्यकीय पडताळणी
                     </p>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                      Veterinary License Number <span className="text-red-400">*</span>
+                      पशुवैद्यकीय परवाना क्रमांक <span className="text-red-400">*</span>
                     </label>
                     <input
                       type="text"
@@ -245,35 +269,35 @@ export default function SignupPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Veterinary College</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">पशुवैद्यकीय महाविद्यालय</label>
                     <input
                       type="text"
                       value={vetCollege}
                       onChange={(e) => setVetCollege(e.target.value)}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all text-slate-900 placeholder-slate-400"
-                      placeholder="College / university name"
+                      placeholder="महाविद्यालय / विद्यापीठ नाव"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1.5">Specialization</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1.5">विशेषज्ञता</label>
                       <select
                         value={specialization}
                         onChange={(e) => setSpecialization(e.target.value)}
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all text-slate-900"
                       >
-                        <option value="">Select</option>
-                        <option value="Large Animal">Large Animal</option>
-                        <option value="Small Animal">Small Animal</option>
-                        <option value="Poultry">Poultry</option>
-                        <option value="Mixed Practice">Mixed Practice</option>
-                        <option value="Animal Nutrition">Animal Nutrition</option>
-                        <option value="Other">Other</option>
+                        <option value="">निवडा</option>
+                        <option value="Large Animal">मोठे प्राणी</option>
+                        <option value="Small Animal">लहान प्राणी</option>
+                        <option value="Poultry">कुक्कुटपालन</option>
+                        <option value="Mixed Practice">मिश्र प्रॅक्टिस</option>
+                        <option value="Animal Nutrition">पशु पोषण</option>
+                        <option value="Other">इतर</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1.5">Experience (yrs)</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1.5">अनुभव (वर्षे)</label>
                       <input
                         type="number"
                         min="0"
@@ -289,7 +313,7 @@ export default function SignupPage() {
                   {/* Document Upload */}
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                      Verification Document <span className="text-red-400">*</span>
+                      पडताळणी दस्तऐवज <span className="text-red-400">*</span>
                     </label>
                     <input
                       ref={fileRef}
@@ -315,10 +339,85 @@ export default function SignupPage() {
                       ) : (
                         <>
                           <Upload className="w-5 h-5" />
-                          <span className="text-sm">Upload License / ID (image or PDF)</span>
+                          <span className="text-sm">परवाना / ओळखपत्र अपलोड करा (फोटो किंवा PDF)</span>
                         </>
                       )}
                     </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Buyer-Specific Fields */}
+            <AnimatePresence>
+              {role === 'buyer' && (
+                <motion.div
+                  key="buyer-fields"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-4 overflow-hidden"
+                >
+                  <div className="pt-2 border-t border-slate-100">
+                    <p className="text-xs font-semibold text-purple-600 uppercase tracking-wider mb-3">
+                      खरेदीदार माहिती
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                      व्यवसायाचे नाव <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required={role === 'buyer'}
+                      value={businessName}
+                      onChange={(e) => setBusinessName(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 outline-none transition-all text-slate-900 placeholder-slate-400"
+                      placeholder="उदा. शर्मा ट्रेडिंग कंपनी"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                      मंडी / बाजार <span className="text-red-400">*</span>
+                    </label>
+                    <select
+                      required={role === 'buyer'}
+                      value={marketName}
+                      onChange={(e) => setMarketName(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 outline-none transition-all text-slate-900"
+                    >
+                      <option value="">मंडी निवडा</option>
+                      <option value="पुणे मंडी">पुणे मंडी</option>
+                      <option value="नाशिक मंडी">नाशिक मंडी</option>
+                      <option value="नागपूर मंडी">नागपूर मंडी</option>
+                      <option value="औरंगाबाद मंडी">औरंगाबाद मंडी</option>
+                      <option value="सोलापूर मंडी">सोलापूर मंडी</option>
+                      <option value="कोल्हापूर मंडी">कोल्हापूर मंडी</option>
+                      <option value="सांगली मंडी">सांगली मंडी</option>
+                      <option value="अमरावती मंडी">अमरावती मंडी</option>
+                      <option value="अकोला मंडी">अकोला मंडी</option>
+                      <option value="लातूर मंडी">लातूर मंडी</option>
+                      <option value="जळगाव मंडी">जळगाव मंडी</option>
+                      <option value="अहमदनगर मंडी">अहमदनगर मंडी</option>
+                      <option value="सातारा मंडी">सातारा मंडी</option>
+                      <option value="बारामती मंडी">बारामती मंडी</option>
+                      <option value="मालेगाव मंडी">मालेगाव मंडी</option>
+                      <option value="वाशी (नवी मुंबई) मंडी">वाशी (नवी मुंबई) मंडी</option>
+                      <option value="मुंबई APMC मंडी">मुंबई APMC मंडी</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">जिल्हा</label>
+                    <input
+                      type="text"
+                      value={district}
+                      onChange={(e) => setDistrict(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 outline-none transition-all text-slate-900 placeholder-slate-400"
+                      placeholder="उदा. पुणे"
+                    />
                   </div>
                 </motion.div>
               )}
@@ -330,6 +429,8 @@ export default function SignupPage() {
               className={`w-full py-3 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2 disabled:opacity-50 ${
                 role === 'doctor'
                   ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-lg shadow-blue-500/30'
+                  : role === 'buyer'
+                  ? 'bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 shadow-lg shadow-purple-500/30'
                   : 'bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 shadow-lg shadow-emerald-500/30'
               }`}
             >
@@ -337,7 +438,7 @@ export default function SignupPage() {
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 <>
-                  Create {role === 'doctor' ? 'Doctor' : 'Farmer'} Account
+                  {role === 'doctor' ? 'डॉक्टर' : role === 'buyer' ? 'खरेदीदार' : 'शेतकरी'} खाते तयार करा
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -346,9 +447,9 @@ export default function SignupPage() {
 
           {/* Footer */}
           <div className="px-6 pb-6 text-center text-sm text-slate-500">
-            Already have an account?{' '}
+            आधीच खाते आहे?{' '}
             <Link href="/login" className="text-emerald-600 font-medium hover:text-emerald-700 transition-colors">
-              Sign in
+              लॉग इन करा
             </Link>
           </div>
         </div>

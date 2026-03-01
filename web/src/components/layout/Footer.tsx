@@ -5,27 +5,27 @@ import { Leaf, Twitter, Github, Linkedin, Mail, Phone, MapPin } from 'lucide-rea
 
 const footerLinks = {
   products: [
-    { name: 'Crop Risk Advisor', href: '/crop-risk' },
-    { name: 'Price Intelligence', href: '/price-forecast' },
-    { name: 'Weather Insights', href: '/weather' },
-    { name: 'Market Analytics', href: '/markets' },
+    { name: 'पीक जोखीम सल्लागार', href: '/crop-risk' },
+    { name: 'भाव बुद्धिमत्ता', href: '/price-forecast' },
+    { name: 'हवामान माहिती', href: '/weather' },
+    { name: 'बाजार विश्लेषण', href: '/markets' },
   ],
   company: [
-    { name: 'About Us', href: '/about' },
-    { name: 'Careers', href: '/careers' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Press Kit', href: '/press' },
+    { name: 'आमच्याबद्दल', href: '/about' },
+    { name: 'नोकऱ्या', href: '/careers' },
+    { name: 'ब्लॉग', href: '/blog' },
+    { name: 'प्रेस किट', href: '/press' },
   ],
   resources: [
-    { name: 'Documentation', href: '/docs' },
-    { name: 'API Reference', href: '/api-docs' },
-    { name: 'Help Center', href: '/help' },
-    { name: 'Community', href: '/community' },
+    { name: 'दस्तएवज', href: '/docs' },
+    { name: 'API संदर्भ', href: '/api-docs' },
+    { name: 'मदत केंद्र', href: '/help' },
+    { name: 'समुदाय', href: '/community' },
   ],
   legal: [
-    { name: 'Privacy Policy', href: '/privacy' },
-    { name: 'Terms of Service', href: '/terms' },
-    { name: 'Cookie Policy', href: '/cookies' },
+    { name: 'गोपनीयता धोरण', href: '/privacy' },
+    { name: 'सेवा अटी', href: '/terms' },
+    { name: 'कुकी धोरण', href: '/cookies' },
   ],
 };
 
@@ -44,8 +44,8 @@ export function Footer() {
               <span className="text-xl font-bold text-white">MANDIMITRA</span>
             </Link>
             <p className="text-slate-400 mb-6 max-w-sm">
-              Empowering Indian farmers with AI-driven agricultural intelligence for smarter, 
-              more profitable farming decisions.
+              भारतीय शेतकऱ्यांना AI-आधारित शेती बुद्धिमत्तेच्या माध्यमातून हुशार आणि 
+              अधिक नफ्याच्या शेती निर्णयांसाठी सक्षम करणे.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-emerald-600 transition-colors">
@@ -62,7 +62,7 @@ export function Footer() {
 
           {/* Products */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Products</h3>
+            <h3 className="text-white font-semibold mb-4">उत्पादने</h3>
             <ul className="space-y-3">
               {footerLinks.products.map((link) => (
                 <li key={link.name}>
@@ -76,7 +76,7 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Company</h3>
+            <h3 className="text-white font-semibold mb-4">कंपनी</h3>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
@@ -90,7 +90,7 @@ export function Footer() {
 
           {/* Resources */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Resources</h3>
+            <h3 className="text-white font-semibold mb-4">साधने</h3>
             <ul className="space-y-3">
               {footerLinks.resources.map((link) => (
                 <li key={link.name}>
@@ -104,7 +104,7 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Contact</h3>
+            <h3 className="text-white font-semibold mb-4">संपर्क</h3>
             <ul className="space-y-3">
               <li className="flex items-center">
                 <Mail className="w-4 h-4 mr-2 text-emerald-500" />
@@ -132,7 +132,7 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-sm text-slate-500">
-              © 2026 MANDIMITRA. All rights reserved. Made with ❤️ for Indian Farmers
+                            © 2026 मंडीमित्र. सर्व हक्क राखीव. भारतीय शेतकऱ्यांसाठी ❤️ने बनवले
             </p>
             <div className="flex flex-wrap justify-center md:justify-end gap-4 sm:gap-6">
               {footerLinks.legal.map((link) => (

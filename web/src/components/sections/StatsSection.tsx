@@ -5,10 +5,10 @@ import { useInView } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 
 const stats = [
-  { value: 3500000, suffix: '+', label: 'Price Records', format: true },
-  { value: 400, suffix: '+', label: 'Markets Covered', format: false },
-  { value: 93, suffix: '%', label: 'Forecast Accuracy', format: false },
-  { value: 36, suffix: '+', label: 'Districts', format: false },
+  { value: 3500000, suffix: '+', label: 'भाव नोंदी', format: true },
+  { value: 400, suffix: '+', label: 'बाजार समाविष्ट', format: false },
+  { value: 93, suffix: '%', label: 'अंदाज अचूकता', format: false },
+  { value: 36, suffix: '+', label: 'जिल्हे', format: false },
 ];
 
 function AnimatedCounter({ value, suffix, format }: { value: number; suffix: string; format: boolean }) {

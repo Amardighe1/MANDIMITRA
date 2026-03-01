@@ -18,6 +18,7 @@ import {
   LayoutDashboard,
   Stethoscope,
   Camera,
+  ShoppingCart,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -25,16 +26,15 @@ interface NavbarProps {
 }
 
 const navLinks = [
-  { name: 'Features', href: '#features' },
-  { name: 'How It Works', href: '#how-it-works' },
-  { name: 'Pricing', href: '#pricing' },
+  { name: 'वैशिष्ट्ये', href: '#features' },
+  { name: 'कसे काम करते', href: '#how-it-works' },
 ];
 
 const productLinks = [
-  { name: 'Crop Risk Advisor', href: '/crop-risk', icon: Shield, description: 'AI-powered crop risk assessment' },
-  { name: 'Price Intelligence', href: '/price-forecast', icon: TrendingUp, description: '15-day price forecasting' },
-  { name: 'Weather Insights', href: '/weather', icon: Cloud, description: 'Hyperlocal weather predictions' },
-  { name: 'Market Analytics', href: '/markets', icon: BarChart3, description: 'Real-time market data' },
+  { name: 'पीक जोखीम सल्लागार', href: '/crop-risk', icon: Shield, description: 'AI-आधारित पीक जोखीम मूल्यांकन' },
+  { name: 'भाव अंदाज', href: '/price-forecast', icon: TrendingUp, description: '15-दिवसांचा भाव अंदाज' },
+  { name: 'हवामान माहिती', href: '/weather', icon: Cloud, description: 'स्थानिक हवामान अंदाज' },
+  { name: 'बाजार विश्लेषण', href: '/markets', icon: BarChart3, description: 'रिअल-टाइम बाजार माहिती' },
 ];
 
 export function Navbar({ isScrolled }: NavbarProps) {
@@ -51,6 +51,7 @@ export function Navbar({ isScrolled }: NavbarProps) {
     farmer: 'bg-emerald-100 text-emerald-700',
     doctor: 'bg-blue-100 text-blue-700',
     admin: 'bg-amber-100 text-amber-700',
+    buyer: 'bg-purple-100 text-purple-700',
   }[user.role] || 'bg-slate-100 text-slate-700' : '';
 
   const dashboardPath = user
@@ -100,7 +101,7 @@ export function Navbar({ isScrolled }: NavbarProps) {
                   onMouseLeave={() => setIsProductMenuOpen(false)}
                   className="flex items-center px-4 py-2 text-slate-600 hover:text-emerald-600 font-medium transition-colors"
                 >
-                  Products
+                  उत्पादने
                   <ChevronDown className={`ml-1 w-4 h-4 transition-transform ${isProductMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
                 
@@ -163,7 +164,14 @@ export function Navbar({ isScrolled }: NavbarProps) {
                         className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
                       >
                         <Stethoscope className="w-4 h-4" />
-                        Vet Services
+                        पशुवैद्यकीय सेवा
+                      </Link>
+                      <Link
+                        href="/mandi"
+                        className="flex items-center gap-2 px-4 py-2 text-purple-600 hover:text-purple-700 font-medium transition-colors"
+                      >
+                        <ShoppingCart className="w-4 h-4" />
+                        मंडी विक्री
                       </Link>
                     </>
                   ) : (
@@ -172,7 +180,7 @@ export function Navbar({ isScrolled }: NavbarProps) {
                       className="flex items-center gap-2 px-4 py-2 text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
                     >
                       <LayoutDashboard className="w-4 h-4" />
-                      Dashboard
+                      डॅशबोर्ड
                     </Link>
                   )}
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200">
@@ -185,7 +193,7 @@ export function Navbar({ isScrolled }: NavbarProps) {
                   <button
                     onClick={handleLogout}
                     className="p-2.5 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
-                    title="Log out"
+                    title="लॉग आउट"
                   >
                     <LogOut className="w-5 h-5" />
                   </button>
@@ -196,13 +204,13 @@ export function Navbar({ isScrolled }: NavbarProps) {
                     href="/login"
                     className="px-4 py-2 text-slate-600 hover:text-emerald-600 font-medium transition-colors"
                   >
-                    Log in
+                    लॉग इन
                   </Link>
                   <Link
                     href="/signup"
                     className="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105"
                   >
-                    Get Started Free
+                    मोफत सुरू करा
                   </Link>
                 </>
               )}
@@ -243,7 +251,7 @@ export function Navbar({ isScrolled }: NavbarProps) {
             >
               <div className="p-6 pb-10 space-y-6" style={{ paddingBottom: 'max(2.5rem, env(safe-area-inset-bottom))' }}>
                 <div className="flex items-center justify-between">
-                  <span className="text-xl font-bold text-gradient">MANDIMITRA</span>
+                  <span className="text-xl font-bold text-gradient">मंडीमित्र</span>
                   <button
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
@@ -253,7 +261,7 @@ export function Navbar({ isScrolled }: NavbarProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Products</div>
+                  <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">उत्पादने</div>
                   {productLinks.map((item) => (
                     <Link
                       key={item.name}
@@ -296,7 +304,7 @@ export function Navbar({ isScrolled }: NavbarProps) {
                             className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors"
                           >
                             <Camera className="w-4 h-4" />
-                            Crop Analysis
+                            पीक विश्लेषण
                           </Link>
                           <Link
                             href="/veterinary"
@@ -304,7 +312,15 @@ export function Navbar({ isScrolled }: NavbarProps) {
                             className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
                           >
                             <Stethoscope className="w-4 h-4" />
-                            Vet Services
+                            पशुवैद्यकीय सेवा
+                          </Link>
+                          <Link
+                            href="/mandi"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 transition-colors"
+                          >
+                            <ShoppingCart className="w-4 h-4" />
+                            मंडी विक्री
                           </Link>
                         </>
                       ) : (
@@ -314,7 +330,7 @@ export function Navbar({ isScrolled }: NavbarProps) {
                           className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors"
                         >
                           <LayoutDashboard className="w-4 h-4" />
-                          Go to Dashboard
+                          डॅशबोर्ड वर जा
                         </Link>
                       )}
                       <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-50 border border-slate-200">
@@ -332,7 +348,7 @@ export function Navbar({ isScrolled }: NavbarProps) {
                         className="flex items-center justify-center gap-2 w-full px-4 py-3 text-red-600 font-medium border border-red-200 rounded-xl hover:bg-red-50 transition-colors"
                       >
                         <LogOut className="w-4 h-4" />
-                        Log out
+                        लॉग आउट
                       </button>
                     </>
                   ) : (
@@ -342,14 +358,14 @@ export function Navbar({ isScrolled }: NavbarProps) {
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="block w-full px-4 py-3 text-center text-slate-600 font-medium border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
                       >
-                        Log in
+                        लॉग इन
                       </Link>
                       <Link
                         href="/signup"
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="block w-full px-4 py-3 text-center bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all shadow-lg shadow-emerald-500/30"
                       >
-                        Get Started Free
+                        मोफत सुरू करा
                       </Link>
                     </>
                   )}

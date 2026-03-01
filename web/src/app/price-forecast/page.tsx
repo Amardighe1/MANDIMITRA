@@ -146,10 +146,10 @@ export default function PriceForecastPage() {
         <div className="bg-white p-4 rounded-xl shadow-lg border border-slate-100">
           <p className="font-medium text-slate-900 mb-2">{label}</p>
           <p className="text-emerald-600 text-sm">
-            Predicted: {formatPrice(dataRow?.predicted_price)}
+            अंदाजित भाव: {formatPrice(dataRow?.predicted_price)}
           </p>
           <p className="text-slate-400 text-xs mt-1">
-            Range: {formatPrice(dataRow?.lower_bound)} - {formatPrice(dataRow?.upper_bound)}
+            श्रेणी: {formatPrice(dataRow?.lower_bound)} - {formatPrice(dataRow?.upper_bound)}
           </p>
         </div>
       );
@@ -171,14 +171,14 @@ export default function PriceForecastPage() {
           >
             <div className="inline-flex items-center px-4 py-2 bg-amber-100 text-amber-700 rounded-full text-sm font-medium mb-4">
               <TrendingUp className="w-4 h-4 mr-2" />
-              AI Price Intelligence
+              AI भाव विश्लेषण
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4">
-              Price <span className="text-gradient-amber">Forecast</span>
+              Price <span className="text-gradient-amber">अंदाज</span>
             </h1>
             <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto px-2">
-              Get accurate price predictions with confidence intervals to make 
-              better selling decisions.
+              चांगले विक्रीचे निर्णय घेण्यासाठी अचूक भाव अंदाज 
+              विश्वासनीयतेसह मिळवा.
             </p>
           </motion.div>
 
@@ -193,14 +193,14 @@ export default function PriceForecastPage() {
               <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 p-5 sm:p-8 border border-slate-100 lg:sticky lg:top-24">
                 <h2 className="text-xl font-semibold text-slate-900 mb-6 flex items-center">
                   <BarChart3 className="w-5 h-5 mr-2 text-amber-500" />
-                  Forecast Settings
+                  अंदाज सेटिंग्स
                 </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Commodity Selection */}
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
-                      Commodity
+                      माल
                     </label>
                     <select
                       value={selectedCommodity}
@@ -208,7 +208,7 @@ export default function PriceForecastPage() {
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
                       required
                     >
-                      <option value="">Select commodity...</option>
+                      <option value="">माल निवडा...</option>
                       {commodities.map((commodity) => (
                         <option key={commodity} value={commodity}>{commodity}</option>
                       ))}
@@ -219,7 +219,7 @@ export default function PriceForecastPage() {
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       <MapPin className="w-4 h-4 inline mr-1" />
-                      Market
+                      बाजार
                     </label>
                     <select
                       value={selectedMarket}
@@ -227,7 +227,7 @@ export default function PriceForecastPage() {
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
                       required
                     >
-                      <option value="">Select market...</option>
+                      <option value="">बाजार निवडा...</option>
                       {markets.map((market) => (
                         <option key={market} value={market}>{market}</option>
                       ))}
@@ -238,7 +238,7 @@ export default function PriceForecastPage() {
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       <Clock className="w-4 h-4 inline mr-1" />
-                      Forecast Period
+                      अंदाज कालावधी
                     </label>
                     <div className="grid grid-cols-3 gap-2">
                       {[7, 14, 15].map((days) => (
@@ -252,7 +252,7 @@ export default function PriceForecastPage() {
                               : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
                           }`}
                         >
-                          {days} Days
+                          {days} दिवस
                         </button>
                       ))}
                     </div>
@@ -275,11 +275,11 @@ export default function PriceForecastPage() {
                     {isLoading ? (
                       <>
                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        Forecasting...
+                        अंदाज तयार होत आहे...
                       </>
                     ) : (
                       <>
-                        Generate Forecast
+                        अंदाज पहा
                         <Sparkles className="w-5 h-5 ml-2" />
                       </>
                     )}
@@ -307,9 +307,9 @@ export default function PriceForecastPage() {
                     {/* Summary Cards */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                       <div className="bg-white rounded-xl p-3 sm:p-4 shadow-lg shadow-slate-200/50 border border-slate-100">
-                        <div className="text-xs sm:text-sm text-slate-500 mb-1">Current Price</div>
+                        <div className="text-xs sm:text-sm text-slate-500 mb-1">सध्याचा भाव</div>
                         <div className="text-lg sm:text-xl font-bold text-slate-900">{formatPrice(result.current_price)}</div>
-                        <div className="text-xs text-slate-400 mt-0.5">/quintal</div>
+                        <div className="text-xs text-slate-400 mt-0.5">/क्विंटल</div>
                         <div className="flex items-center gap-1 mt-1">
                           <span className={`inline-block w-1.5 h-1.5 rounded-full ${result.price_source === 'live' ? 'bg-emerald-400' : 'bg-amber-400'}`}></span>
                           <span className="text-[10px] text-slate-400">
@@ -318,7 +318,7 @@ export default function PriceForecastPage() {
                         </div>
                       </div>
                       <div className="bg-white rounded-xl p-3 sm:p-4 shadow-lg shadow-slate-200/50 border border-slate-100">
-                        <div className="text-xs sm:text-sm text-slate-500 mb-1">7-Day Forecast</div>
+                        <div className="text-xs sm:text-sm text-slate-500 mb-1">७-दिवस अंदाज</div>
                         <div className="text-lg sm:text-xl font-bold text-slate-900">{formatPrice(result.forecast_7d)}</div>
                         <div className={`text-xs mt-1 ${result.forecast_7d > result.current_price ? 'text-emerald-500' : 'text-red-500'}`}>
                           {result.forecast_7d > result.current_price ? '↑' : '↓'} 
@@ -326,7 +326,7 @@ export default function PriceForecastPage() {
                         </div>
                       </div>
                       <div className="bg-white rounded-xl p-3 sm:p-4 shadow-lg shadow-slate-200/50 border border-slate-100">
-                        <div className="text-xs sm:text-sm text-slate-500 mb-1">14-Day Forecast</div>
+                        <div className="text-xs sm:text-sm text-slate-500 mb-1">१४-दिवस अंदाज</div>
                         <div className="text-lg sm:text-xl font-bold text-slate-900">{formatPrice(result.forecast_14d)}</div>
                         <div className={`text-xs mt-1 ${result.forecast_14d > result.current_price ? 'text-emerald-500' : 'text-red-500'}`}>
                           {result.forecast_14d > result.current_price ? '↑' : '↓'} 
@@ -338,14 +338,14 @@ export default function PriceForecastPage() {
                           ? 'bg-emerald-50 border-emerald-200' 
                           : 'bg-amber-50 border-amber-200'
                       }`}>
-                        <div className="text-xs sm:text-sm text-slate-500 mb-1">Recommendation</div>
+                        <div className="text-xs sm:text-sm text-slate-500 mb-1">शिफारस</div>
                         <div className={`text-lg sm:text-xl font-bold ${
                           result.recommendation === 'HOLD' ? 'text-emerald-600' : 'text-amber-600'
                         }`}>
                           {result.recommendation}
                         </div>
                         <div className="text-xs text-slate-500 mt-1">
-                          {result.model_confidence.toFixed(0)}% confidence
+                          {result.model_confidence.toFixed(0)}% विश्वासनीयता
                         </div>
                       </div>
                     </div>
@@ -355,9 +355,9 @@ export default function PriceForecastPage() {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 sm:mb-6">
                         <div className="min-w-0">
                           <h3 className="text-base sm:text-lg font-semibold text-slate-900 truncate">
-                            {result.commodity} Price Forecast
+                            {result.commodity} भाव अंदाज
                           </h3>
-                          <p className="text-sm text-slate-500">{result.market} Market</p>
+                          <p className="text-sm text-slate-500">{result.market} बाजार</p>
                         </div>
                         <div className={`px-3 py-1 rounded-full text-sm font-medium ${
                           result.price_trend === 'up' 
@@ -425,11 +425,11 @@ export default function PriceForecastPage() {
                       <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-4 text-xs sm:text-sm">
                         <div className="flex items-center">
                           <div className="w-3 h-3 bg-amber-500 rounded-full mr-2" />
-                          <span className="text-slate-600">Predicted Price</span>
+                          <span className="text-slate-600">अंदाजित भाव</span>
                         </div>
                         <div className="flex items-center">
                           <div className="w-3 h-3 bg-amber-200 rounded-full mr-2" />
-                          <span className="text-slate-600">Confidence Interval</span>
+                          <span className="text-slate-600">विश्वास श्रेणी</span>
                         </div>
                       </div>
                     </div>
@@ -437,16 +437,16 @@ export default function PriceForecastPage() {
                     {/* Forecast Table */}
                     <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 p-4 sm:p-6 border border-slate-100">
                       <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">
-                        Daily Forecasts
+                        दैनंदिन अंदाज
                       </h3>
                       <div className="overflow-x-auto -mx-2 sm:mx-0">
                         <table className="w-full min-w-[480px]">
                           <thead>
                             <tr className="text-left text-xs sm:text-sm text-slate-500 border-b border-slate-100">
-                              <th className="pb-3 pl-2 sm:pl-0 font-medium">Date</th>
-                              <th className="pb-3 font-medium">Predicted</th>
-                              <th className="pb-3 font-medium">Range</th>
-                              <th className="pb-3 font-medium">Confidence</th>
+                              <th className="pb-3 pl-2 sm:pl-0 font-medium">तारीख</th>
+                              <th className="pb-3 font-medium">अंदाजित</th>
+                              <th className="pb-3 font-medium">श्रेणी</th>
+                              <th className="pb-3 font-medium">विश्वासनीयता</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -489,20 +489,20 @@ export default function PriceForecastPage() {
                       <TrendingUp className="w-10 h-10 text-amber-500" />
                     </div>
                     <h3 className="text-xl font-semibold text-slate-900 mb-2">
-                      Price Forecast Results
+                      भाव अंदाज निकाल
                     </h3>
                     <p className="text-slate-500 max-w-sm mb-6">
-                      Select a commodity and market, then click "Generate Forecast" to see 
-                      AI-powered price predictions with confidence intervals.
+                      माल आणि बाजार निवडा, नंतर "अंदाज पहा" वर क्लिक करा 
+                      AI-आधारित भाव अंदाज पहा.
                     </p>
                     <div className="flex items-center gap-4 text-sm text-slate-400">
                       <div className="flex items-center">
                         <Target className="w-4 h-4 mr-1" />
-                        93% Accuracy
+                        ९३% अचूकता
                       </div>
                       <div className="flex items-center">
                         <Clock className="w-4 h-4 mr-1" />
-                        30-Day Forecast
+                        ३०-दिवस अंदाज
                       </div>
                     </div>
                   </motion.div>

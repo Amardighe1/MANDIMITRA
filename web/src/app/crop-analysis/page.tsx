@@ -52,11 +52,11 @@ interface DiseaseResult {
 }
 
 const SUPPORTED_CROPS = [
-  { name: 'Corn', emoji: '🌽', diseases: ['Common Rust', 'Gray Leaf Spot', 'Northern Leaf Blight'] },
-  { name: 'Potato', emoji: '🥔', diseases: ['Early Blight', 'Late Blight'] },
-  { name: 'Rice', emoji: '🌾', diseases: ['Brown Spot', 'Leaf Blast', 'Neck Blast'] },
-  { name: 'Sugarcane', emoji: '🎋', diseases: ['Bacterial Blight', 'Red Rot'] },
-  { name: 'Wheat', emoji: '🌿', diseases: ['Brown Rust', 'Yellow Rust'] },
+  { name: 'मका (Corn)', emoji: '🌽', diseases: ['सामान्य गंज', 'राखाडी पानावरील डाग', 'उत्तरी पान करपा'] },
+  { name: 'बटाटा (Potato)', emoji: '🥔', diseases: ['लवकर करपा', 'उशिरा करपा'] },
+  { name: 'तांदूळ (Rice)', emoji: '🌾', diseases: ['तपकिरी ठिपके', 'पान करपा', 'मान करपा'] },
+  { name: 'ऊस (Sugarcane)', emoji: '🎋', diseases: ['जिवाणू करपा', 'लाल कुज'] },
+  { name: 'गहू (Wheat)', emoji: '🌿', diseases: ['तपकिरी गंज', 'पिवळा गंज'] },
 ];
 
 export default function CropAnalysisPage() {
@@ -87,11 +87,11 @@ export default function CropAnalysisPage() {
 
   const handleFileSelect = (selectedFile: File) => {
     if (!selectedFile.type.startsWith('image/')) {
-      setError('Please select an image file (JPG, PNG)');
+      setError('कृपया एक इमेज फाइल निवडा (JPG, PNG)');
       return;
     }
     if (selectedFile.size > 10 * 1024 * 1024) {
-      setError('Image must be less than 10MB');
+      setError('इमेज 10MB पेक्षा कमी असणे आवश्यक आहे');
       return;
     }
     setFile(selectedFile);
@@ -140,7 +140,7 @@ export default function CropAnalysisPage() {
         });
         clearTimeout(timeout);
         const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || 'Analysis failed');
+        if (!res.ok) throw new Error(data.detail || 'विश्लेषण अयशस्वी');
         setResult(data);
         setInferenceMode('cloud');
         setShowDetails(true);
@@ -160,8 +160,8 @@ export default function CropAnalysisPage() {
       } catch (localErr: any) {
         setError(
           baseUrl
-            ? `Cloud server unavailable and on-device analysis failed: ${localErr.message}`
-            : `On-device analysis failed: ${localErr.message}`
+            ? `क्लाउड सर्व्हर अनुपलब्ध आणि ऑन-डिव्हाइस विश्लेषण अयशस्वी: ${localErr.message}`
+            : `ऑन-डिव्हाइस विश्लेषण अयशस्वी: ${localErr.message}`
         );
       }
     }
@@ -181,7 +181,7 @@ export default function CropAnalysisPage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-green-50">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
-          <p className="text-sm text-slate-400">Loading...</p>
+          <p className="text-sm text-slate-400">लोड होत आहे...</p>
         </div>
       </div>
     );
@@ -205,7 +205,7 @@ export default function CropAnalysisPage() {
               <span>/</span>
               <span className="text-sm font-medium text-slate-600 flex items-center gap-1.5">
                 <Microscope className="w-4 h-4 text-emerald-500" />
-                Crop Disease Analysis
+                पीक रोग विश्लेषण
               </span>
             </div>
           </div>
@@ -214,8 +214,8 @@ export default function CropAnalysisPage() {
             className="text-sm text-slate-500 hover:text-emerald-600 transition-colors flex items-center gap-1.5 font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Back to Dashboard</span>
-            <span className="sm:hidden">Back</span>
+            <span className="hidden sm:inline">डॅशबोर्डवर परत</span>
+            <span className="sm:hidden">परत</span>
           </Link>
         </div>
       </header>
@@ -229,14 +229,14 @@ export default function CropAnalysisPage() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold mb-4">
             <Zap className="w-3.5 h-3.5" />
-            AI-Powered • 93.5% Accuracy
+            AI-आधारित • ९३.५% अचूकता
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-3">
-            Crop Disease <span className="bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text text-transparent">Detection</span>
+            पीक रोग <span className="bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text text-transparent">ओळख</span>
           </h1>
           <p className="text-slate-500 max-w-xl mx-auto text-sm sm:text-base">
-            Upload a photo of your crop leaf and our AI will identify the disease, explain the cause,
-            and recommend treatments — all in seconds.
+            तुमच्या पिकाच्या पानाचा फोटो अपलोड करा आणि आमचे AI रोग ओळखेल, कारण सांगेल
+            आणि उपचार सुचवेल — काही सेकंदांत.
           </p>
         </motion.div>
 
@@ -270,14 +270,14 @@ export default function CropAnalysisPage() {
                         <ImagePlus className="w-9 h-9 text-emerald-500" />
                       </div>
                       <p className="text-base font-semibold text-slate-700 mb-1">
-                        {dragOver ? 'Drop your image here' : 'Upload crop leaf image'}
+                        {dragOver ? 'तुमची इमेज इथे सोडा' : 'पिकाच्या पानाची इमेज अपलोड करा'}
                       </p>
-                      <p className="text-sm text-slate-400 mb-4">Drag & drop or click to browse</p>
+                      <p className="text-sm text-slate-400 mb-4">ड्रॅग आणि ड्रॉप करा किंवा ब्राउझ करा</p>
                       <div className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-xl hover:bg-emerald-700 transition-colors">
                         <Upload className="w-4 h-4" />
-                        Choose File
+                        फाइल निवडा
                       </div>
-                      <p className="text-xs text-slate-300 mt-3">JPG, PNG • Max 10MB</p>
+                      <p className="text-xs text-slate-300 mt-3">JPG, PNG • कमाल 10MB</p>
                     </motion.div>
                     <input type="file" accept="image/*" onChange={handleInputChange} className="hidden" />
                   </label>
@@ -285,7 +285,7 @@ export default function CropAnalysisPage() {
                   <div className="relative group">
                     <img
                       src={preview}
-                      alt="Crop preview"
+                      alt="पीक पूर्वावलोकन"
                       className="w-full h-72 sm:h-80 object-cover rounded-2xl"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-2xl transition-colors" />
@@ -322,12 +322,12 @@ export default function CropAnalysisPage() {
                     {loading ? (
                       <>
                         <Loader2 className="w-5 h-5 animate-spin" />
-                        Analyzing...
+                        विश्लेषण होत आहे...
                       </>
                     ) : (
                       <>
                         <Sparkles className="w-5 h-5" />
-                        Analyze Crop
+                        पीक विश्लेषण करा
                       </>
                     )}
                   </button>
@@ -337,7 +337,7 @@ export default function CropAnalysisPage() {
                       className="px-4 py-3.5 border border-slate-200 text-slate-600 font-medium rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2"
                     >
                       <RotateCcw className="w-4 h-4" />
-                      <span className="hidden sm:inline">New Scan</span>
+                      <span className="hidden sm:inline">नवीन स्कॅन</span>
                     </button>
                   )}
                 </div>
@@ -356,7 +356,7 @@ export default function CropAnalysisPage() {
             <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
               <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
                 <Sprout className="w-4 h-4 text-emerald-500" />
-                Supported Crops
+                समर्थित पिके
               </h3>
               <div className="space-y-3">
                 {SUPPORTED_CROPS.map((crop) => (
@@ -382,28 +382,28 @@ export default function CropAnalysisPage() {
             <div className="bg-gradient-to-br from-emerald-600 to-green-500 rounded-3xl p-6 text-white shadow-lg shadow-emerald-500/20">
               <h3 className="text-sm font-bold mb-4 flex items-center gap-2 opacity-90">
                 <Info className="w-4 h-4" />
-                About Our AI
+                आमच्या AI बद्दल
               </h3>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="bg-white/15 rounded-xl p-3 backdrop-blur-sm">
                   <p className="text-2xl font-extrabold">93.5%</p>
-                  <p className="text-xs opacity-75">Accuracy</p>
+                  <p className="text-xs opacity-75">अचूकता</p>
                 </div>
                 <div className="bg-white/15 rounded-xl p-3 backdrop-blur-sm">
                   <p className="text-2xl font-extrabold">13.3K</p>
-                  <p className="text-xs opacity-75">Training Images</p>
+                  <p className="text-xs opacity-75">प्रशिक्षण इमेजेस</p>
                 </div>
                 <div className="bg-white/15 rounded-xl p-3 backdrop-blur-sm">
                   <p className="text-2xl font-extrabold">17</p>
-                  <p className="text-xs opacity-75">Disease Classes</p>
+                  <p className="text-xs opacity-75">रोग वर्ग</p>
                 </div>
                 <div className="bg-white/15 rounded-xl p-3 backdrop-blur-sm">
                   <p className="text-2xl font-extrabold">5</p>
-                  <p className="text-xs opacity-75">Crop Types</p>
+                  <p className="text-xs opacity-75">पीक प्रकार</p>
                 </div>
               </div>
               <p className="text-xs opacity-75 leading-relaxed">
-                Powered by MobileNetV2 deep learning with Google Gemini AI for intelligent treatment recommendations.
+                MobileNetV2 डीप लर्निंग आणि Google Gemini AI द्वारे बुद्धिमान उपचार शिफारसींसाठी संचालित.
               </p>
             </div>
           </motion.div>
@@ -424,7 +424,7 @@ export default function CropAnalysisPage() {
                 <div className="flex-1 h-px bg-slate-200" />
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                   <Microscope className="w-4 h-4" />
-                  Analysis Results
+                  विश्लेषण निकाल
                 </span>
                 <div className="flex-1 h-px bg-slate-200" />
               </div>
@@ -452,7 +452,7 @@ export default function CropAnalysisPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-1.5">
                         <h2 className={`text-2xl font-extrabold ${result.is_healthy ? 'text-emerald-800' : 'text-red-800'}`}>
-                          {result.is_healthy ? 'Crop is Healthy! 🎉' : result.advice.disease_name || result.disease}
+                          {result.is_healthy ? 'पीक निरोगी आहे! 🎉' : result.advice.disease_name || result.disease}
                         </h2>
                         {!result.is_healthy && result.advice.severity && (
                           <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${
@@ -467,14 +467,14 @@ export default function CropAnalysisPage() {
                         )}
                       </div>
                       <p className="text-base font-medium text-slate-700 mb-2">
-                        {result.crop} • <span className="font-bold">{result.confidence}%</span> confidence
+                        {result.crop} • <span className="font-bold">{result.confidence}%</span> विश्वासनीयता
                         {inferenceMode && (
                           <span className={`ml-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                             inferenceMode === 'cloud'
                               ? 'bg-blue-100 text-blue-700'
                               : 'bg-amber-100 text-amber-700'
                           }`}>
-                            {inferenceMode === 'cloud' ? '☁️ Cloud AI' : '📱 On-Device'}
+                            {inferenceMode === 'cloud' ? '☁️ क्लाउड AI' : '📱 ऑन-डिव्हाइस'}
                           </span>
                         )}
                       </p>
@@ -485,7 +485,7 @@ export default function CropAnalysisPage() {
 
                 {/* Confidence Bar */}
                 <div className="px-6 sm:px-8 py-5 bg-white border-t border-slate-100">
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Prediction Confidence</h3>
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">अंदाज विश्वासनीयता</h3>
                   <div className="space-y-3">
                     {result.top_predictions.map((pred, i) => (
                       <div key={i} className="flex items-center gap-3">
@@ -526,7 +526,7 @@ export default function CropAnalysisPage() {
                     <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
                       <Sparkles className="w-4 h-4 text-amber-600" />
                     </div>
-                    AI-Powered Detailed Analysis
+                    AI-आधारित सविस्तर विश्लेषण
                   </h3>
                   <motion.div animate={{ rotate: showDetails ? 180 : 0 }}>
                     <ChevronDown className="w-5 h-5 text-slate-400" />
@@ -545,14 +545,14 @@ export default function CropAnalysisPage() {
                       <div className="px-6 pb-6 space-y-5 border-t border-slate-100 pt-5">
                         {/* Description */}
                         <div className="bg-slate-50 rounded-2xl p-5">
-                          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Description</h4>
+                          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">वर्णन</h4>
                           <p className="text-sm text-slate-700 leading-relaxed">{result.advice.description}</p>
                         </div>
 
                         {/* Causes */}
                         {result.advice.causes && (
                           <div className="bg-orange-50 rounded-2xl p-5 border border-orange-100">
-                            <h4 className="text-xs font-bold text-orange-500 uppercase tracking-wide mb-2">Root Causes</h4>
+                            <h4 className="text-xs font-bold text-orange-500 uppercase tracking-wide mb-2">मूळ कारणे</h4>
                             <p className="text-sm text-slate-700 leading-relaxed">{result.advice.causes}</p>
                           </div>
                         )}
@@ -560,7 +560,7 @@ export default function CropAnalysisPage() {
                         {/* Symptoms */}
                         {result.advice.symptoms && result.advice.symptoms.length > 0 && (
                           <div>
-                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-3">Symptoms to Watch</h4>
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-3">लक्षात ठेवण्यासारखी लक्षणे</h4>
                             <div className="grid sm:grid-cols-2 gap-2">
                               {result.advice.symptoms.map((s, i) => (
                                 <div key={i} className="flex items-start gap-2.5 p-3 bg-red-50 rounded-xl border border-red-100">
@@ -575,7 +575,7 @@ export default function CropAnalysisPage() {
                         {/* Treatment */}
                         {result.advice.treatment && result.advice.treatment.length > 0 && (
                           <div>
-                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-3">Treatment Plan</h4>
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-3">उपचार योजना</h4>
                             <div className="space-y-3">
                               {result.advice.treatment.map((t, i) => (
                                 <div key={i} className="bg-blue-50 rounded-2xl p-4 border border-blue-100">
@@ -596,7 +596,7 @@ export default function CropAnalysisPage() {
 
                         {/* Preventive Tips */}
                         <div>
-                          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-3">Preventive Care</h4>
+                          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-3">प्रतिबंधात्मक उपाय</h4>
                           <div className="grid sm:grid-cols-2 gap-2">
                             {result.advice.preventive_tips.map((tip, i) => (
                               <div key={i} className="flex items-start gap-2.5 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
@@ -611,7 +611,7 @@ export default function CropAnalysisPage() {
                         <div className="bg-amber-50 rounded-2xl p-5 border border-amber-200">
                           <h4 className="text-xs font-bold text-amber-700 uppercase tracking-wide mb-3 flex items-center gap-1.5">
                             <AlertTriangle className="w-3.5 h-3.5" />
-                            Recommended Actions
+                            शिफारस केलेल्या कृती
                           </h4>
                           <div className="space-y-2">
                             {result.advice.recommended_actions.map((a, i) => (

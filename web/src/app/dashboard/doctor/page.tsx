@@ -100,23 +100,24 @@ async function apiFetch(path: string, opts?: RequestInit) {
     },
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.detail || 'Request failed');
+  if (!res.ok) throw new Error(data.detail || 'विनंती अयशस्वी झाली');
   return data;
 }
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const secs = Math.floor(diff / 1000);
-  if (secs < 60) return `${secs}s ago`;
+  if (secs < 5) return 'आत्ताच';
+  if (secs < 60) return `${secs} से. पूर्वी`;
   const mins = Math.floor(secs / 60);
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 60) return `${mins} मि. पूर्वी`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
+  if (hrs < 24) return `${hrs} ता. पूर्वी`;
+  return `${Math.floor(hrs / 24)} दि. पूर्वी`;
 }
 
 function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-IN', {
+  return new Date(dateStr).toLocaleDateString('mr-IN', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -254,9 +255,9 @@ export default function DoctorDashboard() {
         body: JSON.stringify({ emergency_id: emergencyId }),
       });
       if (result.next_doctor) {
-        alert(`Emergency escalated to Dr. ${result.next_doctor} (${result.distance_km} km away)`);
+        alert(`आपत्कालीन परिस्थिती डॉ. ${result.next_doctor} यांना पाठवली (${result.distance_km} कि.मी. दूर)`);
       } else {
-        alert('No more nearby doctors available. Emergency remains active for manual assignment.');
+        alert('जवळपास आणखी डॉक्टर उपलब्ध नाहीत. आपत्कालीन परिस्थिती स्वतः नियुक्तीसाठी सक्रिय आहे.');
       }
       await fetchEmergencies();
     } catch (e: any) {
@@ -269,7 +270,7 @@ export default function DoctorDashboard() {
   // Update doctor location via GPS
   const handleUpdateLocation = async () => {
     if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser');
+      alert('तुमच्या ब्राउझरमध्ये जिओलोकेशन समर्थित नाही');
       return;
     }
     setLocationLoading(true);
@@ -285,7 +286,7 @@ export default function DoctorDashboard() {
             }),
           });
           await fetchProfile();
-          alert('Location updated successfully!');
+          alert('स्थान यशस्वीरीत्या अपडेट झाले!');
         } catch (e: any) {
           alert(e.message);
         } finally {
@@ -293,7 +294,7 @@ export default function DoctorDashboard() {
         }
       },
       (err) => {
-        alert('Could not detect your location. Please enable GPS.');
+        alert('तुमचे स्थान शोधता आले नाही. कृपया GPS सक्षम करा.');
         setLocationLoading(false);
       },
       { enableHighAccuracy: true, timeout: 10000 }
@@ -352,9 +353,9 @@ export default function DoctorDashboard() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Upload failed');
+      if (!res.ok) throw new Error(data.detail || 'अपलोड अयशस्वी झाले');
 
-      alert('Document uploaded! Please wait for admin approval.');
+      alert('दस्तऐवज अपलोड झाला! अॅडमिन मंजुरीची प्रतीक्षा करा.');
       await fetchProfile();
     } catch (err: any) {
       alert(err.message);
@@ -393,13 +394,13 @@ export default function DoctorDashboard() {
   const tabs = [
     {
       key: 'emergencies' as Tab,
-      label: 'Emergency Cases',
+      label: 'आपत्कालीन प्रकरणे',
       icon: AlertTriangle,
       badge: activeEmergencies.length,
       alert: activeEmergencies.length > 0,
     },
-    { key: 'bookings' as Tab, label: 'My Bookings', icon: Calendar, badge: pendingBookings.length },
-    { key: 'profile' as Tab, label: 'Profile', icon: User },
+    { key: 'bookings' as Tab, label: 'माझी बुकिंग्ज', icon: Calendar, badge: pendingBookings.length },
+    { key: 'profile' as Tab, label: 'प्रोफाइल', icon: User },
   ];
 
   return (
@@ -413,7 +414,7 @@ export default function DoctorDashboard() {
                 <Stethoscope className="w-5 h-5 text-white" />
               </div>
               <div>
-                <span className="font-bold text-lg text-slate-900">Doctor Portal</span>
+                <span className="font-bold text-lg text-slate-900">डॉक्टर पोर्टल</span>
                 <span className="hidden sm:inline text-xs text-slate-400 ml-2">MANDIMITRA</span>
               </div>
             </Link>
@@ -422,7 +423,7 @@ export default function DoctorDashboard() {
                 onClick={handleRefresh}
                 disabled={refreshing}
                 className="relative p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                title="Refresh"
+                title="रिफ्रेश"
               >
                 <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
                 {newEmergencyCount > 0 && (
@@ -436,7 +437,7 @@ export default function DoctorDashboard() {
                 className="flex items-center gap-2 text-sm text-slate-500 hover:text-red-500 transition-colors"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">लॉग आउट</span>
               </button>
             </div>
           </div>
@@ -505,19 +506,19 @@ export default function DoctorDashboard() {
                   isPending ? 'text-amber-800' : isRejected ? 'text-red-800' : 'text-slate-800'
                 }`}>
                   {isPending
-                    ? 'Verification Pending'
+                    ? 'पडताळणी प्रतीक्षेत'
                     : isRejected
-                    ? 'Verification Rejected'
-                    : 'Complete Your Verification'}
+                    ? 'पडताळणी नाकारली'
+                    : 'तुमची पडताळणी पूर्ण करा'}
                 </h3>
                 <p className={`text-sm mt-1 ${
                   isPending ? 'text-amber-600' : isRejected ? 'text-red-600' : 'text-slate-600'
                 }`}>
                   {isPending
-                    ? 'Your documents are under review. You will be notified once approved.'
+                    ? 'तुमचे दस्तऐवज तपासले जात आहेत. मंजुरी मिळाल्यावर तुम्हाला कळवले जाईल.'
                     : isRejected
-                    ? 'Please upload a valid veterinary license document to re-apply.'
-                    : 'Upload your veterinary license document to start accepting patients.'}
+                    ? 'कृपया पुन्हा अर्ज करण्यासाठी वैध पशुवैद्यकीय परवाना दस्तऐवज अपलोड करा.'
+                    : 'रुग्ण स्वीकारणे सुरू करण्यासाठी तुमचा पशुवैद्यकीय परवाना दस्तऐवज अपलोड करा.'}
                 </p>
               </div>
               {(!isPending || isRejected || !profile?.verification_document_url) && (
@@ -539,7 +540,7 @@ export default function DoctorDashboard() {
                     ) : (
                       <>
                         <Upload className="w-5 h-5" />
-                        Upload Document
+                        दस्तऐवज अपलोड करा
                       </>
                     )}
                   </div>
@@ -563,14 +564,14 @@ export default function DoctorDashboard() {
                   <MapPin className="w-5 h-5 text-amber-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-amber-800">Set your location to receive emergencies</p>
-                  <p className="text-sm text-amber-600">Go to Profile tab → Emergency Location to enable GPS-based emergency matching</p>
+                  <p className="font-semibold text-amber-800">आपत्कालीन विनंत्या मिळवण्यासाठी तुमचे स्थान सेट करा</p>
+                  <p className="text-sm text-amber-600">प्रोफाइल टॅब → आपत्कालीन स्थान वर जा GPS-आधारित आपत्कालीन जुळवणी सक्षम करण्यासाठी</p>
                 </div>
                 <button
                   onClick={() => setTab('profile')}
                   className="px-4 py-2 bg-amber-600 text-white font-medium rounded-xl hover:bg-amber-700 transition-colors text-sm flex-shrink-0"
                 >
-                  Set Location
+                  स्थान सेट करा
                 </button>
               </motion.div>
             )}
@@ -581,10 +582,10 @@ export default function DoctorDashboard() {
                 <div>
                   <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-4">
                     <BellRing className="w-5 h-5 text-red-500" />
-                    Active SOS Requests
+                    सक्रिय SOS विनंत्या
                     {activeEmergencies.length > 0 && (
                       <span className="px-2 py-0.5 text-xs bg-red-100 text-red-700 rounded-full font-semibold animate-pulse">
-                        {activeEmergencies.length} LIVE
+                        {activeEmergencies.length} सक्रिय
                       </span>
                     )}
                   </h2>
@@ -598,8 +599,8 @@ export default function DoctorDashboard() {
                   ) : activeEmergencies.length === 0 ? (
                     <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
                       <Bell className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                      <p className="text-slate-600 font-medium">No active emergencies right now</p>
-                      <p className="text-sm text-slate-400 mt-1">New requests will appear here automatically</p>
+                      <p className="text-slate-600 font-medium">सध्या कोणतीही सक्रिय आपत्कालीन नाही</p>
+                      <p className="text-sm text-slate-400 mt-1">नवीन विनंत्या आपोआप इथे दिसतील</p>
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -625,7 +626,7 @@ export default function DoctorDashboard() {
                                   <span className="text-xs text-slate-400">{timeAgo(emg.created_at)}</span>
                                   {emg.distance_km != null && (
                                     <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
-                                      📍 {emg.distance_km} km away
+                                      📍 {emg.distance_km} कि.मी. दूर
                                     </span>
                                   )}
                                 </div>
@@ -634,7 +635,7 @@ export default function DoctorDashboard() {
                                 <div className="flex flex-wrap gap-4 mt-3 text-sm text-slate-500">
                                   <span className="flex items-center gap-1">
                                     <User className="w-4 h-4" />
-                                    {emg.farmer_name || 'Farmer'}
+                                    {emg.farmer_name || 'शेतकरी'}
                                   </span>
                                   {emg.farmer_phone && (
                                     <a
@@ -664,7 +665,7 @@ export default function DoctorDashboard() {
                                   ) : (
                                     <>
                                       <Zap className="w-6 h-6" />
-                                      Accept
+                                      स्वीकारा
                                     </>
                                   )}
                                 </button>
@@ -678,7 +679,7 @@ export default function DoctorDashboard() {
                                   ) : (
                                     <>
                                       <XCircle className="w-4 h-4" />
-                                      Decline
+                                      नाकारा
                                     </>
                                   )}
                                 </button>
@@ -696,7 +697,7 @@ export default function DoctorDashboard() {
                   <div>
                     <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-4">
                       <Activity className="w-5 h-5 text-blue-500" />
-                      My Emergency Cases
+                      माझी आपत्कालीन प्रकरणे
                     </h2>
                     <div className="space-y-3">
                       {myEmergencies.map((emg) => (
@@ -737,7 +738,7 @@ export default function DoctorDashboard() {
                                     className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-bold shadow-lg shadow-blue-600/25"
                                   >
                                     <Navigation className="w-4 h-4" />
-                                    Start Map
+                                    नकाशा सुरू करा
                                   </button>
                                 )}
                                 {emg.farmer_phone && (
@@ -746,7 +747,7 @@ export default function DoctorDashboard() {
                                     className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                                   >
                                     <Phone className="w-4 h-4" />
-                                    Call
+                                    कॉल करा
                                   </a>
                                 )}
                                 <button
@@ -759,7 +760,7 @@ export default function DoctorDashboard() {
                                   ) : (
                                     <>
                                       <CheckCircle className="w-4 h-4" />
-                                      Complete
+                                      पूर्ण करा
                                     </>
                                   )}
                                 </button>
@@ -781,7 +782,7 @@ export default function DoctorDashboard() {
                 <div>
                   <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-4">
                     <Clock className="w-5 h-5 text-amber-500" />
-                    Pending Confirmations
+                    प्रतीक्षेतील पुष्टीकरण
                     {pendingBookings.length > 0 && (
                       <span className="px-2 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full font-semibold">
                         {pendingBookings.length}
@@ -794,7 +795,7 @@ export default function DoctorDashboard() {
                   ) : pendingBookings.length === 0 ? (
                     <div className="bg-white rounded-2xl border border-slate-100 p-8 text-center">
                       <CheckCircle className="w-10 h-10 mx-auto text-emerald-400 mb-2" />
-                      <p className="text-sm text-slate-500">No pending bookings</p>
+                      <p className="text-sm text-slate-500">कोणतीही प्रतीक्षेतील बुकिंग नाही</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -809,7 +810,7 @@ export default function DoctorDashboard() {
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
                                 <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-md bg-amber-100 text-amber-700">
-                                  Pending
+                                  प्रतीक्षेत
                                 </span>
                                 <span className="text-xs text-slate-400">{timeAgo(b.created_at)}</span>
                               </div>
@@ -820,7 +821,7 @@ export default function DoctorDashboard() {
                                 </span>
                               </div>
                               <p className="text-slate-600">
-                                <span className="font-medium">{b.farmer_name || 'Farmer'}</span>
+                                <span className="font-medium">{b.farmer_name || 'शेतकरी'}</span>
                                 {b.animal_type && ` • ${b.animal_type}`}
                               </p>
                               {b.description && (
@@ -847,7 +848,7 @@ export default function DoctorDashboard() {
                                 ) : (
                                   <>
                                     <CheckCircle className="w-5 h-5" />
-                                    Confirm
+                                    पुष्टी करा
                                   </>
                                 )}
                               </button>
@@ -857,7 +858,7 @@ export default function DoctorDashboard() {
                                 className="flex items-center gap-2 px-5 py-2.5 border-2 border-red-200 text-red-600 font-semibold rounded-xl hover:bg-red-50 transition-colors disabled:opacity-50"
                               >
                                 <XCircle className="w-5 h-5" />
-                                Decline
+                                नाकारा
                               </button>
                             </div>
                           </div>
@@ -871,13 +872,13 @@ export default function DoctorDashboard() {
                 <div>
                   <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-4">
                     <Calendar className="w-5 h-5 text-blue-500" />
-                    Upcoming Appointments
+                    आगामी अपॉइंटमेंट
                   </h2>
 
                   {confirmedBookings.length === 0 ? (
                     <div className="bg-white rounded-2xl border border-slate-100 p-8 text-center">
                       <Calendar className="w-10 h-10 mx-auto text-slate-300 mb-2" />
-                      <p className="text-sm text-slate-500">No upcoming appointments</p>
+                      <p className="text-sm text-slate-500">कोणतीही आगामी अपॉइंटमेंट नाही</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -891,11 +892,11 @@ export default function DoctorDashboard() {
                                   {b.time_slot}
                                 </span>
                                 <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-md text-xs font-bold uppercase">
-                                  Confirmed
+                                  पुष्टी झाली
                                 </span>
                               </div>
                               <p className="text-slate-600">
-                                <span className="font-medium">{b.farmer_name || 'Farmer'}</span>
+                                <span className="font-medium">{b.farmer_name || 'शेतकरी'}</span>
                                 {b.animal_type && ` • ${b.animal_type}`}
                               </p>
                               {b.farmer_phone && (
@@ -912,7 +913,7 @@ export default function DoctorDashboard() {
                                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                                 >
                                   <Phone className="w-4 h-4" />
-                                  Call
+                                  कॉल करा
                                 </a>
                               )}
                               <button
@@ -925,7 +926,7 @@ export default function DoctorDashboard() {
                                 ) : (
                                   <>
                                     <CheckCircle className="w-4 h-4" />
-                                    Complete
+                                    पूर्ण करा
                                   </>
                                 )}
                               </button>
@@ -942,7 +943,7 @@ export default function DoctorDashboard() {
                   <div>
                     <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-4">
                       <Activity className="w-5 h-5 text-slate-500" />
-                      Past Appointments
+                      मागील अपॉइंटमेंट
                     </h2>
                     <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
                       <div className="divide-y divide-slate-100">
@@ -953,7 +954,7 @@ export default function DoctorDashboard() {
                             <div key={b.id} className="p-4 flex items-center justify-between hover:bg-slate-50">
                               <div>
                                 <p className="text-sm font-medium text-slate-900">
-                                  {b.farmer_name} • {b.animal_type || 'General'}
+                                  {b.farmer_name} • {b.animal_type || 'सामान्य'}
                                 </p>
                                 <p className="text-xs text-slate-500">
                                   {formatDate(b.booking_date)} at {b.time_slot}
@@ -983,10 +984,10 @@ export default function DoctorDashboard() {
                       </div>
                       <div className="text-white">
                         <h2 className="text-2xl font-bold">Dr. {profile.full_name}</h2>
-                        <p className="text-blue-100">{profile.specialization || 'General Veterinarian'}</p>
+                        <p className="text-blue-100">{profile.specialization || 'सामान्य पशुवैद्यक'}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <CheckCircle className="w-4 h-4 text-emerald-300" />
-                          <span className="text-sm text-emerald-200">Verified Doctor</span>
+                          <span className="text-sm text-emerald-200">सत्यापित डॉक्टर</span>
                         </div>
                       </div>
                     </div>
@@ -996,21 +997,21 @@ export default function DoctorDashboard() {
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       <div className="text-center p-4 bg-slate-50 rounded-xl">
                         <div className="text-3xl font-bold text-blue-600">{profile.total_bookings}</div>
-                        <div className="text-xs text-slate-500 mt-1">Total Bookings</div>
+                        <div className="text-xs text-slate-500 mt-1">एकूण बुकिंग्ज</div>
                       </div>
                       <div className="text-center p-4 bg-slate-50 rounded-xl">
                         <div className="text-3xl font-bold text-emerald-600">{profile.completed_bookings}</div>
-                        <div className="text-xs text-slate-500 mt-1">Completed</div>
+                        <div className="text-xs text-slate-500 mt-1">पूर्ण</div>
                       </div>
                       <div className="text-center p-4 bg-slate-50 rounded-xl">
                         <div className="text-3xl font-bold text-red-600">{profile.handled_emergencies}</div>
-                        <div className="text-xs text-slate-500 mt-1">Emergencies</div>
+                        <div className="text-xs text-slate-500 mt-1">आपत्कालीन</div>
                       </div>
                       <div className="text-center p-4 bg-slate-50 rounded-xl">
                         <div className="text-3xl font-bold text-amber-600">
                           {profile.years_of_experience || 0}
                         </div>
-                        <div className="text-xs text-slate-500 mt-1">Years Exp.</div>
+                        <div className="text-xs text-slate-500 mt-1">वर्षे अनुभव</div>
                       </div>
                     </div>
                   </div>
@@ -1018,14 +1019,14 @@ export default function DoctorDashboard() {
 
                 {/* Details */}
                 <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-                  <h3 className="font-bold text-slate-900 mb-4">Professional Information</h3>
+                  <h3 className="font-bold text-slate-900 mb-4">व्यावसायिक माहिती</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="flex items-start gap-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
                         <Phone className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400">Phone</p>
+                        <p className="text-xs text-slate-400">फोन</p>
                         <p className="font-medium text-slate-900">{profile.phone}</p>
                       </div>
                     </div>
@@ -1034,8 +1035,8 @@ export default function DoctorDashboard() {
                         <Award className="w-5 h-5 text-emerald-600" />
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400">Specialization</p>
-                        <p className="font-medium text-slate-900">{profile.specialization || 'General'}</p>
+                        <p className="text-xs text-slate-400">विशेषज्ञता</p>
+                        <p className="font-medium text-slate-900">{profile.specialization || 'सामान्य'}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
@@ -1043,7 +1044,7 @@ export default function DoctorDashboard() {
                         <FileText className="w-5 h-5 text-amber-600" />
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400">License Number</p>
+                        <p className="text-xs text-slate-400">परवाना क्रमांक</p>
                         <p className="font-medium text-slate-900 font-mono">{profile.veterinary_license || 'N/A'}</p>
                       </div>
                     </div>
@@ -1052,7 +1053,7 @@ export default function DoctorDashboard() {
                         <Building className="w-5 h-5 text-violet-600" />
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400">College</p>
+                        <p className="text-xs text-slate-400">महाविद्यालय</p>
                         <p className="font-medium text-slate-900">{profile.veterinary_college || 'N/A'}</p>
                       </div>
                     </div>
@@ -1061,9 +1062,9 @@ export default function DoctorDashboard() {
                         <Briefcase className="w-5 h-5 text-slate-600" />
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400">Experience</p>
+                        <p className="text-xs text-slate-400">अनुभव</p>
                         <p className="font-medium text-slate-900">
-                          {profile.years_of_experience != null ? `${profile.years_of_experience} years` : 'N/A'}
+                          {profile.years_of_experience != null ? `${profile.years_of_experience} वर्षे` : 'N/A'}
                         </p>
                       </div>
                     </div>
@@ -1073,7 +1074,7 @@ export default function DoctorDashboard() {
                           <MapPin className="w-5 h-5 text-rose-600" />
                         </div>
                         <div>
-                          <p className="text-xs text-slate-400">Address</p>
+                          <p className="text-xs text-slate-400">पत्ता</p>
                           <p className="font-medium text-slate-900">{profile.address}</p>
                         </div>
                       </div>
@@ -1087,18 +1088,18 @@ export default function DoctorDashboard() {
                 }`}>
                   <h3 className="font-bold text-slate-900 mb-2 flex items-center gap-2">
                     <MapPin className="w-5 h-5 text-blue-600" />
-                    Emergency Location
+                    आपत्कालीन स्थान
                   </h3>
                   <p className="text-sm text-slate-500 mb-4">
                     {profile.latitude
-                      ? 'Your location is set. Emergency requests from nearby farmers will be sent to you.'
-                      : 'Set your location so farmers can find you for emergencies. This is required to receive emergency SOS requests.'}
+                      ? 'तुमचे स्थान सेट आहे. जवळच्या शेतकऱ्यांकडून आपत्कालीन विनंत्या तुम्हाला पाठवल्या जातील.'
+                      : 'तुमचे स्थान सेट करा जेणेकरून शेतकरी तुम्हाला आपत्कालीन परिस्थितीत शोधू शकतील. आपत्कालीन SOS विनंत्या मिळवण्यासाठी हे आवश्यक आहे.'}
                   </p>
 
                   {profile.latitude && profile.longitude && (
                     <div className="bg-emerald-50 rounded-xl p-3 mb-4 flex items-center gap-2 text-sm text-emerald-700">
                       <CheckCircle className="w-4 h-4 flex-shrink-0" />
-                      <span>Current: {profile.latitude.toFixed(4)}, {profile.longitude.toFixed(4)}</span>
+                      <span>सध्याचे: {profile.latitude.toFixed(4)}, {profile.longitude.toFixed(4)}</span>
                       {profile.address && <span className="text-emerald-500">({profile.address})</span>}
                     </div>
                   )}
@@ -1106,7 +1107,7 @@ export default function DoctorDashboard() {
                   {!profile.latitude && (
                     <div className="bg-amber-50 rounded-xl p-3 mb-4 flex items-center gap-2 text-sm text-amber-700">
                       <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-                      <span>Location not set — you won&apos;t receive emergency requests!</span>
+                      <span>स्थान सेट नाही — तुम्हाला आपत्कालीन विनंत्या मिळणार नाहीत!</span>
                     </div>
                   )}
 
@@ -1115,7 +1116,7 @@ export default function DoctorDashboard() {
                       type="text"
                       value={locationAddress}
                       onChange={(e) => setLocationAddress(e.target.value)}
-                      placeholder="Clinic / area name (optional)"
+                      placeholder="दवाखाना / परिसराचे नाव (ऐच्छिक)"
                       className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all text-slate-900 placeholder-slate-400 text-sm"
                     />
                     <button
@@ -1128,7 +1129,7 @@ export default function DoctorDashboard() {
                       ) : (
                         <>
                           <MapPin className="w-4 h-4" />
-                          {profile.latitude ? 'Update Location' : 'Set My Location'}
+                          {profile.latitude ? 'स्थान अपडेट करा' : 'माझे स्थान सेट करा'}
                         </>
                       )}
                     </button>
@@ -1145,7 +1146,7 @@ export default function DoctorDashboard() {
         <FarmerLocationMap
           farmerLat={mapEmergency.latitude}
           farmerLon={mapEmergency.longitude}
-          farmerName={mapEmergency.farmer_name || 'Farmer'}
+          farmerName={mapEmergency.farmer_name || 'शेतकरी'}
           animalType={mapEmergency.animal_type}
           onClose={() => setMapEmergency(null)}
         />

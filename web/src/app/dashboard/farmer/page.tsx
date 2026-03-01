@@ -76,11 +76,11 @@ async function apiFetch(path: string, opts?: RequestInit) {
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'Just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return 'आत्ताच';
+  if (mins < 60) return `${mins} मि. पूर्वी`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
+  if (hrs < 24) return `${hrs} तास पूर्वी`;
+  return `${Math.floor(hrs / 24)} दिवस पूर्वी`;
 }
 
 const TIME_SLOTS = [
@@ -94,7 +94,7 @@ const TIME_SLOTS = [
   '05:00 PM - 06:00 PM',
 ];
 
-const ANIMAL_TYPES = ['Cow', 'Buffalo', 'Goat', 'Sheep', 'Poultry', 'Horse', 'Dog', 'Cat', 'Other'];
+const ANIMAL_TYPES = ['गाय', 'म्हैस', 'बकरी', 'मेंढी', 'कुक्कुटपालन', 'घोडा', 'कुत्रा', 'मांजर', 'इतर'];
 
 export default function FarmerDashboard() {
   const { user, loading: authLoading, logout } = useAuth();
@@ -124,6 +124,8 @@ export default function FarmerDashboard() {
   const [sosLocation, setSosLocation] = useState('');
   const [sosLoading, setSosLoading] = useState(false);
 
+
+
   const fetchDoctors = useCallback(async () => {
     try {
       const { doctors: data } = await apiFetch('/api/vet/doctors');
@@ -147,6 +149,10 @@ export default function FarmerDashboard() {
     } catch {}
     setLoadingEmg(false);
   }, []);
+
+
+
+
 
   // Auth guard
   useEffect(() => {
@@ -240,9 +246,9 @@ export default function FarmerDashboard() {
   };
 
   const tabItems = [
-    { key: 'doctors' as Tab, label: 'Find Doctors', icon: Stethoscope },
-    { key: 'bookings' as Tab, label: 'My Bookings', icon: Calendar },
-    { key: 'emergencies' as Tab, label: 'Emergencies', icon: AlertTriangle },
+    { key: 'doctors' as Tab, label: 'डॉक्टर शोधा', icon: Stethoscope },
+    { key: 'bookings' as Tab, label: 'माझी बुकिंग्ज', icon: Calendar },
+    { key: 'emergencies' as Tab, label: 'आपत्कालीन', icon: AlertTriangle },
   ];
 
   const todayStr = new Date().toISOString().split('T')[0];
@@ -257,7 +263,7 @@ export default function FarmerDashboard() {
               <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
                 <Leaf className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-lg text-gradient">Farmer Panel</span>
+              <span className="font-bold text-lg text-gradient">शेतकरी पॅनेल</span>
             </Link>
             <div className="flex items-center gap-3">
               {/* SOS Button */}
@@ -266,7 +272,7 @@ export default function FarmerDashboard() {
                 className="flex items-center gap-1.5 px-4 py-2 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors text-sm shadow-lg shadow-red-500/30 animate-pulse hover:animate-none"
               >
                 <Siren className="w-4 h-4" />
-                <span className="hidden sm:inline">Emergency SOS</span>
+                <span className="hidden sm:inline">आपत्कालीन SOS</span>
                 <span className="sm:hidden">SOS</span>
               </button>
               <button
@@ -274,7 +280,7 @@ export default function FarmerDashboard() {
                 className="flex items-center gap-2 text-sm text-slate-500 hover:text-red-500 transition-colors"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">लॉग आउट</span>
               </button>
             </div>
           </div>
@@ -310,7 +316,7 @@ export default function FarmerDashboard() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search doctors by name or specialization..."
+                  placeholder="नाव किंवा विशेषतेनुसार डॉक्टर शोधा..."
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-slate-900 placeholder-slate-400"
                 />
               </div>
@@ -325,9 +331,9 @@ export default function FarmerDashboard() {
             ) : filteredDoctors.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
                 <Stethoscope className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                <p className="text-slate-600 font-medium">No verified doctors found</p>
+                <p className="text-slate-600 font-medium">कोणतेही सत्यापित डॉक्टर सापडले नाहीत</p>
                 <p className="text-sm text-slate-400 mt-1">
-                  {searchQuery ? 'Try a different search term' : 'Doctors will appear once verified by admin'}
+                  {searchQuery ? 'वेगळा शोध शब्द वापरा' : 'प्रशासकाने सत्यापित केल्यावर डॉक्टर दिसतील'}
                 </p>
               </div>
             ) : (
@@ -352,7 +358,7 @@ export default function FarmerDashboard() {
                           {doc.years_of_experience != null && (
                             <span className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-md">
                               <Award className="w-3 h-3" />
-                              {doc.years_of_experience} yrs exp
+                              {doc.years_of_experience} वर्षे अनुभव
                             </span>
                           )}
                           {doc.veterinary_college && (
@@ -373,7 +379,7 @@ export default function FarmerDashboard() {
                       }}
                       className="mt-4 w-full py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 transition-colors"
                     >
-                      Book Appointment
+                      अपॉइंटमेंट बुक करा
                     </button>
                   </motion.div>
                 ))}
@@ -387,7 +393,7 @@ export default function FarmerDashboard() {
           <div className="space-y-4">
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <Calendar className="w-5 h-5 text-emerald-500" />
-              My Bookings
+              माझी बुकिंग्ज
             </h2>
 
             {loadingBook ? (
@@ -399,8 +405,8 @@ export default function FarmerDashboard() {
             ) : bookings.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
                 <Calendar className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                <p className="text-slate-600 font-medium">No bookings yet</p>
-                <p className="text-sm text-slate-400 mt-1">Book an appointment with a verified doctor</p>
+                <p className="text-slate-600 font-medium">अजून बुकिंग नाही</p>
+                <p className="text-sm text-slate-400 mt-1">सत्यापित डॉक्टरांशी अपॉइंटमेंट बुक करा</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -412,7 +418,7 @@ export default function FarmerDashboard() {
                     className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <h3 className="font-semibold text-slate-900">Dr. {b.doctor_name || 'Doctor'}</h3>
+                      <h3 className="font-semibold text-slate-900">डॉ. {b.doctor_name || 'डॉक्टर'}</h3>
                       <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-md ${statusColor[b.status] || 'bg-slate-100 text-slate-600'}`}>
                         {b.status}
                       </span>
@@ -434,7 +440,7 @@ export default function FarmerDashboard() {
           <div className="space-y-4">
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-red-500" />
-              My Emergency Requests
+              माझ्या आपत्कालीन विनंत्या
             </h2>
 
             {loadingEmg ? (
@@ -446,8 +452,8 @@ export default function FarmerDashboard() {
             ) : emergencies.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
                 <AlertTriangle className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                <p className="text-slate-600 font-medium">No emergency requests</p>
-                <p className="text-sm text-slate-400 mt-1">Use the Emergency SOS button for critical situations</p>
+                <p className="text-slate-600 font-medium">सध्या कोणतीही आपत्कालीन विनंती नाही</p>
+                <p className="text-sm text-slate-400 mt-1">गंभीर परिस्थितीसाठी आपत्कालीन SOS बटण वापरा</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -476,13 +482,13 @@ export default function FarmerDashboard() {
                     {emg.status === 'accepted' && emg.doctor_name && (
                       <p className="text-sm text-blue-600 font-medium mt-2 flex items-center gap-1">
                         <Stethoscope className="w-3.5 h-3.5" />
-                        Dr. {emg.doctor_name} accepted your request
+                        डॉ. {emg.doctor_name} यांनी तुमची विनंती स्वीकारली
                       </p>
                     )}
                     {emg.status === 'completed' && (
                       <p className="text-sm text-emerald-600 font-medium mt-2 flex items-center gap-1">
                         <CheckCircle className="w-3.5 h-3.5" />
-                        Case resolved
+                        प्रकरण निकाली निघाले
                       </p>
                     )}
                   </motion.div>
@@ -491,6 +497,7 @@ export default function FarmerDashboard() {
             )}
           </div>
         )}
+
       </main>
 
       {/* ==================== BOOKING MODAL ==================== */}
@@ -511,7 +518,7 @@ export default function FarmerDashboard() {
             >
               <div className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-slate-900">Book Appointment</h2>
+                  <h2 className="text-lg font-bold text-slate-900">अपॉइंटमेंट बुक करा</h2>
                   <button onClick={() => setBookingDoctor(null)} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
                     <X className="w-5 h-5 text-slate-500" />
                   </button>
@@ -523,14 +530,14 @@ export default function FarmerDashboard() {
                     <Stethoscope className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900">Dr. {bookingDoctor.full_name}</p>
-                    <p className="text-sm text-blue-600">{bookingDoctor.specialization || 'General Veterinary'}</p>
+                    <p className="font-semibold text-slate-900">डॉ. {bookingDoctor.full_name}</p>
+                    <p className="text-sm text-blue-600">{bookingDoctor.specialization || 'सामान्य पशुवैद्यकीय'}</p>
                   </div>
                 </div>
 
                 {/* Date */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Appointment Date</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">अपॉइंटमेंट तारीख</label>
                   <input
                     type="date"
                     min={todayStr}
@@ -543,7 +550,7 @@ export default function FarmerDashboard() {
 
                 {/* Time Slot */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Time Slot</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">वेळ निवडा</label>
                   <div className="grid grid-cols-2 gap-2">
                     {TIME_SLOTS.map((slot) => (
                       <button
@@ -564,13 +571,13 @@ export default function FarmerDashboard() {
 
                 {/* Animal Type */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Animal Type</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">प्राण्याचा प्रकार</label>
                   <select
                     value={bookAnimal}
                     onChange={(e) => setBookAnimal(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-slate-900"
                   >
-                    <option value="">Select animal</option>
+                    <option value="">प्राणी निवडा</option>
                     {ANIMAL_TYPES.map((a) => (
                       <option key={a} value={a}>{a}</option>
                     ))}
@@ -579,13 +586,13 @@ export default function FarmerDashboard() {
 
                 {/* Description */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Description (optional)</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">वर्णन (ऐच्छिक)</label>
                   <textarea
                     value={bookDesc}
                     onChange={(e) => setBookDesc(e.target.value)}
                     rows={3}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-slate-900 placeholder-slate-400 resize-none"
-                    placeholder="Describe the issue..."
+                    placeholder="समस्येचे वर्णन करा..."
                   />
                 </div>
 
@@ -599,7 +606,7 @@ export default function FarmerDashboard() {
                   ) : (
                     <>
                       <Calendar className="w-4 h-4" />
-                      Confirm Booking
+                      बुकिंग पुष्टी करा
                     </>
                   )}
                 </button>
@@ -629,7 +636,7 @@ export default function FarmerDashboard() {
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-bold text-red-700 flex items-center gap-2">
                     <Siren className="w-5 h-5" />
-                    Emergency SOS
+                    आपत्कालीन SOS
                   </h2>
                   <button onClick={() => setShowSOS(false)} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
                     <X className="w-5 h-5 text-slate-500" />
@@ -637,19 +644,19 @@ export default function FarmerDashboard() {
                 </div>
 
                 <p className="text-sm text-slate-500">
-                  This broadcasts an urgent alert to <strong>all nearby veterinary doctors</strong>. Use only for critical situations.
+                  हे <strong>सर्व जवळच्या पशुवैद्यकीय डॉक्टरांना</strong> तातडीचा इशारा पाठवते. फक्त गंभीर परिस्थितीत वापरा.
                 </p>
 
                 {/* Animal Type */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Animal Type <span className="text-red-400">*</span></label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">प्राण्याचा प्रकार <span className="text-red-400">*</span></label>
                   <select
                     value={sosAnimal}
                     onChange={(e) => setSosAnimal(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none transition-all text-slate-900"
                     required
                   >
-                    <option value="">Select animal</option>
+                    <option value="">प्राणी निवडा</option>
                     {ANIMAL_TYPES.map((a) => (
                       <option key={a} value={a}>{a}</option>
                     ))}
@@ -658,26 +665,26 @@ export default function FarmerDashboard() {
 
                 {/* Description */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">What happened? <span className="text-red-400">*</span></label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">काय झाले? <span className="text-red-400">*</span></label>
                   <textarea
                     value={sosDesc}
                     onChange={(e) => setSosDesc(e.target.value)}
                     rows={3}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none transition-all text-slate-900 placeholder-slate-400 resize-none"
-                    placeholder="Describe the emergency..."
+                    placeholder="आपत्कालीन परिस्थितीचे वर्णन करा..."
                     required
                   />
                 </div>
 
                 {/* Location */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Location</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">स्थान</label>
                   <input
                     type="text"
                     value={sosLocation}
                     onChange={(e) => setSosLocation(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none transition-all text-slate-900 placeholder-slate-400"
-                    placeholder="Village / area name"
+                    placeholder="गाव / परिसराचे नाव"
                   />
                 </div>
 
@@ -691,7 +698,7 @@ export default function FarmerDashboard() {
                   ) : (
                     <>
                       <Siren className="w-5 h-5" />
-                      Send Emergency Alert
+                      आपत्कालीन इशारा पाठवा
                     </>
                   )}
                 </button>

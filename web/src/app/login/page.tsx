@@ -4,14 +4,15 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { Leaf, User, Stethoscope, ShieldCheck, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Leaf, User, Stethoscope, ShieldCheck, ShoppingCart, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
 
-type Role = 'farmer' | 'doctor' | 'admin';
+type Role = 'farmer' | 'doctor' | 'buyer' | 'admin';
 
 const roles = [
-  { key: 'farmer' as Role, label: 'Farmer', icon: User, color: 'emerald' },
-  { key: 'doctor' as Role, label: 'Veterinary Doctor', icon: Stethoscope, color: 'blue' },
-  { key: 'admin' as Role, label: 'Admin', icon: ShieldCheck, color: 'amber' },
+  { key: 'farmer' as Role, label: 'शेतकरी', icon: User, color: 'emerald' },
+  { key: 'doctor' as Role, label: 'पशुवैद्यकीय डॉक्टर', icon: Stethoscope, color: 'blue' },
+  { key: 'buyer' as Role, label: 'खरेदीदार', icon: ShoppingCart, color: 'purple' },
+  { key: 'admin' as Role, label: 'अॅडमिन', icon: ShieldCheck, color: 'amber' },
 ];
 
 export default function LoginPage() {
@@ -91,6 +92,7 @@ export default function LoginPage() {
   const accentMap: Record<Role, string> = {
     farmer: 'emerald',
     doctor: 'blue',
+    buyer: 'purple',
     admin: 'amber',
   };
   const accent = accentMap[role];
@@ -110,13 +112,13 @@ export default function LoginPage() {
             </div>
             <span className="text-2xl font-bold text-gradient">MANDIMITRA</span>
           </Link>
-          <p className="mt-2 text-slate-500">Sign in to your account</p>
+          <p className="mt-2 text-slate-500">तुमच्या खात्यात लॉग इन करा</p>
         </div>
 
         {/* Card */}
         <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
           {/* Role Tabs */}
-          <div className="grid grid-cols-3 border-b border-slate-100">
+          <div className="grid grid-cols-4 border-b border-slate-100">
             {roles.map((r) => (
               <button
                 key={r.key}
@@ -127,6 +129,8 @@ export default function LoginPage() {
                       ? 'text-emerald-600'
                       : r.key === 'doctor'
                       ? 'text-blue-600'
+                      : r.key === 'buyer'
+                      ? 'text-purple-600'
                       : 'text-amber-600'
                     : 'text-slate-400 hover:text-slate-600'
                 }`}
@@ -141,6 +145,8 @@ export default function LoginPage() {
                         ? 'bg-emerald-500'
                         : r.key === 'doctor'
                         ? 'bg-blue-500'
+                        : r.key === 'buyer'
+                        ? 'bg-purple-500'
                         : 'bg-amber-500'
                     }`}
                   />
@@ -175,7 +181,7 @@ export default function LoginPage() {
                 className="space-y-4"
               >
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">ईमेल</label>
                   <input
                     type="email"
                     required
@@ -186,7 +192,7 @@ export default function LoginPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">पासवर्ड</label>
                   <div className="relative">
                     <input
                       type={showPassword ? 'text' : 'password'}
@@ -211,10 +217,12 @@ export default function LoginPage() {
                   className={`w-full py-3 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2 ${
                     role === 'doctor'
                       ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-lg shadow-blue-500/30'
+                      : role === 'buyer'
+                      ? 'bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 shadow-lg shadow-purple-500/30'
                       : 'bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 shadow-lg shadow-emerald-500/30'
                   } disabled:opacity-50`}
                 >
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Sign In <ArrowRight className="w-4 h-4" /></>}
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>लॉग इन <ArrowRight className="w-4 h-4" /></>}
                 </button>
               </motion.form>
             )}
@@ -233,17 +241,17 @@ export default function LoginPage() {
                   <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-100 mb-3">
                     <ShieldCheck className="w-7 h-7 text-amber-600" />
                   </div>
-                  <p className="text-sm text-slate-500">Step 1 of 2 — Verify Admin Identity</p>
+                  <p className="text-sm text-slate-500">पायरी 1 / 2 — अॅडमिन ओळख पडताळणी</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Admin ID</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">अॅडमिन ID</label>
                   <input
                     type="text"
                     required
                     value={adminId}
                     onChange={(e) => setAdminId(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-100 outline-none transition-all text-slate-900 placeholder-slate-400 text-center tracking-widest text-lg"
-                    placeholder="Enter Admin ID"
+                    placeholder="अॅडमिन ID टाका"
                   />
                 </div>
                 <button
@@ -251,7 +259,7 @@ export default function LoginPage() {
                   disabled={loading}
                   className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 shadow-lg shadow-amber-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Verify <ArrowRight className="w-4 h-4" /></>}
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>पडताळणी करा <ArrowRight className="w-4 h-4" /></>}
                 </button>
               </motion.form>
             )}
@@ -270,11 +278,11 @@ export default function LoginPage() {
                   <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-100 mb-3">
                     <ShieldCheck className="w-7 h-7 text-emerald-600" />
                   </div>
-                  <p className="text-sm text-emerald-600 font-medium">ID Verified ✓</p>
-                  <p className="text-sm text-slate-500">Step 2 of 2 — Enter Admin Credentials</p>
+                  <p className="text-sm text-emerald-600 font-medium">ID पडताळणी व्हाली ✓</p>
+                  <p className="text-sm text-slate-500">पायरी 2 / 2 — अॅडमिन माहिती टाका</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">ईमेल</label>
                   <input
                     type="email"
                     required
@@ -285,7 +293,7 @@ export default function LoginPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">पासवर्ड</label>
                   <div className="relative">
                     <input
                       type={showPassword ? 'text' : 'password'}
@@ -309,14 +317,14 @@ export default function LoginPage() {
                   disabled={loading}
                   className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 shadow-lg shadow-amber-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Sign In as Admin <ArrowRight className="w-4 h-4" /></>}
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>अॅडमिन लॉग इन <ArrowRight className="w-4 h-4" /></>}
                 </button>
                 <button
                   type="button"
                   onClick={() => { setAdminStep(1); setError(''); }}
                   className="w-full text-sm text-slate-400 hover:text-slate-600 transition-colors"
                 >
-                  ← Back to ID verification
+                  ← ID पडताळणीवर परत जा
                 </button>
               </motion.form>
             )}
@@ -327,7 +335,7 @@ export default function LoginPage() {
             <div className="px-6 pb-6 text-center text-sm text-slate-500">
               Don&apos;t have an account?{' '}
               <Link href="/signup" className="text-emerald-600 font-medium hover:text-emerald-700 transition-colors">
-                Sign up
+                नोंदणी करा
               </Link>
             </div>
           )}

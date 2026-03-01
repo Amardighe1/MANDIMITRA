@@ -127,14 +127,14 @@ export default function CropRiskPage() {
           >
             <div className="inline-flex items-center px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-4">
               <Shield className="w-4 h-4 mr-2" />
-              AI-Powered Risk Assessment
+              AI-आधारित जोखीम मूल्यांकन
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4">
-              Crop Risk <span className="text-gradient">Advisor</span>
+              Crop Risk <span className="text-gradient">सल्लागार</span>
             </h1>
             <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto px-2">
-              Get instant AI-powered risk assessment for your crops based on weather, 
-              growth stage, and historical patterns.
+              हवामान, वाढीची अवस्था आणि ऐतिहासिक माहितीवर आधारित 
+              AI-आधारित पीक जोखीम मूल्यांकन मिळवा.
             </p>
           </motion.div>
 
@@ -148,14 +148,14 @@ export default function CropRiskPage() {
               <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 p-5 sm:p-8 border border-slate-100">
                 <h2 className="text-xl font-semibold text-slate-900 mb-6 flex items-center">
                   <Leaf className="w-5 h-5 mr-2 text-emerald-500" />
-                  Enter Crop Details
+                  पीक माहिती टाका
                 </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Crop Selection */}
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
-                      Select Crop
+                      पीक निवडा
                     </label>
                     <select
                       value={selectedCrop}
@@ -163,7 +163,7 @@ export default function CropRiskPage() {
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                       required
                     >
-                      <option value="">Choose a crop...</option>
+                      <option value="">पीक निवडा...</option>
                       {crops.map((crop) => (
                         <option key={crop} value={crop}>{crop}</option>
                       ))}
@@ -174,7 +174,7 @@ export default function CropRiskPage() {
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       <MapPin className="w-4 h-4 inline mr-1" />
-                      District
+                      जिल्हा
                     </label>
                     <select
                       value={selectedDistrict}
@@ -182,7 +182,7 @@ export default function CropRiskPage() {
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                       required
                     >
-                      <option value="">Choose a district...</option>
+                      <option value="">जिल्हा निवडा...</option>
                       {districts.map((district) => (
                         <option key={district} value={district}>{district}</option>
                       ))}
@@ -193,7 +193,7 @@ export default function CropRiskPage() {
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       <Calendar className="w-4 h-4 inline mr-1" />
-                      Sowing Date
+                      पेरणीची तारीख
                     </label>
                     <input
                       type="date"
@@ -221,11 +221,11 @@ export default function CropRiskPage() {
                     {isLoading ? (
                       <>
                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        Analyzing...
+                        विश्लेषण सुरू आहे...
                       </>
                     ) : (
                       <>
-                        Assess Crop Risk
+                        पीक जोखीम तपासा
                         <ArrowRight className="w-5 h-5 ml-2" />
                       </>
                     )}
@@ -237,8 +237,8 @@ export default function CropRiskPage() {
                   <div className="flex items-start">
                     <Info className="w-5 h-5 text-slate-400 mr-3 mt-0.5" />
                     <div className="text-sm text-slate-600">
-                      <p className="font-medium text-slate-700 mb-1">How it works</p>
-                      <p>Our AI analyzes weather forecasts, crop growth stages, and historical data to predict potential risks and provide actionable recommendations.</p>
+                      <p className="font-medium text-slate-700 mb-1">हे कसे काम करते</p>
+                      <p>आमचे AI हवामान अंदाज, पीक वाढीची अवस्था आणि ऐतिहासिक माहितीचे विश्लेषण करते आणि उपयुक्त शिफारसी देते.</p>
                     </div>
                   </div>
                 </div>
@@ -267,14 +267,14 @@ export default function CropRiskPage() {
                         <p className="text-sm sm:text-base text-slate-500 truncate">{result.district} • {result.current_stage}</p>
                       </div>
                       <div className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold border whitespace-nowrap flex-shrink-0 ${getRiskBg(result.risk_level)}`}>
-                        {result.risk_level} Risk
+                        {result.risk_level} जोखीम
                       </div>
                     </div>
 
                     {/* Risk Meter */}
                     <div className="mb-6">
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-slate-500">Risk Score</span>
+                        <span className="text-slate-500">जोखीम गुण</span>
                         <span className="font-semibold text-slate-900">{Math.round(result.risk_score)}/100</span>
                       </div>
                       <div className="h-4 bg-slate-100 rounded-full overflow-hidden">
@@ -293,27 +293,27 @@ export default function CropRiskPage() {
                         <div className="text-xl sm:text-2xl font-bold text-emerald-600">
                           {(result.ml_probabilities.low * 100).toFixed(0)}%
                         </div>
-                        <div className="text-xs text-slate-500">Low Risk</div>
+                        <div className="text-xs text-slate-500">कमी जोखीम</div>
                       </div>
                       <div className="text-center p-3 sm:p-4 bg-amber-50 rounded-xl">
                         <div className="text-xl sm:text-2xl font-bold text-amber-600">
                           {(result.ml_probabilities.medium * 100).toFixed(0)}%
                         </div>
-                        <div className="text-xs text-slate-500">Medium</div>
+                        <div className="text-xs text-slate-500">मध्यम</div>
                       </div>
                       <div className="text-center p-3 sm:p-4 bg-red-50 rounded-xl">
                         <div className="text-xl sm:text-2xl font-bold text-red-600">
                           {(result.ml_probabilities.high * 100).toFixed(0)}%
                         </div>
-                        <div className="text-xs text-slate-500">High Risk</div>
+                        <div className="text-xs text-slate-500">जास्त जोखीम</div>
                       </div>
                     </div>
 
                     {/* Days Since Sowing */}
                     <div className="p-4 bg-slate-50 rounded-xl mb-6">
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-600">Days Since Sowing</span>
-                        <span className="font-semibold text-slate-900">{result.days_since_sowing} days</span>
+                        <span className="text-slate-600">पेरणीपासून दिवस</span>
+                        <span className="font-semibold text-slate-900">{result.days_since_sowing} दिवस</span>
                       </div>
                     </div>
 
@@ -321,7 +321,7 @@ export default function CropRiskPage() {
                     <div>
                       <h4 className="font-semibold text-slate-900 mb-3 flex items-center">
                         <CheckCircle2 className="w-5 h-5 mr-2 text-emerald-500" />
-                        Recommendations
+                        शिफारसी
                       </h4>
                       <div className="space-y-2">
                         {result.recommendations.slice(0, 4).map((rec, index) => (
@@ -347,11 +347,11 @@ export default function CropRiskPage() {
                       <Shield className="w-10 h-10 text-emerald-500" />
                     </div>
                     <h3 className="text-xl font-semibold text-slate-900 mb-2">
-                      Your Risk Assessment
+                      तुमचे जोखीम मूल्यांकन
                     </h3>
                     <p className="text-slate-500 max-w-sm">
-                      Fill in your crop details and click "Assess Crop Risk" to get 
-                      AI-powered insights and recommendations.
+                      पीक माहिती भरा आणि "पीक जोखीम तपासा" वर क्लिक करा 
+                      AI-आधारित माहिती आणि शिफारसी मिळवा.
                     </p>
                   </motion.div>
                 )}

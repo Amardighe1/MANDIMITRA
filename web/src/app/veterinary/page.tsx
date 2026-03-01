@@ -79,11 +79,11 @@ async function apiFetch(path: string, opts?: RequestInit) {
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'Just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return 'आत्ताच';
+  if (mins < 60) return `${mins} मि. पूर्वी`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
+  if (hrs < 24) return `${hrs} तास पूर्वी`;
+  return `${Math.floor(hrs / 24)} दिवस पूर्वी`;
 }
 
 const TIME_SLOTS = [
@@ -98,6 +98,27 @@ const TIME_SLOTS = [
 ];
 
 const ANIMAL_TYPES = ['Cow', 'Buffalo', 'Goat', 'Sheep', 'Poultry', 'Horse', 'Dog', 'Cat', 'Other'];
+
+const ANIMAL_LABELS: Record<string, string> = {
+  Cow: 'गाय',
+  Buffalo: 'म्हैस',
+  Goat: 'बकरी',
+  Sheep: 'मेंढी',
+  Poultry: 'कुक्कुटपालन',
+  Horse: 'घोडा',
+  Dog: 'कुत्रा',
+  Cat: 'मांजर',
+  Other: 'इतर',
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: 'प्रतीक्षेत',
+  confirmed: 'पुष्टी झाली',
+  completed: 'पूर्ण झाले',
+  cancelled: 'रद्द',
+  active: 'सक्रिय',
+  accepted: 'स्वीकारले',
+};
 
 /* ── Component ─────────────────────────────────────────────────────────── */
 export default function VeterinaryPage() {
@@ -235,7 +256,7 @@ export default function VeterinaryPage() {
   const handleSOS = async () => {
     if (!sosAnimal || !sosDesc) return;
     if (!sosLat || !sosLon) {
-      alert('GPS location is required. Please enable location services and try again.');
+      alert('GPS स्थान आवश्यक आहे. कृपया स्थान सेवा सुरू करा आणि पुन्हा प्रयत्न करा.');
       return;
     }
     setSosLoading(true);
@@ -295,9 +316,9 @@ export default function VeterinaryPage() {
   };
 
   const tabItems = [
-    { key: 'doctors' as Tab, label: 'Find Doctors', icon: Stethoscope },
-    { key: 'bookings' as Tab, label: 'My Bookings', icon: Calendar, badge: bookings.filter((b) => b.status === 'confirmed').length },
-    { key: 'emergencies' as Tab, label: 'My Emergencies', icon: AlertTriangle, badge: emergencies.filter((e) => e.status === 'active' || e.status === 'accepted').length },
+    { key: 'doctors' as Tab, label: 'डॉक्टर शोधा', icon: Stethoscope },
+    { key: 'bookings' as Tab, label: 'माझी बुकिंग्ज', icon: Calendar, badge: bookings.filter((b) => b.status === 'confirmed').length },
+    { key: 'emergencies' as Tab, label: 'माझी आपत्कालीन विनंत्या', icon: AlertTriangle, badge: emergencies.filter((e) => e.status === 'active' || e.status === 'accepted').length },
   ];
 
   const todayStr = new Date().toISOString().split('T')[0];
@@ -318,22 +339,22 @@ export default function VeterinaryPage() {
                 className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-emerald-600 transition-colors mb-2"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back to Home
+                मुख्यपृष्ठावर परत
               </Link>
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 flex items-center gap-3">
                 <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
                   <Stethoscope className="w-5 h-5 text-blue-600" />
                 </div>
-                Veterinary Services
+                पशुवैद्यकीय सेवा
               </h1>
-              <p className="text-slate-500 mt-1">Book appointments & get emergency help for your animals</p>
+              <p className="text-slate-500 mt-1">अपॉइंटमेंट बुक करा आणि आपल्या प्राण्यांसाठी आपत्कालीन मदत मिळवा</p>
             </div>
             <button
               onClick={() => setShowSOS(true)}
               className="flex-shrink-0 flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors text-sm shadow-lg shadow-red-500/30 animate-pulse hover:animate-none"
             >
               <Siren className="w-5 h-5" />
-              <span className="hidden sm:inline">Emergency SOS</span>
+              <span className="hidden sm:inline">आपत्कालीन SOS</span>
               <span className="sm:hidden">SOS</span>
             </button>
           </div>
@@ -375,7 +396,7 @@ export default function VeterinaryPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by name or specialization..."
+                placeholder="नाव किंवा विशेषज्ञतेनुसार शोधा..."
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-slate-900 placeholder-slate-400"
               />
             </div>
@@ -389,9 +410,9 @@ export default function VeterinaryPage() {
             ) : filteredDoctors.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
                 <Stethoscope className="w-14 h-14 mx-auto text-slate-300 mb-3" />
-                <p className="text-slate-600 font-medium text-lg">No verified doctors found</p>
+                <p className="text-slate-600 font-medium text-lg">पडताळणी झालेले डॉक्टर सापडले नाहीत</p>
                 <p className="text-sm text-slate-400 mt-1">
-                  {searchQuery ? 'Try a different search term' : 'Doctors will appear once verified by admin'}
+                  {searchQuery ? 'वेगळा शोध शब्द वापरून पहा' : 'प्रशासकाने पडताळणी केल्यावर डॉक्टर दिसतील'}
                 </p>
               </div>
             ) : (
@@ -409,8 +430,8 @@ export default function VeterinaryPage() {
                           <Stethoscope className="w-6 h-6 text-blue-600" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-slate-900 truncate">Dr. {doc.full_name}</h3>
-                          <p className="text-sm text-blue-600 font-medium">{doc.specialization || 'General Veterinary'}</p>
+                          <h3 className="font-bold text-slate-900 truncate">डॉ. {doc.full_name}</h3>
+                          <p className="text-sm text-blue-600 font-medium">{doc.specialization || 'सामान्य पशुवैद्यक'}</p>
                         </div>
                       </div>
 
@@ -418,7 +439,7 @@ export default function VeterinaryPage() {
                         {doc.years_of_experience != null && (
                           <span className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-md">
                             <Award className="w-3 h-3" />
-                            {doc.years_of_experience} yrs exp
+                            {doc.years_of_experience} वर्षे अनुभव
                           </span>
                         )}
                         {doc.veterinary_college && (
@@ -452,7 +473,7 @@ export default function VeterinaryPage() {
                         className="w-full py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2"
                       >
                         <Calendar className="w-4 h-4" />
-                        Book Appointment
+                        अपॉइंटमेंट बुक करा
                       </button>
                     </div>
                   </motion.div>
@@ -468,9 +489,9 @@ export default function VeterinaryPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-emerald-500" />
-                My Bookings
+                माझी बुकिंग्ज
               </h2>
-              <span className="text-sm text-slate-400">{bookings.length} total</span>
+              <span className="text-sm text-slate-400">{bookings.length} एकूण</span>
             </div>
 
             {loadingBook ? (
@@ -482,13 +503,13 @@ export default function VeterinaryPage() {
             ) : bookings.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
                 <Calendar className="w-14 h-14 mx-auto text-slate-300 mb-3" />
-                <p className="text-slate-600 font-medium text-lg">No bookings yet</p>
-                <p className="text-sm text-slate-400 mt-1">Browse doctors and book your first appointment</p>
+                <p className="text-slate-600 font-medium text-lg">अद्याप बुकिंग नाही</p>
+                <p className="text-sm text-slate-400 mt-1">डॉक्टर शोधा आणि पहिली अपॉइंटमेंट बुक करा</p>
                 <button
                   onClick={() => setTab('doctors')}
                   className="mt-4 px-5 py-2.5 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors text-sm"
                 >
-                  Find a Doctor
+                  डॉक्टर शोधा
                 </button>
               </div>
             ) : (
@@ -520,13 +541,13 @@ export default function VeterinaryPage() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-slate-900">Dr. {b.doctor_name || 'Doctor'}</h3>
+                          <h3 className="font-semibold text-slate-900">डॉ. {b.doctor_name || 'डॉक्टर'}</h3>
                           <span
                             className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-md ${
                               statusColor[b.status] || 'bg-slate-100 text-slate-600'
                             }`}
                           >
-                            {b.status}
+                            {STATUS_LABELS[b.status] || b.status}
                           </span>
                         </div>
                         <p className="text-sm text-slate-500">
@@ -549,14 +570,14 @@ export default function VeterinaryPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-red-500" />
-                My Emergency Requests
+                माझ्या आपत्कालीन विनंत्या
               </h2>
               <button
                 onClick={() => setShowSOS(true)}
                 className="flex items-center gap-1.5 px-4 py-2 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors text-sm"
               >
                 <Siren className="w-4 h-4" />
-                New SOS
+                नवीन SOS
               </button>
             </div>
 
@@ -569,8 +590,8 @@ export default function VeterinaryPage() {
             ) : emergencies.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
                 <AlertTriangle className="w-14 h-14 mx-auto text-slate-300 mb-3" />
-                <p className="text-slate-600 font-medium text-lg">No emergency requests</p>
-                <p className="text-sm text-slate-400 mt-1">Use the Emergency SOS button for critical situations</p>
+                <p className="text-slate-600 font-medium text-lg">आपत्कालीन विनंत्या नाहीत</p>
+                <p className="text-sm text-slate-400 mt-1">गंभीर परिस्थितीसाठी आपत्कालीन SOS बटण वापरा</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -612,7 +633,7 @@ export default function VeterinaryPage() {
                               statusColor[emg.status] || 'bg-slate-100 text-slate-600'
                             }`}
                           >
-                            {emg.status === 'active' ? '🚨 Live' : emg.status}
+                            {emg.status === 'active' ? '🚨 सक्रिय' : (STATUS_LABELS[emg.status] || emg.status)}
                           </span>
                           <span className="text-xs text-slate-400">{timeAgo(emg.created_at)}</span>
                         </div>
@@ -628,28 +649,28 @@ export default function VeterinaryPage() {
                         {emg.status === 'active' && emg.assigned_doctor_name && (
                           <p className="text-sm text-amber-600 mt-2 flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5" />
-                            Sent to Dr. {emg.assigned_doctor_name}
-                            {emg.distance_km != null && ` (${emg.distance_km} km away)`}
-                            {' — '}waiting for response...
+                            डॉ. {emg.assigned_doctor_name} यांना पाठवले
+                            {emg.distance_km != null && ` (${emg.distance_km} कि.मी. दूर)`}
+                            {' — '}प्रतिसादाची वाट पाहत आहे...
                           </p>
                         )}
                         {emg.status === 'active' && !emg.assigned_doctor_name && (
                           <p className="text-sm text-amber-600 mt-2 flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5" />
-                            Searching for nearby doctor...
+                            जवळचे डॉक्टर शोधत आहे...
                           </p>
                         )}
                         {emg.status === 'accepted' && emg.doctor_name && (
                           <p className="text-sm text-blue-600 font-medium mt-2 flex items-center gap-1">
                             <Stethoscope className="w-3.5 h-3.5" />
-                            Dr. {emg.doctor_name} is responding to your case
-                            {emg.distance_km != null && ` (${emg.distance_km} km away)`}
+                            डॉ. {emg.doctor_name} आपल्या केसला प्रतिसाद देत आहेत
+                            {emg.distance_km != null && ` (${emg.distance_km} कि.मी. दूर)`}
                           </p>
                         )}
                         {emg.status === 'completed' && (
                           <p className="text-sm text-emerald-600 font-medium mt-2 flex items-center gap-1">
                             <CheckCircle className="w-3.5 h-3.5" />
-                            Case resolved
+                            केस निकाली लागली
                           </p>
                         )}
                       </div>
@@ -680,7 +701,7 @@ export default function VeterinaryPage() {
             >
               <div className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-slate-900">Book Appointment</h2>
+                  <h2 className="text-lg font-bold text-slate-900">अपॉइंटमेंट बुक करा</h2>
                   <button onClick={() => setBookingDoctor(null)} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
                     <X className="w-5 h-5 text-slate-500" />
                   </button>
@@ -692,14 +713,14 @@ export default function VeterinaryPage() {
                     <Stethoscope className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900">Dr. {bookingDoctor.full_name}</p>
-                    <p className="text-sm text-blue-600">{bookingDoctor.specialization || 'General Veterinary'}</p>
+                    <p className="font-semibold text-slate-900">डॉ. {bookingDoctor.full_name}</p>
+                    <p className="text-sm text-blue-600">{bookingDoctor.specialization || 'सामान्य पशुवैद्यक'}</p>
                   </div>
                 </div>
 
                 {/* Date */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Appointment Date</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">अपॉइंटमेंट तारीख</label>
                   <input
                     type="date"
                     min={todayStr}
@@ -712,7 +733,7 @@ export default function VeterinaryPage() {
 
                 {/* Time Slot */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Time Slot</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">वेळ निवडा</label>
                   <div className="grid grid-cols-2 gap-2">
                     {TIME_SLOTS.map((slot) => (
                       <button
@@ -733,16 +754,16 @@ export default function VeterinaryPage() {
 
                 {/* Animal Type */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Animal Type</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">प्राण्याचा प्रकार</label>
                   <select
                     value={bookAnimal}
                     onChange={(e) => setBookAnimal(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-slate-900"
                   >
-                    <option value="">Select animal</option>
+                    <option value="">प्राणी निवडा</option>
                     {ANIMAL_TYPES.map((a) => (
                       <option key={a} value={a}>
-                        {a}
+                        {ANIMAL_LABELS[a] || a}
                       </option>
                     ))}
                   </select>
@@ -750,13 +771,13 @@ export default function VeterinaryPage() {
 
                 {/* Description */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Description (optional)</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">वर्णन (ऐच्छिक)</label>
                   <textarea
                     value={bookDesc}
                     onChange={(e) => setBookDesc(e.target.value)}
                     rows={3}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-slate-900 placeholder-slate-400 resize-none"
-                    placeholder="Describe the issue..."
+                    placeholder="समस्या वर्णन करा..."
                   />
                 </div>
 
@@ -770,7 +791,7 @@ export default function VeterinaryPage() {
                   ) : (
                     <>
                       <Calendar className="w-4 h-4" />
-                      Confirm Booking
+                      बुकिंग पुष्टी करा
                     </>
                   )}
                 </button>
@@ -800,7 +821,7 @@ export default function VeterinaryPage() {
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-bold text-red-700 flex items-center gap-2">
                     <Siren className="w-5 h-5" />
-                    Emergency SOS
+                    आपत्कालीन SOS
                   </h2>
                   <button onClick={() => { setShowSOS(false); setSosResult(null); }} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
                     <X className="w-5 h-5 text-slate-500" />
@@ -815,10 +836,10 @@ export default function VeterinaryPage() {
                   'bg-slate-50 text-slate-600'
                 }`}>
                   <MapPin className={`w-4 h-4 ${gpsStatus === 'loading' ? 'animate-pulse' : ''}`} />
-                  {gpsStatus === 'loading' && 'Detecting your location...'}
-                  {gpsStatus === 'success' && `Location detected (${sosLat?.toFixed(4)}, ${sosLon?.toFixed(4)})`}
-                  {gpsStatus === 'error' && 'Could not detect location. Please enable GPS.'}
-                  {gpsStatus === 'idle' && 'Waiting for GPS...'}
+                  {gpsStatus === 'loading' && 'तुमचे स्थान शोधत आहे...'}
+                  {gpsStatus === 'success' && `स्थान सापडले (${sosLat?.toFixed(4)}, ${sosLon?.toFixed(4)})`}
+                  {gpsStatus === 'error' && 'स्थान सापडले नाही. कृपया GPS सुरू करा.'}
+                  {gpsStatus === 'idle' && 'GPS ची वाट पाहत आहे...'}
                 </div>
 
                 {/* Success message after assignment */}
@@ -829,9 +850,9 @@ export default function VeterinaryPage() {
                     className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center"
                   >
                     <CheckCircle className="w-10 h-10 mx-auto text-emerald-600 mb-2" />
-                    <p className="font-bold text-emerald-800">Emergency Sent!</p>
+                    <p className="font-bold text-emerald-800">आपत्कालीन विनंती पाठवली!</p>
                     <p className="text-sm text-emerald-600 mt-1">
-                      Assigned to <strong>Dr. {sosResult.doctor}</strong> ({sosResult.distance} km away)
+                      <strong>डॉ. {sosResult.doctor}</strong> यांना नियुक्त केले ({sosResult.distance} कि.मी. दूर)
                     </p>
                   </motion.div>
                 )}
@@ -839,13 +860,13 @@ export default function VeterinaryPage() {
                 {!sosResult && (
                   <>
                     <p className="text-sm text-slate-500">
-                      Your emergency will be sent to the <strong>nearest available veterinary doctor</strong> automatically.
+                      तुमची आपत्कालीन विनंती <strong>जवळच्या उपलब्ध पशुवैद्यकीय डॉक्टरांना</strong> आपोआप पाठवली जाईल.
                     </p>
 
                     {/* Animal Type */}
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                        Animal Type <span className="text-red-400">*</span>
+                        प्राण्याचा प्रकार <span className="text-red-400">*</span>
                       </label>
                       <select
                         value={sosAnimal}
@@ -853,10 +874,10 @@ export default function VeterinaryPage() {
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none transition-all text-slate-900"
                         required
                       >
-                        <option value="">Select animal</option>
+                        <option value="">प्राणी निवडा</option>
                         {ANIMAL_TYPES.map((a) => (
                           <option key={a} value={a}>
-                            {a}
+                            {ANIMAL_LABELS[a] || a}
                           </option>
                         ))}
                       </select>
@@ -865,27 +886,27 @@ export default function VeterinaryPage() {
                     {/* Description */}
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                        What happened? <span className="text-red-400">*</span>
+                        काय झाले? <span className="text-red-400">*</span>
                       </label>
                       <textarea
                         value={sosDesc}
                         onChange={(e) => setSosDesc(e.target.value)}
                         rows={3}
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none transition-all text-slate-900 placeholder-slate-400 resize-none"
-                        placeholder="Describe the emergency..."
+                        placeholder="आपत्कालीन परिस्थिती वर्णन करा..."
                         required
                       />
                     </div>
 
                     {/* Location */}
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1.5">Location (optional)</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1.5">स्थान (ऐच्छिक)</label>
                       <input
                         type="text"
                         value={sosLocation}
                         onChange={(e) => setSosLocation(e.target.value)}
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none transition-all text-slate-900 placeholder-slate-400"
-                        placeholder="Village / area name"
+                        placeholder="गाव / परिसराचे नाव"
                       />
                     </div>
 
@@ -899,7 +920,7 @@ export default function VeterinaryPage() {
                       ) : (
                         <>
                           <Siren className="w-5 h-5" />
-                          Send Emergency Alert
+                          आपत्कालीन सूचना पाठवा
                         </>
                       )}
                     </button>

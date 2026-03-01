@@ -100,11 +100,11 @@ function getWindDirection(deg: number): string {
 }
 
 function getUVLabel(uv: number): { label: string; color: string } {
-  if (uv <= 2) return { label: 'Low', color: 'text-green-400' };
-  if (uv <= 5) return { label: 'Moderate', color: 'text-yellow-400' };
-  if (uv <= 7) return { label: 'High', color: 'text-orange-400' };
-  if (uv <= 10) return { label: 'Very High', color: 'text-red-400' };
-  return { label: 'Extreme', color: 'text-purple-400' };
+  if (uv <= 2) return { label: 'कमी', color: 'text-green-400' };
+  if (uv <= 5) return { label: 'मध्यम', color: 'text-yellow-400' };
+  if (uv <= 7) return { label: 'जास्त', color: 'text-orange-400' };
+  if (uv <= 10) return { label: 'अति जास्त', color: 'text-red-400' };
+  return { label: 'अत्यंत', color: 'text-purple-400' };
 }
 
 function getTempColor(temp: number): string {
@@ -180,9 +180,9 @@ export default function WeatherPage() {
               <div>
                 <h1 className="text-2xl font-bold text-white flex items-center gap-2">
                   <CloudSun className="w-7 h-7 text-blue-400" />
-                  Weather Insights
+                  हवामान माहिती
                 </h1>
-                <p className="text-white/50 text-sm">Hyperlocal weather predictions for Maharashtra</p>
+                <p className="text-white/50 text-sm">महाराष्ट्रासाठी स्थानिक हवामान अंदाज</p>
               </div>
             </div>
             <button
@@ -191,7 +191,7 @@ export default function WeatherPage() {
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 transition text-sm"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
+              रिफ्रेश करा
             </button>
           </div>
         </div>
@@ -224,7 +224,7 @@ export default function WeatherPage() {
                   <div className="p-3 border-b border-white/10">
                     <input
                       type="text"
-                      placeholder="Search district..."
+                      placeholder="जिल्हा शोधा..."
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
                       className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-white/40 focus:outline-none focus:border-blue-500/50"
@@ -233,7 +233,7 @@ export default function WeatherPage() {
                   </div>
                   {/* Popular districts */}
                   <div className="px-3 pt-2 pb-1">
-                    <p className="text-[10px] uppercase tracking-wider text-white/30 mb-1">Popular</p>
+                    <p className="text-[10px] uppercase tracking-wider text-white/30 mb-1">लोकप्रिय</p>
                     <div className="flex flex-wrap gap-1">
                       {POPULAR_DISTRICTS.map(d => (
                         <button
@@ -281,7 +281,7 @@ export default function WeatherPage() {
               }`}
             >
               <Calendar className="w-4 h-4 inline mr-1" />
-              7 Days
+              ७ दिवस
             </button>
             <button
               onClick={() => setForecastDays(15)}
@@ -292,7 +292,7 @@ export default function WeatherPage() {
               }`}
             >
               <Calendar className="w-4 h-4 inline mr-1" />
-              15 Days
+              १५ दिवस
             </button>
           </div>
         </div>
@@ -312,7 +312,7 @@ export default function WeatherPage() {
         {loading && (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-10 h-10 text-blue-400 animate-spin mb-4" />
-            <p className="text-white/50">Fetching live weather data for {selectedDistrict}...</p>
+            <p className="text-white/50">{selectedDistrict} साठी हवामान माहिती आणत आहे...</p>
           </div>
         )}
 
@@ -344,7 +344,7 @@ export default function WeatherPage() {
                       <span className="text-white/40 text-lg">C</span>
                     </div>
                     <p className="text-white/50 text-sm mt-1">
-                      Feels like {Math.round(weather.current.feels_like)}°C
+                      जाणवते {Math.round(weather.current.feels_like)}°C
                     </p>
                   </div>
                 </div>
@@ -353,23 +353,23 @@ export default function WeatherPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
                   <div className="bg-white/5 rounded-xl p-3">
                     <Droplets className="w-4 h-4 text-blue-400 mb-1" />
-                    <p className="text-white/40 text-xs">Humidity</p>
+                    <p className="text-white/40 text-xs">आर्द्रता</p>
                     <p className="text-white font-semibold">{weather.current.humidity}%</p>
                   </div>
                   <div className="bg-white/5 rounded-xl p-3">
                     <Wind className="w-4 h-4 text-cyan-400 mb-1" />
-                    <p className="text-white/40 text-xs">Wind</p>
+                    <p className="text-white/40 text-xs">वारा</p>
                     <p className="text-white font-semibold">{Math.round(weather.current.wind_speed)} km/h</p>
                     <p className="text-white/30 text-xs">{getWindDirection(weather.current.wind_direction)}</p>
                   </div>
                   <div className="bg-white/5 rounded-xl p-3">
                     <CloudRain className="w-4 h-4 text-indigo-400 mb-1" />
-                    <p className="text-white/40 text-xs">Rain</p>
+                    <p className="text-white/40 text-xs">पाउस</p>
                     <p className="text-white font-semibold">{weather.current.precipitation} mm</p>
                   </div>
                   <div className="bg-white/5 rounded-xl p-3">
                     <Thermometer className="w-4 h-4 text-orange-400 mb-1" />
-                    <p className="text-white/40 text-xs">Feels Like</p>
+                    <p className="text-white/40 text-xs">जाणवते</p>
                     <p className="text-white font-semibold">{Math.round(weather.current.feels_like)}°C</p>
                   </div>
                 </div>
@@ -380,12 +380,12 @@ export default function WeatherPage() {
                 <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
                   <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                     <BarChart3 className="w-4 h-4 text-blue-400" />
-                    {selectedDay === 0 ? "Today's Details" : formatDate(selectedForecast.date).full}
+                    {selectedDay === 0 ? "आजची सविस्तर माहिती" : formatDate(selectedForecast.date).full}
                   </h3>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center py-2 border-b border-white/5">
                       <span className="text-white/50 text-sm flex items-center gap-2">
-                        <TrendingUp className="w-3.5 h-3.5 text-red-400" /> High
+                        <TrendingUp className="w-3.5 h-3.5 text-red-400" /> कमाल
                       </span>
                       <span className={`font-semibold ${getTempColor(selectedForecast.temp_max)}`}>
                         {Math.round(selectedForecast.temp_max)}°C
@@ -393,7 +393,7 @@ export default function WeatherPage() {
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-white/5">
                       <span className="text-white/50 text-sm flex items-center gap-2">
-                        <TrendingDown className="w-3.5 h-3.5 text-blue-400" /> Low
+                        <TrendingDown className="w-3.5 h-3.5 text-blue-400" /> कमी
                       </span>
                       <span className={`font-semibold ${getTempColor(selectedForecast.temp_min)}`}>
                         {Math.round(selectedForecast.temp_min)}°C
@@ -401,31 +401,31 @@ export default function WeatherPage() {
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-white/5">
                       <span className="text-white/50 text-sm flex items-center gap-2">
-                        <Umbrella className="w-3.5 h-3.5 text-indigo-400" /> Rain Chance
+                        <Umbrella className="w-3.5 h-3.5 text-indigo-400" /> पावसाची शक्यता
                       </span>
                       <span className="text-white font-semibold">{selectedForecast.precipitation_probability}%</span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-white/5">
                       <span className="text-white/50 text-sm flex items-center gap-2">
-                        <CloudRain className="w-3.5 h-3.5 text-blue-400" /> Precipitation
+                        <CloudRain className="w-3.5 h-3.5 text-blue-400" /> पर्जन्यमान
                       </span>
                       <span className="text-white font-semibold">{selectedForecast.precipitation} mm</span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-white/5">
                       <span className="text-white/50 text-sm flex items-center gap-2">
-                        <Wind className="w-3.5 h-3.5 text-cyan-400" /> Wind Speed
+                        <Wind className="w-3.5 h-3.5 text-cyan-400" /> वाऱ्याचा वेग
                       </span>
                       <span className="text-white font-semibold">{Math.round(selectedForecast.wind_speed)} km/h</span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-white/5">
                       <span className="text-white/50 text-sm flex items-center gap-2">
-                        <Droplets className="w-3.5 h-3.5 text-blue-400" /> Humidity
+                        <Droplets className="w-3.5 h-3.5 text-blue-400" /> आर्द्रता
                       </span>
                       <span className="text-white font-semibold">{selectedForecast.humidity_min}–{selectedForecast.humidity_max}%</span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-white/5">
                       <span className="text-white/50 text-sm flex items-center gap-2">
-                        <Sun className={`w-3.5 h-3.5 ${getUVLabel(selectedForecast.uv_index).color}`} /> UV Index
+                        <Sun className={`w-3.5 h-3.5 ${getUVLabel(selectedForecast.uv_index).color}`} /> UV निर्देशांक
                       </span>
                       <span className={`font-semibold ${getUVLabel(selectedForecast.uv_index).color}`}>
                         {selectedForecast.uv_index} ({getUVLabel(selectedForecast.uv_index).label})
@@ -433,13 +433,13 @@ export default function WeatherPage() {
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-white/5">
                       <span className="text-white/50 text-sm flex items-center gap-2">
-                        <Sunrise className="w-3.5 h-3.5 text-yellow-400" /> Sunrise
+                        <Sunrise className="w-3.5 h-3.5 text-yellow-400" /> सूर्योदय
                       </span>
                       <span className="text-white font-semibold">{formatTime(selectedForecast.sunrise)}</span>
                     </div>
                     <div className="flex justify-between items-center py-2">
                       <span className="text-white/50 text-sm flex items-center gap-2">
-                        <Sunset className="w-3.5 h-3.5 text-orange-400" /> Sunset
+                        <Sunset className="w-3.5 h-3.5 text-orange-400" /> सूर्यास्त
                       </span>
                       <span className="text-white font-semibold">{formatTime(selectedForecast.sunset)}</span>
                     </div>
@@ -452,7 +452,7 @@ export default function WeatherPage() {
             <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
               <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                 <Thermometer className="w-5 h-5 text-orange-400" />
-                Temperature Forecast
+                तापमान अंदाज
               </h3>
               <div className="overflow-x-auto">
                 <div className="flex gap-2 min-w-max pb-2">
@@ -475,7 +475,7 @@ export default function WeatherPage() {
                             : 'hover:bg-white/5 border border-transparent'
                         }`}
                       >
-                        <span className="text-white/40 text-xs font-medium">{i === 0 ? 'Today' : dayName}</span>
+                        <span className="text-white/40 text-xs font-medium">{i === 0 ? 'आज' : dayName}</span>
                         <span className="text-white/60 text-xs">{date}</span>
                         <span className="text-2xl my-2">{day.weather_emoji}</span>
 
@@ -510,7 +510,7 @@ export default function WeatherPage() {
               <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
                 <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                   <CloudRain className="w-5 h-5 text-blue-400" />
-                  Precipitation
+                पर्जन्यमान
                 </h3>
                 <div className="space-y-2">
                   {weather.forecast.slice(0, forecastDays).map((day, i) => {
@@ -526,7 +526,7 @@ export default function WeatherPage() {
                         }`}
                         onClick={() => setSelectedDay(i)}
                       >
-                        <span className="text-white/40 text-xs w-8">{i === 0 ? 'Tod' : dayName}</span>
+                        <span className="text-white/40 text-xs w-8">{i === 0 ? 'आज' : dayName}</span>
                         <span className="text-white/30 text-xs w-5">{date}</span>
                         <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
                           <motion.div
@@ -536,7 +536,7 @@ export default function WeatherPage() {
                             className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-500"
                           />
                         </div>
-                        <span className="text-white/60 text-xs w-12 text-right">{day.precipitation}mm</span>
+                        <span className="text-white/60 text-xs w-12 text-right">{day.precipitation}मिमी</span>
                         <span className="text-blue-400/60 text-xs w-8 text-right">{day.precipitation_probability}%</span>
                       </div>
                     );
@@ -586,54 +586,54 @@ export default function WeatherPage() {
             {selectedForecast && (
               <div className="rounded-2xl bg-gradient-to-r from-green-600/10 to-emerald-600/10 border border-green-500/20 p-6">
                 <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
-                  🌾 Farming Advisory
+                  🌾 शेती सल्ला
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {selectedForecast.precipitation_probability > 60 && (
                     <div className="bg-white/5 rounded-xl p-3">
-                      <p className="text-yellow-400 text-sm font-medium">⚠️ High Rain Probability</p>
+                      <p className="text-yellow-400 text-sm font-medium">⚠️ पावसाची जास्त शक्यता</p>
                       <p className="text-white/50 text-xs mt-1">
-                        {selectedForecast.precipitation_probability}% chance of rain. Postpone spraying and harvest drying activities.
+                        {selectedForecast.precipitation_probability}% पावसाची शक्यता. फवारणी आणि वाळवण्याची कामे पुढे ढकला.
                       </p>
                     </div>
                   )}
                   {selectedForecast.temp_max > 38 && (
                     <div className="bg-white/5 rounded-xl p-3">
-                      <p className="text-red-400 text-sm font-medium">🌡️ Heat Alert</p>
+                      <p className="text-red-400 text-sm font-medium">🌡️ उष्णतेचा इशारा</p>
                       <p className="text-white/50 text-xs mt-1">
-                        Temperature exceeding 38°C. Ensure adequate irrigation. Avoid fieldwork during peak hours.
+                        तापमान 38°C पेक्षा जास्त. पुरेसे पाणी द्या. दुपारच्या उन्हात शेतात काम टाळा.
                       </p>
                     </div>
                   )}
                   {selectedForecast.wind_speed > 30 && (
                     <div className="bg-white/5 rounded-xl p-3">
-                      <p className="text-cyan-400 text-sm font-medium">💨 Strong Winds</p>
+                      <p className="text-cyan-400 text-sm font-medium">💨 जोरदार वारा</p>
                       <p className="text-white/50 text-xs mt-1">
-                        Wind speeds above 30 km/h. Secure structures and avoid pesticide spraying.
+                        वाऱ्याचा वेग 30 किमी/तास पेक्षा जास्त. संरचना सुरक्षित करा आणि कीटकनाशक फवारणी टाळा.
                       </p>
                     </div>
                   )}
                   {selectedForecast.uv_index > 7 && (
                     <div className="bg-white/5 rounded-xl p-3">
-                      <p className="text-orange-400 text-sm font-medium">☀️ High UV Index</p>
+                      <p className="text-orange-400 text-sm font-medium">☀️ जास्त UV निर्देशांक</p>
                       <p className="text-white/50 text-xs mt-1">
-                        UV Index is {selectedForecast.uv_index}. Use sun protection during outdoor work.
+                        UV निर्देशांक {selectedForecast.uv_index} आहे. बाहेरील कामासाठी सूर्यसंरक्षण वापरा.
                       </p>
                     </div>
                   )}
                   {selectedForecast.humidity_max > 85 && (
                     <div className="bg-white/5 rounded-xl p-3">
-                      <p className="text-blue-400 text-sm font-medium">💧 High Humidity</p>
+                      <p className="text-blue-400 text-sm font-medium">💧 जास्त आर्द्रता</p>
                       <p className="text-white/50 text-xs mt-1">
-                        Humidity above 85%. Watch for fungal diseases. Ensure good air circulation in crops.
+                        आर्द्रता 85% पेक्षा जास्त. बुरशीजन्य रोगांकडे लक्ष ठेवा. पिकांमध्ये चांगली हवा खेळती ठेवा.
                       </p>
                     </div>
                   )}
                   {selectedForecast.precipitation_probability <= 20 && selectedForecast.temp_max <= 35 && selectedForecast.wind_speed <= 20 && (
                     <div className="bg-white/5 rounded-xl p-3">
-                      <p className="text-green-400 text-sm font-medium">✅ Good Conditions</p>
+                      <p className="text-green-400 text-sm font-medium">✅ चांगली परिस्थिती</p>
                       <p className="text-white/50 text-xs mt-1">
-                        Fair weather expected. Suitable for spraying, sowing, and field operations.
+                        चांगले हवामान अपेक्षित. फवारणी, पेरणी आणि शेतीच्या कामांसाठी योग्य.
                       </p>
                     </div>
                   )}
@@ -643,7 +643,7 @@ export default function WeatherPage() {
 
             {/* Source Attribution */}
             <div className="text-center text-white/30 text-xs py-4">
-              Data powered by {weather.source} • Coordinates: {weather.latitude}°N, {weather.longitude}°E
+              माहिती स्रोत: {weather.source} • निर्देशांक: {weather.latitude}°N, {weather.longitude}°E
             </div>
           </motion.div>
         )}
