@@ -24,8 +24,8 @@ export function CapacitorInit() {
         .then(({ StatusBar, Style }) => {
           // This is the critical call — makes the status bar NOT overlay the WebView
           StatusBar.setOverlaysWebView({ overlay: false });
-          StatusBar.setStyle({ style: Style.Dark });
-          StatusBar.setBackgroundColor({ color: '#000000' });
+          StatusBar.setStyle({ style: Style.Light });  // dark icons on light bg
+          StatusBar.setBackgroundColor({ color: '#FFFFFF' });  // white status bar
         })
         .catch(() => {
           // StatusBar plugin not installed — skip

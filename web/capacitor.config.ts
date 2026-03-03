@@ -15,14 +15,18 @@ const config: CapacitorConfig = {
     androidScheme: 'https', // Required for Capacitor 5+ to avoid CORS issues
   },
   android: {
-    backgroundColor: '#000000',
+    backgroundColor: '#FFFFFF',
     allowMixedContent: true,
   },
   plugins: {
     StatusBar: {
       overlaysWebView: false,
-      style: 'DARK',
-      backgroundColor: '#000000',
+      style: 'LIGHT',
+      backgroundColor: '#FFFFFF',
+    },
+    Keyboard: {
+      resize: 'body',
+      style: 'LIGHT',
     },
   },
 };
