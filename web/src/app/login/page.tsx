@@ -123,7 +123,7 @@ export default function LoginPage() {
               <button
                 key={r.key}
                 onClick={() => handleRoleChange(r.key)}
-                className={`relative flex flex-col items-center gap-1 py-4 text-xs font-medium transition-colors ${
+                className={`relative flex flex-col items-center gap-1 py-3 sm:py-4 text-[10px] sm:text-xs font-medium transition-colors ${
                   role === r.key
                     ? r.key === 'farmer'
                       ? 'text-emerald-600'
@@ -135,8 +135,8 @@ export default function LoginPage() {
                     : 'text-slate-400 hover:text-slate-600'
                 }`}
               >
-                <r.icon className="w-5 h-5" />
-                <span>{r.label}</span>
+                <r.icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="truncate max-w-full px-1">{r.label}</span>
                 {role === r.key && (
                   <motion.div
                     layoutId="activeTab"

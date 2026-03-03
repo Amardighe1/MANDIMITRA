@@ -251,7 +251,12 @@ export function Navbar({ isScrolled }: NavbarProps) {
             >
               <div className="p-6 pb-10 space-y-6" style={{ paddingBottom: 'max(2.5rem, env(safe-area-inset-bottom))' }}>
                 <div className="flex items-center justify-between">
-                  <span className="text-xl font-bold text-gradient">मंडीमित्र</span>
+                  <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                      <Leaf className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-lg font-bold text-gradient">MANDIMITRA</span>
+                  </Link>
                   <button
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="p-2 rounded-lg hover:bg-slate-100 transition-colors"

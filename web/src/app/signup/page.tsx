@@ -143,14 +143,14 @@ export default function SignupPage() {
               <button
                 key={r.key}
                 onClick={() => { setRole(r.key); setError(''); }}
-                className={`relative flex items-center justify-center gap-2 py-4 text-sm font-medium transition-colors ${
+                className={`relative flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-3 sm:py-4 text-[11px] sm:text-sm font-medium transition-colors ${
                   role === r.key
                     ? r.key === 'farmer' ? 'text-emerald-600' : r.key === 'doctor' ? 'text-blue-600' : 'text-purple-600'
                     : 'text-slate-400 hover:text-slate-600'
                 }`}
               >
                 <r.icon className="w-4 h-4" />
-                <span>{r.label}</span>
+                <span className="truncate max-w-full text-center leading-tight">{r.label}</span>
                 {role === r.key && (
                   <motion.div
                     layoutId="signupTab"

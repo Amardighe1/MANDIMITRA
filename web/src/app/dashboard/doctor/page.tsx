@@ -978,12 +978,12 @@ export default function DoctorDashboard() {
                 {/* Profile Card */}
                 <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                   <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-8">
-                    <div className="flex items-center gap-4">
-                      <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                        <Stethoscope className="w-10 h-10 text-white" />
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <Stethoscope className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                       </div>
-                      <div className="text-white">
-                        <h2 className="text-2xl font-bold">Dr. {profile.full_name}</h2>
+                      <div className="text-white min-w-0">
+                        <h2 className="text-xl sm:text-2xl font-bold truncate">Dr. {profile.full_name}</h2>
                         <p className="text-blue-100">{profile.specialization || 'सामान्य पशुवैद्यक'}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <CheckCircle className="w-4 h-4 text-emerald-300" />
