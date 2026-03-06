@@ -165,7 +165,7 @@ export default function WeatherPage() {
   const selectedForecast = weather?.forecast?.[selectedDay];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950">
+    <div className="min-h-screen pb-24 bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950">
       {/* Header */}
       <div className="border-b border-white/10 bg-black/20 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">

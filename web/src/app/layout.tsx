@@ -13,6 +13,10 @@ const ConnectionSetup = dynamic(
   () => import('@/components/ConnectionSetup').then((mod) => mod.ConnectionSetup),
   { ssr: false }
 );
+const BottomNav = dynamic(
+  () => import('@/components/layout/BottomNav').then((mod) => mod.BottomNav),
+  { ssr: false }
+);
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -46,7 +50,10 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased`}>
         <CapacitorInit />
         <ConnectionSetup />
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <BottomNav />
+        </Providers>
       </body>
     </html>
   );

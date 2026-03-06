@@ -188,7 +188,7 @@ export default function CropAnalysisPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30">
+    <div className="min-h-screen pb-24 bg-gradient-to-br from-slate-50 via-white to-emerald-50/30">
       {/* ───── Top Bar ───── */}
       <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">

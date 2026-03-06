@@ -108,7 +108,7 @@ export default function MandiPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50/40 via-white to-emerald-50/30">
+    <div className="min-h-screen pb-24 bg-gradient-to-br from-purple-50/40 via-white to-emerald-50/30">
       {/* Header */}
       <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-purple-100/60 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

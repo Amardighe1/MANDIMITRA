@@ -325,7 +325,7 @@ export default function VeterinaryPage() {
 
   /* ── Render ─────────────────────────────────────────────────────────── */
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/20">
+    <div className="min-h-screen pb-24 bg-gradient-to-br from-slate-50 via-white to-emerald-50/20">
       <Navbar isScrolled={isScrolled} />
 
       {/* Page Header – below the navbar */}

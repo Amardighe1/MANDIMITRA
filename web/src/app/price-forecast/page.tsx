@@ -158,7 +158,7 @@ export default function PriceForecastPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-amber-50/30">
+    <main className="min-h-screen pb-24 bg-gradient-to-b from-slate-50 via-white to-amber-50/30">
       <Navbar isScrolled={isScrolled} />
       
       <section className="pt-24 sm:pt-32 pb-12 sm:pb-20">

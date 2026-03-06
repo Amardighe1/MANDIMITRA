@@ -254,7 +254,7 @@ export default function FarmerDashboard() {
   const todayStr = new Date().toISOString().split('T')[0];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/20">
+    <div className="min-h-screen pb-24 bg-gradient-to-br from-slate-50 via-white to-emerald-50/20">
       {/* Header */}
       <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-slate-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

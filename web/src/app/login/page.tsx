@@ -98,65 +98,57 @@ export default function LoginPage() {
   const accent = accentMap[role];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 flex items-center justify-center px-4 py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
         {/* Logo */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <Link href="/" className="inline-flex items-center space-x-2 group">
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
+            <div className="w-11 h-11 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
               <Leaf className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold text-gradient">MANDIMITRA</span>
+            <span className="text-2xl font-bold text-gradient">मंडीमित्र</span>
           </Link>
-          <p className="mt-2 text-slate-500">तुमच्या खात्यात लॉग इन करा</p>
+          <p className="mt-2 text-slate-500 text-sm">तुमचे खाते निवडा</p>
         </div>
 
-        {/* Card */}
-        <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
-          {/* Role Tabs */}
-          <div className="grid grid-cols-4 border-b border-slate-100">
-            {roles.map((r) => (
+        {/* Role Cards */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {roles.map((r) => {
+            const isActive = role === r.key;
+            const colors: Record<string, string> = {
+              emerald: isActive ? 'bg-emerald-50 border-emerald-400 ring-2 ring-emerald-200' : 'bg-white border-slate-200',
+              blue: isActive ? 'bg-blue-50 border-blue-400 ring-2 ring-blue-200' : 'bg-white border-slate-200',
+              purple: isActive ? 'bg-purple-50 border-purple-400 ring-2 ring-purple-200' : 'bg-white border-slate-200',
+              amber: isActive ? 'bg-amber-50 border-amber-400 ring-2 ring-amber-200' : 'bg-white border-slate-200',
+            };
+            const iconColors: Record<string, string> = {
+              emerald: isActive ? 'bg-emerald-500 text-white' : 'bg-emerald-100 text-emerald-600',
+              blue: isActive ? 'bg-blue-500 text-white' : 'bg-blue-100 text-blue-600',
+              purple: isActive ? 'bg-purple-500 text-white' : 'bg-purple-100 text-purple-600',
+              amber: isActive ? 'bg-amber-500 text-white' : 'bg-amber-100 text-amber-600',
+            };
+            return (
               <button
                 key={r.key}
                 onClick={() => handleRoleChange(r.key)}
-                className={`relative flex flex-col items-center gap-1 py-3 sm:py-4 text-[10px] sm:text-xs font-medium transition-colors ${
-                  role === r.key
-                    ? r.key === 'farmer'
-                      ? 'text-emerald-600'
-                      : r.key === 'doctor'
-                      ? 'text-blue-600'
-                      : r.key === 'buyer'
-                      ? 'text-purple-600'
-                      : 'text-amber-600'
-                    : 'text-slate-400 hover:text-slate-600'
-                }`}
+                className={`relative flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all ${colors[r.color]}`}
               >
-                <r.icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="truncate max-w-full px-1">{r.label}</span>
-                {role === r.key && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className={`absolute bottom-0 left-0 right-0 h-0.5 ${
-                      r.key === 'farmer'
-                        ? 'bg-emerald-500'
-                        : r.key === 'doctor'
-                        ? 'bg-blue-500'
-                        : r.key === 'buyer'
-                        ? 'bg-purple-500'
-                        : 'bg-amber-500'
-                    }`}
-                  />
-                )}
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${iconColors[r.color]}`}>
+                  <r.icon className="w-5 h-5" />
+                </div>
+                <span className={`text-sm font-semibold ${isActive ? 'text-slate-800' : 'text-slate-500'}`}>{r.label}</span>
               </button>
-            ))}
-          </div>
+            );
+          })}
+        </div>
 
           {/* Form */}
-          <div className="p-6">
+          <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+          <div className="p-5">
             <AnimatePresence mode="wait">
               {error && (
                 <motion.div
@@ -332,10 +324,10 @@ export default function LoginPage() {
 
           {/* Footer */}
           {role !== 'admin' && (
-            <div className="px-6 pb-6 text-center text-sm text-slate-500">
-              Don&apos;t have an account?{' '}
-              <Link href="/signup" className="text-emerald-600 font-medium hover:text-emerald-700 transition-colors">
-                नोंदणी करा
+            <div className="px-5 pb-5 text-center text-sm text-slate-500">
+              खाते नाही?{' '}
+              <Link href="/signup" className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
+                नोंदणी करा →
               </Link>
             </div>
           )}

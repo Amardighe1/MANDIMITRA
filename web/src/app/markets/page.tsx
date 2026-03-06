@@ -199,7 +199,7 @@ export default function MarketsPage() {
   const hasActiveFilters = search || selectedCommodity || selectedDistrict;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-emerald-950 to-green-950">
+    <div className="min-h-screen pb-24 bg-gradient-to-br from-slate-950 via-emerald-950 to-green-950">
       {/* Header */}
       <div className="border-b border-white/10 bg-black/20 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
