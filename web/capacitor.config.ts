@@ -5,8 +5,8 @@ const config: CapacitorConfig = {
   appName: 'MANDIMITRA',
   webDir: 'out',
   server: {
-    // Load UI from Vercel — any GitHub push auto-updates the app UI
-    url: 'https://mandimitra-rose.vercel.app',
+    // Offline-first: UI is bundled inside the APK (no Vercel streaming)
+    // API calls still go to the Render backend via api-config.ts
     androidScheme: 'https',
   },
   android: {

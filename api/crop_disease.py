@@ -24,6 +24,44 @@ logger = logging.getLogger("mandimitra-api")
 router = APIRouter(prefix="/api/crop-disease", tags=["Crop Disease Detection"])
 
 # ============================================================================
+# DISEASE KNOWLEDGE BASE (medicines, soil minerals, prevention)
+# ============================================================================
+
+_disease_kb = None
+_KB_PATH = Path(__file__).resolve().parent.parent / "configs" / "disease_knowledge_base.json"
+
+
+def _load_knowledge_base():
+    """Load the disease treatment knowledge base (once)."""
+    global _disease_kb
+    if _disease_kb is not None:
+        return
+    if _KB_PATH.exists():
+        with open(_KB_PATH, encoding="utf-8") as f:
+            _disease_kb = json.load(f)
+        logger.info(f"Disease knowledge base loaded: {len(_disease_kb) - 1} entries")
+    else:
+        logger.warning(f"Disease knowledge base not found at {_KB_PATH}")
+        _disease_kb = {}
+
+
+def _get_disease_treatment(predicted_class: str) -> dict | None:
+    """Get treatment info (medicines, soil minerals) for a predicted class."""
+    _load_knowledge_base()
+    entry = _disease_kb.get(predicted_class)
+    if not entry or predicted_class == "_meta":
+        return None
+    return {
+        "disease_name_en": entry.get("disease_name_en"),
+        "disease_name_mr": entry.get("disease_name_mr"),
+        "pathogen": entry.get("pathogen"),
+        "severity": entry.get("severity"),
+        "summary_mr": entry.get("summary_mr"),
+        "medicines": entry.get("medicines"),
+        "soil_minerals": entry.get("soil_minerals"),
+    }
+
+# ============================================================================
 # MODEL LOADING (lazy, loaded once on first request)
 # ============================================================================
 
@@ -334,7 +372,10 @@ async def analyze_crop_disease(
     # Get Gemini advice
     advice = _get_gemini_advice(crop, disease, confidence)
 
-    return {
+    # Get structured treatment info from knowledge base
+    treatment = _get_disease_treatment(predicted_class)
+
+    result = {
         "crop": crop,
         "disease": disease.replace("_", " ") if not is_healthy else None,
         "is_healthy": is_healthy,
@@ -344,6 +385,10 @@ async def analyze_crop_disease(
         "advice": advice,
         "model_accuracy": round(_metadata["val_accuracy"] * 100, 1),
     }
+    if treatment:
+        result["treatment"] = treatment
+
+    return result
 
 
 @router.get("/classes")
@@ -364,3 +409,12 @@ async def get_supported_classes():
         "crops": crops,
         "model_accuracy": round(_metadata["val_accuracy"] * 100, 1),
     }
+
+
+@router.get("/treatment/{disease_class}")
+async def get_treatment_info(disease_class: str):
+    """Return structured treatment info (medicines, soil minerals) for a disease class."""
+    treatment = _get_disease_treatment(disease_class)
+    if treatment is None:
+        raise HTTPException(404, f"No treatment info for class '{disease_class}'")
+    return treatment

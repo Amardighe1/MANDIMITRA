@@ -49,6 +49,36 @@ interface DiseaseResult {
     recommended_actions: string[];
   };
   model_accuracy: number;
+  treatment?: {
+    disease_name_en: string;
+    disease_name_mr: string;
+    pathogen: string;
+    severity: string;
+    summary_mr: string;
+    medicines: {
+      treatments: Array<{
+        name: string;
+        name_mr: string;
+        type: string;
+        dosage: string;
+        dosage_mr: string;
+        application: string;
+        application_mr: string;
+      }>;
+      prevention_mr?: string[];
+    };
+    soil_minerals: {
+      deficiencies: Array<{
+        mineral: string;
+        mineral_mr: string;
+        relation: string;
+        relation_mr: string;
+        remedy: string;
+        remedy_mr: string;
+      }>;
+      general_advice_mr?: string;
+    };
+  };
 }
 
 const SUPPORTED_CROPS = [
@@ -629,6 +659,94 @@ export default function CropAnalysisPage() {
                   )}
                 </AnimatePresence>
               </div>
+
+              {/* ─── Medicine / Pesticide KB Section ─── */}
+              {result.treatment?.medicines?.treatments && result.treatment.medicines.treatments.length > 0 && (
+                <div className="bg-white rounded-3xl border border-purple-200 shadow-sm overflow-hidden">
+                  <div className="p-6 sm:p-8 bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100">
+                    <h3 className="text-base font-bold text-purple-800 flex items-center gap-2.5">
+                      <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                        💊
+                      </div>
+                      औषधे आणि बुरशीनाशके / Medicines & Fungicides
+                    </h3>
+                    {result.treatment.summary_mr && (
+                      <p className="text-sm text-purple-700 mt-2 leading-relaxed">{result.treatment.summary_mr}</p>
+                    )}
+                  </div>
+                  <div className="p-6 sm:p-8 space-y-4">
+                    {result.treatment.medicines.treatments.map((med, i) => (
+                      <div key={i} className="bg-purple-50/60 rounded-2xl p-4 border border-purple-100 space-y-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-sm font-bold text-purple-900">{med.name_mr || med.name}</span>
+                          <span className="px-2 py-0.5 bg-purple-200 text-purple-800 rounded-lg text-[10px] font-bold uppercase">{med.type}</span>
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-3">
+                          <div className="bg-white rounded-xl p-3 border border-purple-100">
+                            <p className="text-[10px] font-bold text-purple-400 uppercase tracking-wide mb-1">मात्रा (Dosage)</p>
+                            <p className="text-sm font-medium text-slate-800">{med.dosage_mr || med.dosage}</p>
+                          </div>
+                          <div className="bg-white rounded-xl p-3 border border-purple-100">
+                            <p className="text-[10px] font-bold text-purple-400 uppercase tracking-wide mb-1">कसे वापरावे</p>
+                            <p className="text-sm text-slate-700">{med.application_mr || med.application}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {result.treatment.medicines.prevention_mr && result.treatment.medicines.prevention_mr.length > 0 && (
+                      <div className="mt-4">
+                        <h4 className="text-xs font-bold text-purple-500 uppercase tracking-wide mb-3">प्रतिबंधात्मक उपाय</h4>
+                        <div className="grid sm:grid-cols-2 gap-2">
+                          {result.treatment.medicines.prevention_mr.map((tip, i) => (
+                            <div key={i} className="flex items-start gap-2.5 p-3 bg-purple-50 rounded-xl border border-purple-100">
+                              <CheckCircle className="w-4 h-4 mt-0.5 text-purple-500 flex-shrink-0" />
+                              <span className="text-sm text-slate-700">{tip}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* ─── Soil Mineral Deficiency KB Section ─── */}
+              {result.treatment?.soil_minerals?.deficiencies && result.treatment.soil_minerals.deficiencies.length > 0 && (
+                <div className="bg-white rounded-3xl border border-amber-200 shadow-sm overflow-hidden">
+                  <div className="p-6 sm:p-8 bg-gradient-to-r from-amber-50 to-yellow-50 border-b border-amber-100">
+                    <h3 className="text-base font-bold text-amber-800 flex items-center gap-2.5">
+                      <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                        🧪
+                      </div>
+                      मातीतील खनिज कमतरता / Soil Mineral Deficiencies
+                    </h3>
+                  </div>
+                  <div className="p-6 sm:p-8 space-y-4">
+                    {result.treatment.soil_minerals.deficiencies.map((def, i) => (
+                      <div key={i} className="bg-amber-50/60 rounded-2xl p-4 border border-amber-100 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2.5 py-1 bg-amber-200 text-amber-900 rounded-lg text-xs font-bold">{def.mineral_mr || def.mineral}</span>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="bg-white rounded-xl p-3 border border-amber-100">
+                            <p className="text-[10px] font-bold text-amber-400 uppercase tracking-wide mb-1">रोगाशी संबंध</p>
+                            <p className="text-sm text-slate-700">{def.relation_mr || def.relation}</p>
+                          </div>
+                          <div className="bg-white rounded-xl p-3 border border-amber-100">
+                            <p className="text-[10px] font-bold text-amber-400 uppercase tracking-wide mb-1">उपाय</p>
+                            <p className="text-sm font-medium text-slate-800">{def.remedy_mr || def.remedy}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {result.treatment.soil_minerals.general_advice_mr && (
+                      <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200 mt-3">
+                        <p className="text-sm text-amber-900 font-medium leading-relaxed">{result.treatment.soil_minerals.general_advice_mr}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

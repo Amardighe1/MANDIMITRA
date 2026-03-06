@@ -1,0 +1,1347 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "last_updated": "2026-03-07",
+    "description": "Crop disease treatment knowledge base — medicines, pesticides, soil mineral deficiencies and remedies for all 17 classes in the MandiMitra crop disease detector.",
+    "sources": [
+      "IRRI Rice Knowledge Bank",
+      "University of Minnesota Extension",
+      "Crop Protection Network",
+      "ICAR-Indian Institute of Sugarcane Research",
+      "ICAR-Indian Institute of Wheat & Barley Research",
+      "Data.gov.in Agricultural Extension",
+      "FAO Plant Health Guidelines"
+    ]
+  },
+
+  "Corn___Common_Rust": {
+    "disease_name_en": "Common Rust",
+    "disease_name_mr": "सामान्य गंज (तांबेरा)",
+    "crop": "Corn (Maize)",
+    "crop_mr": "मका",
+    "pathogen": "Puccinia sorghi (Fungus)",
+    "severity": "Moderate",
+    "summary_en": "Rust-colored to dark brown elongated pustules on both leaf surfaces. Common in cool, humid weather (16–26°C). Rarely causes major yield loss in resistant hybrids but can be devastating on susceptible varieties.",
+    "summary_mr": "पानांच्या दोन्ही बाजूंवर तांबूस ते गडद तपकिरी लांबट पुटकुळ्या. थंड, दमट हवामानात सामान्य.",
+
+    "medicines": {
+      "title_en": "Recommended Fungicides & Medicines",
+      "title_mr": "शिफारस केलेली बुरशीनाशके आणि औषधे",
+      "treatments": [
+        {
+          "name": "Mancozeb 75% WP",
+          "name_mr": "मँकोझेब ७५% WP",
+          "type": "Contact Fungicide",
+          "dosage": "2.5 g/L of water",
+          "dosage_mr": "२.५ ग्रॅम/लिटर पाणी",
+          "application": "Foliar spray at first sign of pustules. Repeat every 10–14 days.",
+          "application_mr": "पुटकुळ्या दिसताच पर्णावर फवारणी. प्रत्येक १०-१४ दिवसांनी पुन्हा फवारणी."
+        },
+        {
+          "name": "Propiconazole 25% EC (Tilt)",
+          "name_mr": "प्रोपिकोनॅझोल २५% EC (टिल्ट)",
+          "type": "Systemic Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Spray when 1–2% pustules appear on leaves. Most effective systemic option.",
+          "application_mr": "पानांवर १-२% पुटकुळ्या दिसल्यावर फवारणी करा."
+        },
+        {
+          "name": "Azoxystrobin 23% SC (Amistar)",
+          "name_mr": "ॲझॉक्सिस्ट्रोबिन २३% SC (अमिस्टार)",
+          "type": "Strobilurin Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Preventive spray at tasseling stage. Excellent for rust control.",
+          "application_mr": "तुरा येण्याच्या अवस्थेत प्रतिबंधात्मक फवारणी."
+        }
+      ],
+      "prevention": [
+        "Use rust-resistant corn hybrids (most effective method)",
+        "Early planting to avoid peak humidity period",
+        "Remove volunteer corn plants from field margins"
+      ],
+      "prevention_mr": [
+        "गंज-प्रतिरोधक मका संकर वापरा (सर्वात प्रभावी उपाय)",
+        "उच्च आर्द्रता कालावधी टाळण्यासाठी लवकर पेरणी करा",
+        "शेताच्या कडेला उगवणाऱ्या मक्याची झाडे काढून टाका"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Mineral Deficiencies & Remedies",
+      "title_mr": "मातीतील खनिज कमतरता आणि उपाय",
+      "is_soil_related": true,
+      "deficiencies": [
+        {
+          "mineral": "Potassium (K)",
+          "mineral_mr": "पोटॅशियम (K)",
+          "relation": "Low potassium weakens cell walls, making plants more susceptible to fungal penetration by rusts.",
+          "relation_mr": "पोटॅशियमच्या कमतरतेमुळे पेशीभित्ती कमकुवत होतात, ज्यामुळे गंज बुरशीचा प्रवेश सोपा होतो.",
+          "remedy": "Apply Muriate of Potash (MOP) at 60–80 kg/ha before sowing. Potassium Sulphate (SOP) at 50 kg/ha for K-deficient soils.",
+          "remedy_mr": "पेरणीपूर्वी ६०-८० किलो/हेक्टर म्युरेट ऑफ पोटॅश (MOP) द्या. K-कमतरतेच्या जमिनीसाठी ५० किलो/हेक्टर पोटॅशियम सल्फेट (SOP)."
+        },
+        {
+          "mineral": "Zinc (Zn)",
+          "mineral_mr": "जस्त (Zn)",
+          "relation": "Zinc deficiency reduces plant immunity and disease resistance mechanisms in corn.",
+          "relation_mr": "जस्ताच्या कमतरतेमुळे मक्याची रोगप्रतिकारशक्ती कमी होते.",
+          "remedy": "Apply Zinc Sulphate (ZnSO4) at 25 kg/ha as basal dose. Foliar spray of 0.5% ZnSO4 at 30 and 45 DAS.",
+          "remedy_mr": "बेसल डोस म्हणून २५ किलो/हेक्टर झिंक सल्फेट द्या. ३० आणि ४५ DAS वर ०.५% ZnSO4 पर्णावर फवारणी."
+        }
+      ]
+    }
+  },
+
+  "Corn___Gray_Leaf_Spot": {
+    "disease_name_en": "Gray Leaf Spot",
+    "disease_name_mr": "करड्या पानांचे डाग",
+    "crop": "Corn (Maize)",
+    "crop_mr": "मका",
+    "pathogen": "Cercospora zeae-maydis (Fungus)",
+    "severity": "High",
+    "summary_en": "Long, narrow, rectangular lesions (up to 2 inches) on lower leaves, bounded by veins. Favored by warm (27–32°C), humid (>90% RH for 12+ hours) weather. Severe in corn-after-corn fields with minimum tillage.",
+    "summary_mr": "खालच्या पानांवर लांब, अरुंद, आयताकार जखमा (२ इंच पर्यंत). उबदार, दमट हवामानात तीव्र.",
+
+    "medicines": {
+      "title_en": "Recommended Fungicides & Medicines",
+      "title_mr": "शिफारस केलेली बुरशीनाशके आणि औषधे",
+      "treatments": [
+        {
+          "name": "Azoxystrobin 23% SC (Amistar)",
+          "name_mr": "ॲझॉक्सिस्ट्रोबिन २३% SC (अमिस्टार)",
+          "type": "Strobilurin Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Spray at VT (tasseling) to R1 (silking) stage when lesions first appear on lower leaves.",
+          "application_mr": "खालच्या पानांवर जखमा दिसल्यावर तुरा/रेशीम अवस्थेत फवारणी करा."
+        },
+        {
+          "name": "Propiconazole 25% EC (Tilt)",
+          "name_mr": "प्रोपिकोनॅझोल २५% EC (टिल्ट)",
+          "type": "Triazole Systemic Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Apply at first sign of rectangular lesions on lower canopy.",
+          "application_mr": "खालच्या छतावर आयताकार जखमा दिसताच लागू करा."
+        },
+        {
+          "name": "Pyraclostrobin + Metconazole (Headline AMP)",
+          "name_mr": "पायराक्लोस्ट्रोबिन + मेट्कोनॅझोल",
+          "type": "Combination Fungicide",
+          "dosage": "1–1.5 mL/L of water",
+          "dosage_mr": "१-१.५ मिली/लिटर पाणी",
+          "application": "Premium option for severe infections. Apply at tasseling for maximum protection.",
+          "application_mr": "तीव्र संसर्गासाठी उत्कृष्ट पर्याय. तुरा अवस्थेत फवारणी करा."
+        }
+      ],
+      "prevention": [
+        "Rotate corn with non-host crops (soybean, wheat) for at least 1 year",
+        "Tillage to bury infected residue (fungus survives in debris)",
+        "Use resistant hybrids — most effective long-term strategy",
+        "Avoid continuous corn planting in the same field"
+      ],
+      "prevention_mr": [
+        "किमान १ वर्ष मका-मका कापणी टाळा, सोयाबीन/गहू फेरपालट करा",
+        "संसर्गित अवशेष मातीत गाडण्यासाठी नांगरणी करा",
+        "प्रतिरोधक संकर वाण वापरा",
+        "त्याच शेतात सतत मका पेरणी टाळा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Mineral Deficiencies & Remedies",
+      "title_mr": "मातीतील खनिज कमतरता आणि उपाय",
+      "is_soil_related": true,
+      "deficiencies": [
+        {
+          "mineral": "Potassium (K)",
+          "mineral_mr": "पोटॅशियम (K)",
+          "relation": "Potassium-deficient corn has thinner cell walls and reduced lignification, making leaves more vulnerable to Cercospora penetration.",
+          "relation_mr": "पोटॅशियमच्या कमतरतेमुळे मक्याच्या पेशीभित्ती पातळ होतात आणि Cercospora बुरशीला प्रवेश सोपा होतो.",
+          "remedy": "Apply 80–100 kg/ha MOP (Muriate of Potash). Split application: 50% basal + 50% at knee-high stage.",
+          "remedy_mr": "८०-१०० किलो/हेक्टर MOP द्या. विभाजित मात्रा: ५०% बेसल + ५०% गुडघा-उंची अवस्थेत."
+        },
+        {
+          "mineral": "Nitrogen (N) — Balance Critical",
+          "mineral_mr": "नायट्रोजन (N) — संतुलन महत्त्वाचे",
+          "relation": "Excess nitrogen promotes lush, dense canopies that trap moisture and increase humidity — favoring gray leaf spot. Deficiency weakens the plant overall.",
+          "relation_mr": "अतिरिक्त नायट्रोजनमुळे दाट छत तयार होते जे ओलावा अडकवते आणि आर्द्रता वाढवते.",
+          "remedy": "Apply nitrogen based on soil test — typically 120–150 kg/ha in splits. Avoid over-application beyond recommended dose.",
+          "remedy_mr": "माती परीक्षणानुसार नायट्रोजन द्या — साधारणतः १२०-१५० किलो/हेक्टर विभाजित मात्रेत."
+        }
+      ]
+    }
+  },
+
+  "Corn___Northern_Leaf_Blight": {
+    "disease_name_en": "Northern Leaf Blight (Turcicum Leaf Blight)",
+    "disease_name_mr": "उत्तरी पर्ण करपा",
+    "crop": "Corn (Maize)",
+    "crop_mr": "मका",
+    "pathogen": "Exserohilum turcicum (Fungus)",
+    "severity": "High",
+    "summary_en": "Large (1–6 inch), long, elliptical, grayish-green to tan cigar-shaped lesions on leaves. Starts on lower leaves and progresses upward. Severe infection before tasseling can cause 30–50% yield loss.",
+    "summary_mr": "पानांवर मोठ्या (१-६ इंच), लांब, अंडाकृती, राखाडी-हिरव्या ते तपकिरी सिगार-आकाराच्या जखमा.",
+
+    "medicines": {
+      "title_en": "Recommended Fungicides & Medicines",
+      "title_mr": "शिफारस केलेली बुरशीनाशके आणि औषधे",
+      "treatments": [
+        {
+          "name": "Propiconazole 25% EC (Tilt)",
+          "name_mr": "प्रोपिकोनॅझोल २५% EC (टिल्ट)",
+          "type": "Systemic Triazole Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Spray at first appearance of cigar-shaped lesions on lower leaves. Best applied before tasseling.",
+          "application_mr": "खालच्या पानांवर सिगार-आकाराच्या जखमा दिसताच फवारणी. तुरा येण्यापूर्वी सर्वोत्तम."
+        },
+        {
+          "name": "Azoxystrobin + Propiconazole (Amistar Top)",
+          "name_mr": "ॲझॉक्सिस्ट्रोबिन + प्रोपिकोनॅझोल (अमिस्टार टॉप)",
+          "type": "Combination Systemic Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Apply at VT-R1 stage. Dual mode of action provides broad-spectrum control.",
+          "application_mr": "तुरा-रेशीम अवस्थेत फवारणी करा. दुहेरी क्रिया विस्तृत नियंत्रण देते."
+        },
+        {
+          "name": "Mancozeb 75% WP",
+          "name_mr": "मँकोझेब ७५% WP",
+          "type": "Contact Fungicide",
+          "dosage": "2.5 g/L of water",
+          "dosage_mr": "२.५ ग्रॅम/लिटर पाणी",
+          "application": "Preventive spray during humid weather. Reapply every 7–10 days.",
+          "application_mr": "दमट हवामानात प्रतिबंधात्मक फवारणी. प्रत्येक ७-१० दिवसांनी पुन्हा फवारणी."
+        }
+      ],
+      "prevention": [
+        "Plant resistant hybrids with Ht1, Ht2, or Ht3 resistance genes",
+        "Crop rotation with non-host crops for 1–2 years",
+        "Tillage to bury crop residue where fungus overwinters",
+        "Balanced fertilization — avoid excessive nitrogen"
+      ],
+      "prevention_mr": [
+        "Ht1, Ht2, Ht3 प्रतिरोधक जनुक असलेले संकर वाण लावा",
+        "१-२ वर्ष गैर-यजमान पिकांसह फेरपालट",
+        "बुरशी टिकून राहणारे पीक अवशेष गाडण्यासाठी नांगरणी करा",
+        "संतुलित खत व्यवस्थापन — अतिरिक्त नायट्रोजन टाळा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Mineral Deficiencies & Remedies",
+      "title_mr": "मातीतील खनिज कमतरता आणि उपाय",
+      "is_soil_related": true,
+      "deficiencies": [
+        {
+          "mineral": "Potassium (K)",
+          "mineral_mr": "पोटॅशियम (K)",
+          "relation": "Low potassium reduces the plant's ability to produce phytoalexins (natural antifungal compounds), increasing susceptibility to Exserohilum.",
+          "relation_mr": "कमी पोटॅशियममुळे वनस्पतीची फायटोअलेक्सिन (नैसर्गिक बुरशीरोधक संयुगे) निर्मिती कमी होते.",
+          "remedy": "Apply 80 kg/ha MOP. In severely deficient soils, foliar spray of 2% KNO3 at 30 and 45 DAS.",
+          "remedy_mr": "८० किलो/हेक्टर MOP द्या. अत्यंत कमतरतेच्या जमिनीत ३० आणि ४५ DAS वर २% KNO3 पर्णावर फवारणी."
+        },
+        {
+          "mineral": "Phosphorus (P)",
+          "mineral_mr": "स्फुरद (P)",
+          "relation": "Phosphorus deficiency delays maturity and weakens root development, making plants more stressed and disease-prone.",
+          "relation_mr": "स्फुरदच्या कमतरतेमुळे परिपक्वता उशीरा होते आणि मुळांचा विकास कमकुवत होतो.",
+          "remedy": "Apply SSP (Single Super Phosphate) at 60–80 kg/ha or DAP at 50 kg/ha as basal dose.",
+          "remedy_mr": "बेसल डोस म्हणून ६०-८० किलो/हेक्टर SSP किंवा ५० किलो/हेक्टर DAP द्या."
+        }
+      ]
+    }
+  },
+
+  "Corn___Healthy": {
+    "disease_name_en": "Healthy",
+    "disease_name_mr": "निरोगी",
+    "crop": "Corn (Maize)",
+    "crop_mr": "मका",
+    "pathogen": "None",
+    "severity": "None",
+    "summary_en": "Your corn crop is healthy! No disease detected. Continue with regular crop management practices.",
+    "summary_mr": "तुमचे मक्याचे पीक निरोगी आहे! कोणताही रोग आढळला नाही. नियमित पीक व्यवस्थापन सुरू ठेवा.",
+
+    "medicines": {
+      "title_en": "Preventive Care",
+      "title_mr": "प्रतिबंधात्मक काळजी",
+      "treatments": [],
+      "prevention": [
+        "Continue regular scouting for pests and diseases",
+        "Maintain balanced NPK fertilization based on soil test",
+        "Ensure proper irrigation — avoid waterlogging",
+        "Practice crop rotation to prevent disease buildup"
+      ],
+      "prevention_mr": [
+        "कीटक आणि रोगांसाठी नियमित निरीक्षण सुरू ठेवा",
+        "माती परीक्षणानुसार संतुलित NPK खत द्या",
+        "योग्य सिंचन करा — पाणी साचणे टाळा",
+        "रोग वाढ रोखण्यासाठी पीक फेरपालट करा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Health Maintenance",
+      "title_mr": "माती आरोग्य देखभाल",
+      "is_soil_related": false,
+      "deficiencies": []
+    }
+  },
+
+  "Potato___Early_Blight": {
+    "disease_name_en": "Early Blight",
+    "disease_name_mr": "लवकर करपा",
+    "crop": "Potato",
+    "crop_mr": "बटाटा",
+    "pathogen": "Alternaria solani (Fungus)",
+    "severity": "Moderate to High",
+    "summary_en": "Dark brown spots with concentric rings ('target-shaped') on older lower leaves. Spreads upward. Favored by warm (24–29°C) and alternating wet/dry conditions. Can cause 20–30% yield loss if untreated.",
+    "summary_mr": "जुन्या खालच्या पानांवर केंद्रित वलयांसह ('लक्ष्य-आकार') गडद तपकिरी डाग. उबदार आणि ओले/कोरडे हवामानात वाढतो.",
+
+    "medicines": {
+      "title_en": "Recommended Fungicides & Medicines",
+      "title_mr": "शिफारस केलेली बुरशीनाशके आणि औषधे",
+      "treatments": [
+        {
+          "name": "Mancozeb 75% WP",
+          "name_mr": "मँकोझेब ७५% WP",
+          "type": "Contact Fungicide (Dithiocarbamate)",
+          "dosage": "2.5 g/L of water (2 kg/ha)",
+          "dosage_mr": "२.५ ग्रॅम/लिटर पाणी (२ किलो/हेक्टर)",
+          "application": "Start preventive spray at 30 DAS. Repeat every 7–10 days during wet season.",
+          "application_mr": "३० DAS वर प्रतिबंधात्मक फवारणी सुरू करा. ओल्या हंगामात प्रत्येक ७-१० दिवसांनी पुन्हा."
+        },
+        {
+          "name": "Chlorothalonil 75% WP (Kavach)",
+          "name_mr": "क्लोरोथॅलोनिल ७५% WP (कवच)",
+          "type": "Contact Fungicide",
+          "dosage": "2 g/L of water",
+          "dosage_mr": "२ ग्रॅम/लिटर पाणी",
+          "application": "Spray at 7–10 day intervals starting at disease onset. Do not mix with EC formulations.",
+          "application_mr": "रोग सुरू होताच ७-१० दिवसांच्या अंतराने फवारणी. EC तयारींसह मिसळू नका."
+        },
+        {
+          "name": "Azoxystrobin 23% SC (Amistar)",
+          "name_mr": "ॲझॉक्सिस्ट्रोबिन २३% SC (अमिस्टार)",
+          "type": "Strobilurin Systemic Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Excellent for both early blight and late blight control. Apply at first symptoms.",
+          "application_mr": "लवकर आणि उशिरा करपा दोन्हीसाठी उत्कृष्ट. पहिली लक्षणे दिसल्यावर फवारणी."
+        },
+        {
+          "name": "Fenamidone + Mancozeb (Sectin)",
+          "name_mr": "फेनामिडोन + मँकोझेब (सेक्टिन)",
+          "type": "Combination Fungicide",
+          "dosage": "3 g/L of water",
+          "dosage_mr": "३ ग्रॅम/लिटर पाणी",
+          "application": "Apply when disease pressure is high. Alternates systemic and contact action.",
+          "application_mr": "रोगाचा दबाव जास्त असताना फवारणी करा."
+        }
+      ],
+      "prevention": [
+        "Use certified disease-free seed tubers",
+        "Maintain 3-year crop rotation with non-Solanaceous crops",
+        "Remove and destroy infected plant debris",
+        "Avoid overhead irrigation — use drip irrigation",
+        "Apply mulch to prevent soil splash onto lower leaves"
+      ],
+      "prevention_mr": [
+        "प्रमाणित रोगमुक्त बियाणे बटाटे वापरा",
+        "गैर-Solanaceous पिकांसह ३ वर्षांची फेरपालट करा",
+        "संसर्गित पीक अवशेष काढून नष्ट करा",
+        "ओव्हरहेड सिंचन टाळा — ठिबक सिंचन वापरा",
+        "खालच्या पानांवर माती उसळणे टाळण्यासाठी आच्छादन करा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Mineral Deficiencies & Remedies",
+      "title_mr": "मातीतील खनिज कमतरता आणि उपाय",
+      "is_soil_related": true,
+      "deficiencies": [
+        {
+          "mineral": "Calcium (Ca)",
+          "mineral_mr": "कॅल्शियम (Ca)",
+          "relation": "Calcium deficiency weakens cell wall integrity in potato tubers and leaves, creating entry points for Alternaria. Linked to higher early blight severity.",
+          "relation_mr": "कॅल्शियमच्या कमतरतेमुळे बटाट्याच्या पेशीभित्ती कमकुवत होतात, ज्यामुळे Alternaria बुरशीला प्रवेश मिळतो.",
+          "remedy": "Apply Gypsum (Calcium Sulphate) at 500 kg/ha. For acidic soils, apply agricultural lime at 2–4 tonnes/ha. Foliar spray of Calcium Chloride (0.5%) at tuber formation stage.",
+          "remedy_mr": "५०० किलो/हेक्टर जिप्सम (कॅल्शियम सल्फेट) द्या. आम्लयुक्त जमिनीसाठी २-४ टन/हेक्टर शेती चुना. बटाटा निर्मिती अवस्थेत ०.५% कॅल्शियम क्लोराईड पर्णावर फवारणी."
+        },
+        {
+          "mineral": "Potassium (K)",
+          "mineral_mr": "पोटॅशियम (K)",
+          "relation": "Potatoes are potassium-hungry crops. K deficiency reduces disease resistance and results in poor skin quality making tubers prone to infection.",
+          "relation_mr": "बटाटा हे पोटॅशियम-भुकेलेले पीक आहे. K कमतरतेमुळे रोगप्रतिकारशक्ती कमी होते.",
+          "remedy": "Apply SOP (Potassium Sulphate) at 120–150 kg K2O/ha. Prefer SOP over MOP for potatoes as chloride can reduce tuber quality.",
+          "remedy_mr": "१२०-१५० किलो K2O/हेक्टर SOP (पोटॅशियम सल्फेट) द्या. बटाट्यासाठी MOP पेक्षा SOP पसंत करा."
+        },
+        {
+          "mineral": "Manganese (Mn)",
+          "mineral_mr": "मँगनीज (Mn)",
+          "relation": "Manganese activates enzymes involved in lignin synthesis and defense responses. Low Mn increases susceptibility to foliar diseases.",
+          "relation_mr": "मँगनीज लिग्निन संश्लेषण आणि संरक्षण प्रतिक्रियांमध्ये सहभागी एन्झाइम सक्रिय करतो.",
+          "remedy": "Foliar spray of MnSO4 (0.5%) at 30 and 50 DAS. Soil application of 25 kg/ha MnSO4 for deficient soils.",
+          "remedy_mr": "३० आणि ५० DAS वर ०.५% MnSO4 पर्णावर फवारणी. कमतरतेच्या जमिनीसाठी २५ किलो/हेक्टर MnSO4."
+        }
+      ]
+    }
+  },
+
+  "Potato___Late_Blight": {
+    "disease_name_en": "Late Blight",
+    "disease_name_mr": "उशिरा करपा",
+    "crop": "Potato",
+    "crop_mr": "बटाटा",
+    "pathogen": "Phytophthora infestans (Oomycete/Water Mold)",
+    "severity": "Very High (Devastating)",
+    "summary_en": "Large, dark brown, water-soaked blotches on leaves with white mold growth on undersides in humid conditions. Spreads extremely fast — can destroy entire field in 7–10 days. Caused the Irish Potato Famine (1845).",
+    "summary_mr": "पानांवर मोठे, गडद तपकिरी, पाणी शोषलेले डाग. दमट हवामानात अत्यंत वेगाने पसरतो — ७-१० दिवसांत संपूर्ण शेत नष्ट करू शकतो.",
+
+    "medicines": {
+      "title_en": "Recommended Fungicides & Medicines",
+      "title_mr": "शिफारस केलेली बुरशीनाशके आणि औषधे",
+      "treatments": [
+        {
+          "name": "Metalaxyl + Mancozeb (Ridomil Gold MZ 68 WP)",
+          "name_mr": "मेटालॅक्सिल + मँकोझेब (रिडोमिल गोल्ड MZ 68 WP)",
+          "type": "Systemic + Contact Fungicide",
+          "dosage": "2.5 g/L of water",
+          "dosage_mr": "२.५ ग्रॅम/लिटर पाणी",
+          "application": "FIRST CHOICE for late blight. Apply at first sign of disease. Repeat every 10–14 days. Maximum 3 applications per season.",
+          "application_mr": "उशिरा करप्यासाठी पहिली निवड. रोगाची पहिली चिन्हे दिसल्यावर फवारणी. प्रत्येक १०-१४ दिवसांनी पुन्हा. प्रति हंगाम जास्तीत जास्त ३ फवारण्या."
+        },
+        {
+          "name": "Cymoxanil + Mancozeb (Curzate M8)",
+          "name_mr": "सायमॉक्सॅनिल + मँकोझेब (कर्झेट M8)",
+          "type": "Systemic + Contact Fungicide",
+          "dosage": "3 g/L of water",
+          "dosage_mr": "३ ग्रॅम/लिटर पाणी",
+          "application": "Excellent curative action. Apply within 48 hours of infection. Alternate with Ridomil to prevent resistance.",
+          "application_mr": "उत्कृष्ट उपचारात्मक क्रिया. संसर्गाच्या ४८ तासांत फवारणी करा. प्रतिकार टाळण्यासाठी रिडोमिलसह बदलत वापरा."
+        },
+        {
+          "name": "Dimethomorph + Mancozeb (Acrobat MZ)",
+          "name_mr": "डायमेथोमॉर्फ + मँकोझेब (ॲक्रोबॅट MZ)",
+          "type": "Translaminar + Contact Fungicide",
+          "dosage": "3 g/L of water",
+          "dosage_mr": "३ ग्रॅम/लिटर पाणी",
+          "application": "Apply for resistant P. infestans strains where Metalaxyl is less effective.",
+          "application_mr": "मेटालॅक्सिल कमी प्रभावी असलेल्या प्रतिरोधक वाणांसाठी फवारणी करा."
+        },
+        {
+          "name": "Copper Oxychloride 50% WP",
+          "name_mr": "कॉपर ऑक्सिक्लोराईड ५०% WP",
+          "type": "Contact Fungicide (Organic-approved)",
+          "dosage": "3 g/L of water",
+          "dosage_mr": "३ ग्रॅम/लिटर पाणी",
+          "application": "Preventive spray. Suitable for organic farming. Apply before disease onset in rainy season.",
+          "application_mr": "प्रतिबंधात्मक फवारणी. सेंद्रिय शेतीसाठी योग्य. पावसाळ्यात रोग सुरू होण्यापूर्वी फवारणी."
+        }
+      ],
+      "prevention": [
+        "Use certified disease-free seed tubers",
+        "Plant resistant varieties (Kufri Jyoti, Kufri Badshah, etc.)",
+        "Destroy all cull piles and volunteer potato plants",
+        "Ensure good air circulation between rows",
+        "Hilling soil around stems prevents tuber infection",
+        "Destroy vines 10 days before harvest in infected fields"
+      ],
+      "prevention_mr": [
+        "प्रमाणित रोगमुक्त बियाणे बटाटे वापरा",
+        "प्रतिरोधक वाण लावा (कुफरी ज्योती, कुफरी बादशाह इ.)",
+        "सर्व टाकाऊ डंगर आणि बटाट्याची झाडे नष्ट करा",
+        "ओळींमध्ये चांगले वायु परिसंचरण सुनिश्चित करा",
+        "बटाटा संसर्ग टाळण्यासाठी देठांभोवती माती चढवा",
+        "संसर्गित शेतात कापणीपूर्वी १० दिवस वेली नष्ट करा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Mineral Deficiencies & Remedies",
+      "title_mr": "मातीतील खनिज कमतरता आणि उपाय",
+      "is_soil_related": true,
+      "deficiencies": [
+        {
+          "mineral": "Calcium (Ca)",
+          "mineral_mr": "कॅल्शियम (Ca)",
+          "relation": "Calcium strengthens cell walls and is critical in potato. Deficient tubers are more susceptible to Phytophthora penetration and secondary rot.",
+          "relation_mr": "कॅल्शियम पेशीभित्ती मजबूत करतो. कमतरतेच्या बटाट्यांमध्ये Phytophthora चा प्रवेश सोपा होतो.",
+          "remedy": "Apply Gypsum at 400–500 kg/ha at planting. Foliar CaCl2 (0.5%) spray at tuber initiation and bulking stages.",
+          "remedy_mr": "लागवडीच्या वेळी ४००-५०० किलो/हेक्टर जिप्सम द्या. बटाटा निर्मिती आणि वाढ अवस्थेत ०.५% CaCl2 पर्णावर फवारणी."
+        },
+        {
+          "mineral": "Phosphorus (P)",
+          "mineral_mr": "स्फुरद (P)",
+          "relation": "Phosphorus is essential for strong root development and plant energy systems. Deficiency makes root zone weaker and increases tuber infection risk.",
+          "relation_mr": "स्फुरद मजबूत मूळ विकास आणि वनस्पती ऊर्जा प्रणालीसाठी आवश्यक. कमतरतेमुळे मूळ क्षेत्र कमकुवत होते.",
+          "remedy": "Apply SSP at 100–120 kg/ha or DAP at 60 kg/ha as pre-planting dose.",
+          "remedy_mr": "पूर्व-लागवड डोस म्हणून १००-१२० किलो/हेक्टर SSP किंवा ६० किलो/हेक्टर DAP द्या."
+        },
+        {
+          "mineral": "Silicon (Si)",
+          "mineral_mr": "सिलिकॉन (Si)",
+          "relation": "Silicon deposition in cell walls creates a physical barrier against pathogen entry. Enhances potato resistance to Phytophthora.",
+          "relation_mr": "पेशीभित्तीत सिलिकॉन जमा झाल्यामुळे रोगजनक प्रवेशाविरुद्ध भौतिक अडथळा निर्माण होतो.",
+          "remedy": "Apply Calcium Silicate at 2–4 tonnes/ha. Foliar spray of Potassium Silicate (0.3%) at 35 and 50 DAS.",
+          "remedy_mr": "२-४ टन/हेक्टर कॅल्शियम सिलिकेट द्या. ३५ आणि ५० DAS वर ०.३% पोटॅशियम सिलिकेट पर्णावर फवारणी."
+        }
+      ]
+    }
+  },
+
+  "Potato___Healthy": {
+    "disease_name_en": "Healthy",
+    "disease_name_mr": "निरोगी",
+    "crop": "Potato",
+    "crop_mr": "बटाटा",
+    "pathogen": "None",
+    "severity": "None",
+    "summary_en": "Your potato crop is healthy! No disease detected. Continue with regular crop management practices.",
+    "summary_mr": "तुमचे बटाट्याचे पीक निरोगी आहे! कोणताही रोग आढळला नाही.",
+
+    "medicines": {
+      "title_en": "Preventive Care",
+      "title_mr": "प्रतिबंधात्मक काळजी",
+      "treatments": [],
+      "prevention": [
+        "Continue scouting for early blight and late blight symptoms",
+        "Maintain proper hilling schedule",
+        "Apply preventive Mancozeb spray during rainy season",
+        "Ensure proper drainage to avoid waterlogging"
+      ],
+      "prevention_mr": [
+        "लवकर व उशिरा करपा लक्षणांसाठी निरीक्षण सुरू ठेवा",
+        "योग्य माती चढवण्याचे वेळापत्रक राखा",
+        "पावसाळ्यात प्रतिबंधात्मक मँकोझेब फवारणी करा",
+        "पाणी साचणे टाळण्यासाठी योग्य निचरा सुनिश्चित करा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Health Maintenance",
+      "title_mr": "माती आरोग्य देखभाल",
+      "is_soil_related": false,
+      "deficiencies": []
+    }
+  },
+
+  "Rice___Brown_Spot": {
+    "disease_name_en": "Brown Spot",
+    "disease_name_mr": "तपकिरी ठिपके",
+    "crop": "Rice",
+    "crop_mr": "भात (तांदूळ)",
+    "pathogen": "Bipolaris oryzae / Cochliobolus miyabeanus (Fungus)",
+    "severity": "Moderate to High",
+    "summary_en": "Circular to oval brown spots with gray center and reddish-brown margin on leaves. Strongly associated with nutrient-deficient soils. Caused the Great Bengal Famine (1943). Can cause 5–45% yield loss.",
+    "summary_mr": "पानांवर गोलाकार ते अंडाकृती तपकिरी डाग, राखाडी केंद्र आणि लालसर-तपकिरी किनार. पोषक-कमतरतेच्या जमिनींशी मजबूत संबंध.",
+
+    "medicines": {
+      "title_en": "Recommended Fungicides & Medicines",
+      "title_mr": "शिफारस केलेली बुरशीनाशके आणि औषधे",
+      "treatments": [
+        {
+          "name": "Iprodione 50% WP (Rovral)",
+          "name_mr": "इप्रोडिओन ५०% WP (रोव्हरल)",
+          "type": "Contact Fungicide",
+          "dosage": "2 g/L of water",
+          "dosage_mr": "२ ग्रॅम/लिटर पाणी",
+          "application": "Spray at tillering and panicle initiation stages when spots first appear.",
+          "application_mr": "डाग प्रथम दिसल्यावर फुटवे आणि कणिस सुरुवात अवस्थेत फवारणी."
+        },
+        {
+          "name": "Propiconazole 25% EC (Tilt)",
+          "name_mr": "प्रोपिकोनॅझोल २५% EC (टिल्ट)",
+          "type": "Systemic Triazole Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Systemic action effective against brown spot. Apply at disease onset.",
+          "application_mr": "तपकिरी डागांविरुद्ध प्रभावी प्रणालीगत क्रिया. रोग सुरू झाल्यावर फवारणी."
+        },
+        {
+          "name": "Carbendazim 50% WP (Bavistin)",
+          "name_mr": "कार्बेन्डाझिम ५०% WP (बाविस्टिन)",
+          "type": "Systemic Benzimidazole Fungicide",
+          "dosage": "1 g/L of water",
+          "dosage_mr": "१ ग्रॅम/लिटर पाणी",
+          "application": "Seed treatment (2 g/kg seed) + foliar spray at tillering. Widely available and affordable.",
+          "application_mr": "बीजप्रक्रिया (२ ग्रॅम/किलो बियाणे) + फुटवे अवस्थेत पर्णावर फवारणी. सर्वत्र उपलब्ध आणि परवडणारे."
+        },
+        {
+          "name": "Azoxystrobin 23% SC (Amistar)",
+          "name_mr": "ॲझॉक्सिस्ट्रोबिन २३% SC (अमिस्टार)",
+          "type": "Strobilurin Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Apply at booting to heading stage for prevention. Provides greenness and yield boost.",
+          "application_mr": "प्रतिबंधासाठी बूट ते हेडिंग अवस्थेत फवारणी. हिरवेपणा आणि उत्पन्न वाढीसाठी."
+        },
+        {
+          "name": "Hot Water Seed Treatment",
+          "name_mr": "गरम पाणी बीजप्रक्रिया",
+          "type": "Non-chemical Treatment",
+          "dosage": "53–54°C water for 10–12 minutes",
+          "dosage_mr": "५३-५४°C पाण्यात १०-१२ मिनिटे",
+          "application": "Pre-soak seeds in cold water for 8 hours, then treat with hot water. Controls seedling stage infection.",
+          "application_mr": "बियाणे ८ तास थंड पाण्यात भिजवा, नंतर गरम पाण्याने प्रक्रिया करा."
+        }
+      ],
+      "prevention": [
+        "Use resistant varieties (contact local agriculture office)",
+        "Improve soil fertility — brown spot is primarily a nutrient deficiency disease",
+        "Use certified, clean seed",
+        "Maintain proper water management — avoid drought stress"
+      ],
+      "prevention_mr": [
+        "प्रतिरोधक वाण वापरा (स्थानिक कृषी कार्यालयाशी संपर्क साधा)",
+        "माती सुपीकता सुधारा — तपकिरी ठिपके प्रामुख्याने पोषक कमतरतेचा रोग आहे",
+        "प्रमाणित, स्वच्छ बियाणे वापरा",
+        "योग्य पाणी व्यवस्थापन राखा — दुष्काळ ताण टाळा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Mineral Deficiencies & Remedies",
+      "title_mr": "मातीतील खनिज कमतरता आणि उपाय",
+      "is_soil_related": true,
+      "deficiencies": [
+        {
+          "mineral": "Silicon (Si) — PRIMARY CAUSE",
+          "mineral_mr": "सिलिकॉन (Si) — मुख्य कारण",
+          "relation": "Brown spot is STRONGLY linked to silicon deficiency. Silicon deposits in rice cell walls form a physical barrier against fungal penetration. Low Si = severe brown spot.",
+          "relation_mr": "तपकिरी ठिपके सिलिकॉनच्या कमतरतेशी मजबूत संबंधित आहेत. सिलिकॉन भाताच्या पेशीभित्तीत जमा होऊन बुरशीविरुद्ध भौतिक अडथळा बनवतो.",
+          "remedy": "Apply Calcium Silicate slag at 1.5–2 tonnes/ha before transplanting. This is the MOST effective treatment for brown spot — more than any fungicide.",
+          "remedy_mr": "रोवणीपूर्वी १.५-२ टन/हेक्टर कॅल्शियम सिलिकेट स्लॅग द्या. हा तपकिरी ठिपक्यांसाठी कोणत्याही बुरशीनाशकापेक्षा सर्वात प्रभावी उपचार आहे."
+        },
+        {
+          "mineral": "Potassium (K)",
+          "mineral_mr": "पोटॅशियम (K)",
+          "relation": "Potassium-deficient rice fields show 2–3x higher brown spot severity. K regulates stomatal function and disease resistance pathways.",
+          "relation_mr": "पोटॅशियम-कमतरतेच्या भात शेतांमध्ये २-३ पट अधिक तपकिरी ठिपके दिसतात.",
+          "remedy": "Apply MOP at 60–80 kg K2O/ha in 2 splits: 50% basal + 50% at panicle initiation.",
+          "remedy_mr": "२ विभागांत ६०-८० किलो K2O/हेक्टर MOP द्या: ५०% बेसल + ५०% कणिस सुरुवातीवेळी."
+        },
+        {
+          "mineral": "Nitrogen (N) — Balance Critical",
+          "mineral_mr": "नायट्रोजन (N) — संतुलन महत्त्वाचे",
+          "relation": "Both excess and deficient nitrogen worsen brown spot. Deficiency weakens the plant; excess creates lush growth that traps humidity.",
+          "relation_mr": "अतिरिक्त आणि कमी दोन्ही नायट्रोजन तपकिरी ठिपके वाढवतात.",
+          "remedy": "Apply N based on Leaf Color Chart (LCC) recommendations: typically 100–120 kg/ha in 3 splits (basal, tillering, panicle initiation).",
+          "remedy_mr": "पान रंग चार्ट (LCC) शिफारसीनुसार N द्या: ३ विभागांत १००-१२० किलो/हेक्टर."
+        },
+        {
+          "mineral": "Zinc (Zn)",
+          "mineral_mr": "जस्त (Zn)",
+          "relation": "Zinc deficiency is endemic in Indian rice paddies. Low Zn impairs plant immune response and increases fungal infection rates.",
+          "relation_mr": "भारतीय भात शेतांमध्ये जस्ताची कमतरता सर्वत्र आहे. कमी Zn मुळे बुरशी संसर्ग दर वाढतो.",
+          "remedy": "Apply ZnSO4 at 25 kg/ha as basal dose. Foliar spray of 0.5% ZnSO4 at 25 and 45 DAT (Days After Transplanting).",
+          "remedy_mr": "बेसल डोस म्हणून २५ किलो/हेक्टर ZnSO4 द्या. २५ आणि ४५ DAT वर ०.५% ZnSO4 पर्णावर फवारणी."
+        }
+      ]
+    }
+  },
+
+  "Rice___Leaf_Blast": {
+    "disease_name_en": "Leaf Blast",
+    "disease_name_mr": "पर्ण ब्लास्ट (लीफ ब्लास्ट)",
+    "crop": "Rice",
+    "crop_mr": "भात (तांदूळ)",
+    "pathogen": "Magnaporthe oryzae / Pyricularia oryzae (Fungus)",
+    "severity": "Very High",
+    "summary_en": "Diamond/spindle-shaped lesions with gray center and brown margin on leaves. Most destructive rice disease worldwide. Can cause 50–90% yield loss in severe epidemics. Favored by 25–28°C, high humidity, prolonged leaf wetness.",
+    "summary_mr": "पानांवर हिऱ्याच्या/चात्या-आकाराच्या जखमा, राखाडी केंद्र आणि तपकिरी किनार. जगातील सर्वात विनाशकारी भात रोग. ५०-९०% उत्पन्न हानी होऊ शकते.",
+
+    "medicines": {
+      "title_en": "Recommended Fungicides & Medicines",
+      "title_mr": "शिफारस केलेली बुरशीनाशके आणि औषधे",
+      "treatments": [
+        {
+          "name": "Tricyclazole 75% WP (Beam / Baan)",
+          "name_mr": "ट्रायसायक्लाझोल ७५% WP (बीम / बान)",
+          "type": "Systemic Melanin Biosynthesis Inhibitor",
+          "dosage": "0.6 g/L of water (300 g/ha)",
+          "dosage_mr": "०.६ ग्रॅम/लिटर पाणी (३०० ग्रॅम/हेक्टर)",
+          "application": "GOLD STANDARD for rice blast. Preventive spray at tillering and before heading. Prevents fungal appressorium formation.",
+          "application_mr": "भात ब्लास्टसाठी सुवर्ण मानक. फुटवे आणि हेडिंगपूर्वी प्रतिबंधात्मक फवारणी."
+        },
+        {
+          "name": "Isoprothiolane 40% EC (Fujione)",
+          "name_mr": "आयसोप्रोथिओलेन ४०% EC (फुजिवन)",
+          "type": "Systemic Fungicide",
+          "dosage": "1.5 mL/L of water",
+          "dosage_mr": "१.५ मिली/लिटर पाणी",
+          "application": "Effective systemic action. Apply as soon as diamond-shaped lesions appear. Also controls brown spot.",
+          "application_mr": "हिरा-आकाराच्या जखमा दिसताच फवारणी करा. तपकिरी ठिपके देखील नियंत्रित करते."
+        },
+        {
+          "name": "Carbendazim 50% WP (Bavistin)",
+          "name_mr": "कार्बेन्डाझिम ५०% WP (बाविस्टिन)",
+          "type": "Systemic Benzimidazole Fungicide",
+          "dosage": "1 g/L of water (500 g/ha)",
+          "dosage_mr": "१ ग्रॅम/लिटर पाणी (५०० ग्रॅम/हेक्टर)",
+          "application": "Affordable alternative. Seed treatment (2 g/kg) + foliar spray at disease onset.",
+          "application_mr": "किफायतशीर पर्याय. बीजप्रक्रिया (२ ग्रॅम/किलो) + रोग सुरू झाल्यावर पर्णावर फवारणी."
+        },
+        {
+          "name": "Azoxystrobin 18.2% + Difenoconazole 11.4% SC (Amistar Top)",
+          "name_mr": "ॲझॉक्सिस्ट्रोबिन + डिफेनोकोनॅझोल (अमिस्टार टॉप)",
+          "type": "Combination Systemic Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Dual mode of action. Excellent for severe blast outbreaks. Apply at booting stage.",
+          "application_mr": "दुहेरी क्रियापद्धती. तीव्र ब्लास्ट उद्रेकासाठी उत्कृष्ट. बूट अवस्थेत फवारणी."
+        }
+      ],
+      "prevention": [
+        "Use blast-resistant varieties (most important strategy)",
+        "Avoid excessive nitrogen — excess N dramatically increases blast severity",
+        "Maintain proper plant spacing for air circulation",
+        "Drain fields periodically to reduce leaf wetness duration",
+        "Treat seeds with Tricyclazole or Carbendazim before sowing"
+      ],
+      "prevention_mr": [
+        "ब्लास्ट-प्रतिरोधक वाण वापरा (सर्वात महत्त्वाची रणनीती)",
+        "अतिरिक्त नायट्रोजन टाळा — अधिक N ब्लास्ट तीव्रता नाटकीयरित्या वाढवतो",
+        "वायु परिसंचालनासाठी योग्य वनस्पती अंतर राखा",
+        "पानांवरील ओलावा कालावधी कमी करण्यासाठी शेतातून नियमित पाणी काढा",
+        "पेरणीपूर्वी ट्रायसायक्लाझोल किंवा कार्बेन्डाझिमने बीजप्रक्रिया करा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Mineral Deficiencies & Remedies",
+      "title_mr": "मातीतील खनिज कमतरता आणि उपाय",
+      "is_soil_related": true,
+      "deficiencies": [
+        {
+          "mineral": "Silicon (Si) — CRITICAL",
+          "mineral_mr": "सिलिकॉन (Si) — अत्यंत महत्त्वाचे",
+          "relation": "Silicon is the #1 mineral defense against blast in rice. Si deposits in epidermal cells physically prevent Magnaporthe appressorium penetration. Si-deficient rice is 3–5x more susceptible to blast.",
+          "relation_mr": "सिलिकॉन भातातील ब्लास्ट विरुद्ध #१ खनिज संरक्षण आहे. Si-कमतरतेचा भात ३-५ पट अधिक ब्लास्ट-संवेदनशील असतो.",
+          "remedy": "Apply Calcium Silicate at 2 tonnes/ha or Rice Husk Ash at 5 tonnes/ha before transplanting. Foliar Potassium Silicate (0.3%) spray at 30 and 50 DAT.",
+          "remedy_mr": "रोवणीपूर्वी २ टन/हेक्टर कॅल्शियम सिलिकेट किंवा ५ टन/हेक्टर भाताची तूस राख द्या. ३० आणि ५० DAT वर ०.३% पोटॅशियम सिलिकेट पर्णावर फवारणी."
+        },
+        {
+          "mineral": "Potassium (K)",
+          "mineral_mr": "पोटॅशियम (K)",
+          "relation": "Potassium strengthens cell walls and regulates stomatal closure, reducing infection windows. K-deficient rice is significantly more blast-prone.",
+          "relation_mr": "पोटॅशियम पेशीभित्ती मजबूत करतो आणि रंध्र बंद होण्यावर नियंत्रण ठेवतो. K-कमतरतेचा भात लक्षणीयरित्या अधिक ब्लास्ट-प्रवण असतो.",
+          "remedy": "Apply 60–80 kg K2O/ha as MOP in 2 splits. For K-deficient soils, increase to 100 kg K2O/ha.",
+          "remedy_mr": "२ विभागांत ६०-८० किलो K2O/हेक्टर MOP द्या. K-कमतरतेच्या जमिनीसाठी १०० किलो K2O/हेक्टर पर्यंत वाढवा."
+        },
+        {
+          "mineral": "Nitrogen (N) — EXCESS IS DANGEROUS",
+          "mineral_mr": "नायट्रोजन (N) — अतिरिक्त धोकादायक",
+          "relation": "Excess nitrogen is the #1 agronomic factor worsening blast epidemics. High N produces soft, lush leaf tissue that Magnaporthe penetrates easily. Reduce N in blast-prone areas.",
+          "relation_mr": "अतिरिक्त नायट्रोजन ब्लास्ट साथीचे रोग वाढवणारा #१ कृषी घटक आहे. अधिक N मुळे मऊ, दाट पान तयार होतात.",
+          "remedy": "Reduce N dose by 15–20% in blast-prone fields. Use slow-release N fertilizers (neem-coated urea). Follow LCC-based N application.",
+          "remedy_mr": "ब्लास्ट-प्रवण शेतात N मात्रा १५-२०% कमी करा. हळू-प्रकाशन N खते (निम-लेपित युरिया) वापरा."
+        }
+      ]
+    }
+  },
+
+  "Rice___Neck_Blast": {
+    "disease_name_en": "Neck Blast (Panicle Blast)",
+    "disease_name_mr": "मान ब्लास्ट (कणिस ब्लास्ट)",
+    "crop": "Rice",
+    "crop_mr": "भात (तांदूळ)",
+    "pathogen": "Magnaporthe oryzae / Pyricularia oryzae (Fungus) — same as leaf blast",
+    "severity": "Very High (Most damaging form of blast)",
+    "summary_en": "Grayish-brown lesion at the panicle base (neck), causing the panicle to break and fall — 'neck rot'. This is the most economically damaging form of blast. Can cause complete grain loss if infection occurs at early heading.",
+    "summary_mr": "कणिसाच्या पायथ्याशी (मान) राखाडी-तपकिरी जखम, ज्यामुळे कणिस तुटून पडतो. ब्लास्टचा सर्वात आर्थिकदृष्ट्या हानिकारक प्रकार.",
+
+    "medicines": {
+      "title_en": "Recommended Fungicides & Medicines",
+      "title_mr": "शिफारस केलेली बुरशीनाशके आणि औषधे",
+      "treatments": [
+        {
+          "name": "Tricyclazole 75% WP (Beam / Baan)",
+          "name_mr": "ट्रायसायक्लाझोल ७५% WP (बीम / बान)",
+          "type": "Systemic Melanin Biosynthesis Inhibitor",
+          "dosage": "0.6 g/L of water",
+          "dosage_mr": "०.६ ग्रॅम/लिटर पाणी",
+          "application": "CRITICAL SPRAY at boot leaf stage (5–7 days before heading) to prevent neck blast. This timing is more important than any other fungicide application in rice.",
+          "application_mr": "बूट पान अवस्थेत (हेडिंगपूर्वी ५-७ दिवस) महत्त्वपूर्ण फवारणी. हे टायमिंग भातातील इतर कोणत्याही फवारणीपेक्षा अधिक महत्त्वाचे."
+        },
+        {
+          "name": "Isoprothiolane 40% EC (Fujione)",
+          "name_mr": "आयसोप्रोथिओलेन ४०% EC (फुजिवन)",
+          "type": "Systemic Fungicide",
+          "dosage": "1.5 mL/L of water",
+          "dosage_mr": "१.५ मिली/लिटर पाणी",
+          "application": "Apply at booting and heading stages. Effective against both leaf and neck blast.",
+          "application_mr": "बूटिंग आणि हेडिंग अवस्थेत फवारणी करा. पर्ण आणि मान ब्लास्ट दोन्हीवर प्रभावी."
+        },
+        {
+          "name": "Kasugamycin 3% SL (Kasumin)",
+          "name_mr": "कसुगामायसिन ३% SL (कसुमिन)",
+          "type": "Antibiotic Fungicide",
+          "dosage": "2 mL/L of water",
+          "dosage_mr": "२ मिली/लिटर पाणी",
+          "application": "Specific anti-blast antibiotic. Apply at heading when weather is humid.",
+          "application_mr": "विशिष्ट ब्लास्ट-विरोधी प्रतिजैविक. दमट हवामानात हेडिंगवेळी फवारणी."
+        },
+        {
+          "name": "Azoxystrobin 18.2% + Difenoconazole 11.4% SC",
+          "name_mr": "ॲझॉक्सिस्ट्रोबिन + डिफेनोकोनॅझोल",
+          "type": "Combination Systemic Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Premium option for severe outbreaks. Apply at boot to early heading stage.",
+          "application_mr": "तीव्र उद्रेकासाठी प्रीमियम पर्याय. बूट ते लवकर हेडिंग अवस्थेत फवारणी."
+        }
+      ],
+      "prevention": [
+        "Time Tricyclazole spray precisely at boot stage — this prevents neck blast",
+        "Use blast-resistant varieties",
+        "Reduce nitrogen by 15–20% in blast-endemic areas",
+        "Avoid late planting which coincides with humid weather at heading",
+        "Drain field before heading to reduce humidity around panicles"
+      ],
+      "prevention_mr": [
+        "बूट अवस्थेत ट्रायसायक्लाझोल फवारणीचे अचूक वेळापत्रक — मान ब्लास्ट प्रतिबंधित करते",
+        "ब्लास्ट-प्रतिरोधक वाण वापरा",
+        "ब्लास्ट-स्थानिक क्षेत्रांत नायट्रोजन १५-२०% कमी करा",
+        "उशिरा लागवड टाळा",
+        "कणिसांभोवती आर्द्रता कमी करण्यासाठी हेडिंगपूर्वी शेतातून पाणी काढा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Mineral Deficiencies & Remedies",
+      "title_mr": "मातीतील खनिज कमतरता आणि उपाय",
+      "is_soil_related": true,
+      "deficiencies": [
+        {
+          "mineral": "Silicon (Si)",
+          "mineral_mr": "सिलिकॉन (Si)",
+          "relation": "Same pathogen as leaf blast — Silicon deposits at the neck/panicle node strengthen the tissue and prevent Magnaporthe infection at this critical point.",
+          "relation_mr": "पर्ण ब्लास्टसारखाच रोगजनक — सिलिकॉन मान/कणिस गाठीवर जमा होऊन ऊती मजबूत करतो.",
+          "remedy": "Apply Calcium Silicate at 2 tonnes/ha. Foliar Potassium Silicate (0.3%) at booting stage specifically protects the neck region.",
+          "remedy_mr": "२ टन/हेक्टर कॅल्शियम सिलिकेट द्या. बूटिंग अवस्थेत ०.३% पोटॅशियम सिलिकेट फवारणी मान क्षेत्राचे विशेष संरक्षण करते."
+        },
+        {
+          "mineral": "Potassium (K)",
+          "mineral_mr": "पोटॅशियम (K)",
+          "relation": "K is critical during grain filling stage. Deficiency weakens the panicle neck tissue, making it highly susceptible to neck blast.",
+          "relation_mr": "दाणे भरण्याच्या अवस्थेत K अत्यंत महत्त्वाचे. कमतरतेमुळे कणिसाच्या मानाची ऊती कमकुवत होते.",
+          "remedy": "Third split of K (20–30 kg K2O/ha) at panicle initiation is critical for neck blast prevention.",
+          "remedy_mr": "कणिस सुरुवातीवेळी K चा तिसरा विभाग (२०-३० किलो K2O/हेक्टर) मान ब्लास्ट प्रतिबंधासाठी महत्त्वाचा."
+        }
+      ]
+    }
+  },
+
+  "Rice___Healthy": {
+    "disease_name_en": "Healthy",
+    "disease_name_mr": "निरोगी",
+    "crop": "Rice",
+    "crop_mr": "भात (तांदूळ)",
+    "pathogen": "None",
+    "severity": "None",
+    "summary_en": "Your rice crop is healthy! No disease detected.",
+    "summary_mr": "तुमचे भाताचे पीक निरोगी आहे! कोणताही रोग आढळला नाही.",
+
+    "medicines": {
+      "title_en": "Preventive Care",
+      "title_mr": "प्रतिबंधात्मक काळजी",
+      "treatments": [],
+      "prevention": [
+        "Continue monitoring for blast and brown spot symptoms",
+        "Preventive Tricyclazole spray at boot stage is recommended in blast-endemic areas",
+        "Maintain balanced N:P:K fertilization",
+        "Apply Silicon (Calcium Silicate or Rice Husk Ash) as a routine soil amendment"
+      ],
+      "prevention_mr": [
+        "ब्लास्ट आणि तपकिरी ठिपक्यांच्या लक्षणांसाठी निरीक्षण सुरू ठेवा",
+        "ब्लास्ट-स्थानिक क्षेत्रांत बूट अवस्थेत प्रतिबंधात्मक ट्रायसायक्लाझोल फवारणी शिफारस आहे",
+        "संतुलित N:P:K खत व्यवस्थापन राखा",
+        "नियमित माती सुधारणा म्हणून सिलिकॉन (कॅल्शियम सिलिकेट किंवा भाताची तूस राख) द्या"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Health Maintenance",
+      "title_mr": "माती आरोग्य देखभाल",
+      "is_soil_related": false,
+      "deficiencies": []
+    }
+  },
+
+  "Sugarcane_Bacterial Blight": {
+    "disease_name_en": "Bacterial Blight (Leaf Scald)",
+    "disease_name_mr": "जिवाणूजन्य करपा",
+    "crop": "Sugarcane",
+    "crop_mr": "ऊस",
+    "pathogen": "Xanthomonas albilineans (Bacteria)",
+    "severity": "High",
+    "summary_en": "White or cream-colored pencil-line stripes along leaf veins, progressing to full leaf wilting and scalding (bleaching). Transmitted through infected setts (seed cane) and cutting tools. No fully effective chemical cure — management is primarily through clean seed and resistant varieties.",
+    "summary_mr": "पानांच्या शिरांवर पांढऱ्या किंवा मलई-रंगाच्या पेन्सिल-रेषा, संपूर्ण पान कोमेजणे आणि पांढरे होणे. संसर्गित बेण्यांद्वारे पसरतो.",
+
+    "medicines": {
+      "title_en": "Recommended Treatments & Medicines",
+      "title_mr": "शिफारस केलेले उपचार आणि औषधे",
+      "treatments": [
+        {
+          "name": "Streptocycline (Streptomycin Sulphate)",
+          "name_mr": "स्ट्रेप्टोसायक्लिन (स्ट्रेप्टोमायसिन सल्फेट)",
+          "type": "Antibiotic",
+          "dosage": "0.5 g/10 L of water (500 ppm)",
+          "dosage_mr": "०.५ ग्रॅम/१० लिटर पाणी (५०० ppm)",
+          "application": "Soak seed setts for 30 minutes before planting. Foliar spray on young crop.",
+          "application_mr": "लागवडीपूर्वी बेणे ३० मिनिटे भिजवा. तरुण पिकावर पर्णावर फवारणी."
+        },
+        {
+          "name": "Copper Oxychloride 50% WP (Blitox)",
+          "name_mr": "कॉपर ऑक्सिक्लोराईड ५०% WP (ब्लिटॉक्स)",
+          "type": "Copper-Based Bactericide",
+          "dosage": "3 g/L of water",
+          "dosage_mr": "३ ग्रॅम/लिटर पाणी",
+          "application": "Spray at first sign of white stripes. Repeat every 15 days. Copper compounds suppress bacterial multiplication.",
+          "application_mr": "पांढऱ्या पट्ट्या दिसताच फवारणी. प्रत्येक १५ दिवसांनी पुन्हा. तांबे संयुगे जिवाणूंची वाढ दाबतात."
+        },
+        {
+          "name": "Hot Water Treatment for Setts",
+          "name_mr": "बेण्यांसाठी गरम पाणी उपचार",
+          "type": "Non-Chemical Seed Treatment",
+          "dosage": "50°C water for 2 hours OR 54°C for 30 minutes",
+          "dosage_mr": "५०°C पाण्यात २ तास किंवा ५४°C वर ३० मिनिटे",
+          "application": "MOST EFFECTIVE method. Treat all setts before planting to eliminate internal bacterial infection.",
+          "application_mr": "सर्वात प्रभावी पद्धत. आंतरिक जिवाणू संसर्ग नष्ट करण्यासाठी सर्व बेण्यांवर लागवडीपूर्वी प्रक्रिया करा."
+        }
+      ],
+      "prevention": [
+        "Use disease-free, hot water treated seed setts — PRIMARY control method",
+        "Plant resistant varieties (consult local sugar factory for recommendations)",
+        "Sterilize cutting tools with 2% bleach between fields/plots",
+        "Remove and burn infected cane stools immediately",
+        "Rogue out symptomatic plants in seed multiplication plots"
+      ],
+      "prevention_mr": [
+        "रोगमुक्त, गरम पाण्याने प्रक्रिया केलेले बेणे वापरा — प्राथमिक नियंत्रण पद्धत",
+        "प्रतिरोधक वाण लावा (शिफारसींसाठी स्थानिक साखर कारखान्याशी सल्ला घ्या)",
+        "शेतांमध्ये कापणी साधने २% ब्लीचने निर्जंतुक करा",
+        "संसर्गित ऊस बुंधे लगेच काढून जाळा",
+        "बीज गुणन भूखंडांमध्ये लक्षणे दाखवणारी झाडे काढा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Mineral Deficiencies & Remedies",
+      "title_mr": "मातीतील खनिज कमतरता आणि उपाय",
+      "is_soil_related": true,
+      "deficiencies": [
+        {
+          "mineral": "Potassium (K)",
+          "mineral_mr": "पोटॅशियम (K)",
+          "relation": "Sugarcane is an extremely potassium-hungry crop. K deficiency weakens stalk tissue and vascular bundles, allowing bacteria to colonize more easily.",
+          "relation_mr": "ऊस अत्यंत पोटॅशियम-भुकेलेले पीक आहे. K कमतरतेमुळे दांड्याची ऊती आणि वाहिका पुंज कमकुवत होतात.",
+          "remedy": "Apply MOP at 120–160 kg K2O/ha in 2–3 splits. For ratoon crops, increase by 25%.",
+          "remedy_mr": "२-३ विभागांत १२०-१६० किलो K2O/हेक्टर MOP द्या. खोडवा पिकासाठी २५% वाढवा."
+        },
+        {
+          "mineral": "Calcium (Ca)",
+          "mineral_mr": "कॅल्शियम (Ca)",
+          "relation": "Calcium is critical for cell wall structure in sugarcane. Deficiency makes stalks softer and more infection-prone.",
+          "relation_mr": "ऊसातील पेशीभित्ती संरचनेसाठी कॅल्शियम महत्त्वाचे. कमतरतेमुळे दांडे मऊ आणि अधिक संसर्ग-प्रवण होतात.",
+          "remedy": "Apply Gypsum at 500–1000 kg/ha or lime in acidic soils. Calcium also helps in juice quality.",
+          "remedy_mr": "५००-१००० किलो/हेक्टर जिप्सम द्या किंवा आम्लयुक्त जमिनीत चुना. कॅल्शियम रस गुणवत्तेतही मदत करतो."
+        },
+        {
+          "mineral": "Iron (Fe) — Indirect",
+          "mineral_mr": "लोह (Fe) — अप्रत्यक्ष",
+          "relation": "Iron deficiency causes chlorosis (yellowing), reducing photosynthesis and overall plant vigor, making the crop more vulnerable to bacterial invasion.",
+          "relation_mr": "लोह कमतरतेमुळे पान पिवळे होणे (क्लोरोसिस), प्रकाश संश्लेषण कमी होते आणि पीक जिवाणू आक्रमणास अधिक असुरक्षित होते.",
+          "remedy": "Apply FeSO4 at 25 kg/ha as soil application. Foliar spray of 1% FeSO4 + 0.5% citric acid for quick correction.",
+          "remedy_mr": "माती अनुप्रयोग म्हणून २५ किलो/हेक्टर FeSO4 द्या. जलद सुधारणासाठी १% FeSO4 + ०.५% सायट्रिक ॲसिड पर्णावर फवारणी."
+        }
+      ]
+    }
+  },
+
+  "Sugarcane_Red Rot": {
+    "disease_name_en": "Red Rot",
+    "disease_name_mr": "लाल कुज",
+    "crop": "Sugarcane",
+    "crop_mr": "ऊस",
+    "pathogen": "Colletotrichum falcatum / Glomerella tucumanensis (Fungus)",
+    "severity": "Very High (Most destructive sugarcane disease in India)",
+    "summary_en": "Internal red discoloration of stalks with white transverse patches — seen when stalk is split open. Causes stalk drying, reduced juice quality, and can kill entire crop. The #1 sugarcane disease in Maharashtra and India.",
+    "summary_mr": "दांड्यांमध्ये आतून लाल रंग बदलणे, पांढऱ्या आडव्या ठिपक्यांसह — दांडा फोडल्यावर दिसतो. ऊसातील #१ रोग. संपूर्ण पीक नष्ट करू शकतो.",
+
+    "medicines": {
+      "title_en": "Recommended Fungicides & Medicines",
+      "title_mr": "शिफारस केलेली बुरशीनाशके आणि औषधे",
+      "treatments": [
+        {
+          "name": "Carbendazim 50% WP (Bavistin)",
+          "name_mr": "कार्बेन्डाझिम ५०% WP (बाविस्टिन)",
+          "type": "Systemic Benzimidazole Fungicide",
+          "dosage": "1 g/L of water for sett soaking (0.1% solution)",
+          "dosage_mr": "बेणे भिजवण्यासाठी १ ग्रॅम/लिटर पाणी (०.१% द्रावण)",
+          "application": "Soak setts for 15–30 minutes in 0.1% Carbendazim solution before planting. This is the MOST critical treatment for red rot.",
+          "application_mr": "लागवडीपूर्वी बेणे ०.१% कार्बेन्डाझिम द्रावणात १५-३० मिनिटे भिजवा. लाल कुजसाठी हा सर्वात महत्त्वाचा उपचार."
+        },
+        {
+          "name": "Thiophanate-Methyl 70% WP (Topsin-M)",
+          "name_mr": "थायोफॅनेट-मिथाइल ७०% WP (टॉपसिन-M)",
+          "type": "Systemic Fungicide",
+          "dosage": "1 g/L of water",
+          "dosage_mr": "१ ग्रॅम/लिटर पाणी",
+          "application": "Sett treatment alternative to Carbendazim. Also effective for stalk rot prevention.",
+          "application_mr": "कार्बेन्डाझिमला बेणे प्रक्रियेचा पर्याय. दांडा कुज प्रतिबंधासाठीही प्रभावी."
+        },
+        {
+          "name": "Trichoderma viride / Trichoderma harzianum",
+          "name_mr": "ट्रायकोडर्मा विरिडे / ट्रायकोडर्मा हार्झियानम",
+          "type": "Biocontrol Agent (Organic)",
+          "dosage": "5 g/L of water (or 2.5 kg/ha mixed in FYM)",
+          "dosage_mr": "५ ग्रॅम/लिटर पाणी (किंवा २.५ किलो/हेक्टर शेणखतात मिसळा)",
+          "application": "Sett treatment by dipping in Trichoderma suspension. Also apply to soil at planting. Eco-friendly option.",
+          "application_mr": "ट्रायकोडर्मा निलंबनात बुडवून बेणे प्रक्रिया. लागवडीवेळी मातीतही द्या. पर्यावरणपूरक पर्याय."
+        },
+        {
+          "name": "Mancozeb 75% WP",
+          "name_mr": "मँकोझेब ७५% WP",
+          "type": "Contact Fungicide",
+          "dosage": "2.5 g/L of water",
+          "dosage_mr": "२.५ ग्रॅम/लिटर पाणी",
+          "application": "Foliar spray on leaf midrib reddening. Prevents secondary spread but cannot cure internal stalk infection.",
+          "application_mr": "पानाच्या मध्यशिरा लालसर होत असल्यास पर्णावर फवारणी. दुय्यम प्रसार रोखतो पण आतील दांडा संसर्ग बरा करू शकत नाही."
+        }
+      ],
+      "prevention": [
+        "Use DISEASE-FREE setts treated with Carbendazim — single most important step",
+        "Plant resistant varieties (Co 86032, CoC 671, Co 94012 — check local recommendations)",
+        "Avoid waterlogging — red rot spreads rapidly in waterlogged soils",
+        "Remove and burn infected stools immediately — do NOT ratoon infected fields",
+        "Follow 3-year crop rotation with non-host crops",
+        "Sterilize cutting tools between plants with 2% formaldehyde or bleach"
+      ],
+      "prevention_mr": [
+        "कार्बेन्डाझिमने प्रक्रिया केलेले रोगमुक्त बेणे वापरा — एकमेव सर्वात महत्त्वाचे पाऊल",
+        "प्रतिरोधक वाण लावा (Co 86032, CoC 671, Co 94012 — स्थानिक शिफारसी तपासा)",
+        "पाणी साचणे टाळा — लाल कुज पाणी साचलेल्या जमिनीत वेगाने पसरतो",
+        "संसर्गित बुंधे लगेच काढून जाळा — संसर्गित शेतातून खोडवा घेऊ नका",
+        "गैर-यजमान पिकांसह ३ वर्षांची फेरपालट करा",
+        "२% फॉर्मल्डिहाइड किंवा ब्लीचने झाडांमध्ये कापणी साधने निर्जंतुक करा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Mineral Deficiencies & Remedies",
+      "title_mr": "मातीतील खनिज कमतरता आणि उपाय",
+      "is_soil_related": true,
+      "deficiencies": [
+        {
+          "mineral": "Potassium (K) — MOST CRITICAL",
+          "mineral_mr": "पोटॅशियम (K) — सर्वात महत्त्वाचे",
+          "relation": "Red rot severity is DIRECTLY correlated with potassium deficiency. K strengthens stalk tissue, increases sucrose content, and activates plant defense enzymes. Maharashtra's black cotton soils are often K-deficient.",
+          "relation_mr": "लाल कुजची तीव्रता पोटॅशियम कमतरतेशी थेट जोडलेली आहे. K दांडा ऊती मजबूत करतो, साखर वाढवतो आणि संरक्षण एन्झाइम सक्रिय करतो.",
+          "remedy": "Apply 150–200 kg K2O/ha as MOP in 3 splits: 1/3 at planting, 1/3 at 60 DAS, 1/3 at 120 DAS. For ratoon, apply 200 kg K2O/ha.",
+          "remedy_mr": "३ विभागांत १५०-२०० किलो K2O/हेक्टर MOP द्या: १/३ लागवडीवेळी, १/३ ६० DAS वर, १/३ १२० DAS वर."
+        },
+        {
+          "mineral": "Calcium (Ca)",
+          "mineral_mr": "कॅल्शियम (Ca)",
+          "relation": "Calcium deficiency leads to weak, soft stalks that are easily penetrated by Colletotrichum. Calcium also affects juice pH and sugar recovery.",
+          "relation_mr": "कॅल्शियम कमतरतेमुळे कमकुवत, मऊ दांडे तयार होतात ज्यात Colletotrichum सहज प्रवेश करतो.",
+          "remedy": "Apply Gypsum at 1 tonne/ha for alkaline soils. Lime at 2–4 tonnes/ha for acidic soils.",
+          "remedy_mr": "क्षारित जमिनीसाठी १ टन/हेक्टर जिप्सम द्या. आम्लयुक्त जमिनीसाठी २-४ टन/हेक्टर चुना."
+        },
+        {
+          "mineral": "Boron (B)",
+          "mineral_mr": "बोरॉन (B)",
+          "relation": "Boron is essential for cell wall integrity and sugar transport in sugarcane. Deficiency increases susceptibility to stalk rots and red rot.",
+          "relation_mr": "बोरॉन ऊसातील पेशीभित्ती अखंडता आणि साखर वाहतुकीसाठी आवश्यक.",
+          "remedy": "Apply Borax at 10–15 kg/ha once every 2–3 crops. Foliar spray of 0.2% Boric acid at grand growth phase.",
+          "remedy_mr": "दर २-३ पिकांमध्ये एकदा १०-१५ किलो/हेक्टर बोरॅक्स द्या. मोठ्या वाढीच्या टप्प्यात ०.२% बोरिक ॲसिड पर्णावर फवारणी."
+        },
+        {
+          "mineral": "Zinc (Zn)",
+          "mineral_mr": "जस्त (Zn)",
+          "relation": "Zinc activates over 300 enzymes including those involved in defense responses. Zn deficiency makes sugarcane more vulnerable to fungal pathogens.",
+          "relation_mr": "जस्त ३०० पेक्षा अधिक एन्झाइम सक्रिय करतो. Zn कमतरतेमुळे ऊस बुरशीजन्य रोगजनकांना अधिक असुरक्षित होतो.",
+          "remedy": "Apply ZnSO4 at 25 kg/ha as basal. Foliar spray of 0.5% ZnSO4 at 45 and 90 DAS.",
+          "remedy_mr": "बेसल म्हणून २५ किलो/हेक्टर ZnSO4 द्या. ४५ आणि ९० DAS वर ०.५% ZnSO4 पर्णावर फवारणी."
+        }
+      ]
+    }
+  },
+
+  "Sugarcane_Healthy": {
+    "disease_name_en": "Healthy",
+    "disease_name_mr": "निरोगी",
+    "crop": "Sugarcane",
+    "crop_mr": "ऊस",
+    "pathogen": "None",
+    "severity": "None",
+    "summary_en": "Your sugarcane crop is healthy! No disease detected.",
+    "summary_mr": "तुमचे ऊसाचे पीक निरोगी आहे! कोणताही रोग आढळला नाही.",
+
+    "medicines": {
+      "title_en": "Preventive Care",
+      "title_mr": "प्रतिबंधात्मक काळजी",
+      "treatments": [],
+      "prevention": [
+        "Always use treated setts from disease-free nurseries",
+        "Monitor for red rot symptoms in the reddening of leaf midribs",
+        "Maintain proper drainage to prevent waterlogging",
+        "Apply recommended K fertilization for Maharashtra sugarcane"
+      ],
+      "prevention_mr": [
+        "नेहमी रोगमुक्त रोपवाटिकेतून प्रक्रिया केलेले बेणे वापरा",
+        "पानांच्या मध्यशिरा लालसर होण्यासाठी लाल कुज लक्षणे निरीक्षण करा",
+        "पाणी साचणे टाळण्यासाठी योग्य निचरा राखा",
+        "महाराष्ट्र ऊसासाठी शिफारस केलेली K खत मात्रा द्या"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Health Maintenance",
+      "title_mr": "माती आरोग्य देखभाल",
+      "is_soil_related": false,
+      "deficiencies": []
+    }
+  },
+
+  "Wheat___Brown_Rust": {
+    "disease_name_en": "Brown Rust (Leaf Rust)",
+    "disease_name_mr": "तपकिरी गंज (पर्ण गंज)",
+    "crop": "Wheat",
+    "crop_mr": "गहू",
+    "pathogen": "Puccinia triticina (Fungus)",
+    "severity": "High",
+    "summary_en": "Small, circular to oval, orange-brown rust pustules scattered randomly on the upper leaf surface (NOT in stripes). Most common rust of wheat worldwide. Can cause 10–30% yield loss. Favored by 15–22°C with dew.",
+    "summary_mr": "पानांच्या वरच्या पृष्ठभागावर लहान, गोलाकार ते अंडाकृती, नारंगी-तपकिरी गंज पुटकुळ्या. जगभरातील गव्हाचा सर्वात सामान्य गंज.",
+
+    "medicines": {
+      "title_en": "Recommended Fungicides & Medicines",
+      "title_mr": "शिफारस केलेली बुरशीनाशके आणि औषधे",
+      "treatments": [
+        {
+          "name": "Propiconazole 25% EC (Tilt)",
+          "name_mr": "प्रोपिकोनॅझोल २५% EC (टिल्ट)",
+          "type": "Systemic Triazole Fungicide",
+          "dosage": "1 mL/L of water (500 mL/ha)",
+          "dosage_mr": "१ मिली/लिटर पाणी (५०० मिली/हेक्टर)",
+          "application": "FIRST CHOICE for wheat rusts in India. Spray at first appearance of pustules. Single spray often sufficient. ICAR recommended.",
+          "application_mr": "भारतातील गहू गंजासाठी पहिली निवड. पुटकुळ्या दिसताच फवारणी. एकच फवारणी बहुतेकदा पुरेशी. ICAR शिफारस केलेले."
+        },
+        {
+          "name": "Tebuconazole 25.9% EC (Folicur)",
+          "name_mr": "टेबुकोनॅझोल २५.९% EC (फोलिकर)",
+          "type": "Systemic Triazole Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Excellent alternative to Propiconazole. Longer residual activity. Apply at flag leaf to heading stage.",
+          "application_mr": "प्रोपिकोनॅझोलला उत्कृष्ट पर्याय. अधिक काळ प्रभावी. ध्वज पान ते हेडिंग अवस्थेत फवारणी."
+        },
+        {
+          "name": "Mancozeb 75% WP",
+          "name_mr": "मँकोझेब ७५% WP",
+          "type": "Contact Fungicide",
+          "dosage": "2.5 g/L of water",
+          "dosage_mr": "२.५ ग्रॅम/लिटर पाणी",
+          "application": "Preventive spray before rust appears in the region. Cheaper option. Repeat every 10 days.",
+          "application_mr": "प्रदेशात गंज येण्यापूर्वी प्रतिबंधात्मक फवारणी. स्वस्त पर्याय. प्रत्येक १० दिवसांनी पुन्हा."
+        },
+        {
+          "name": "Triademefon 25% WP (Bayleton)",
+          "name_mr": "ट्रायडेमेफॉन २५% WP (बेलेटॉन)",
+          "type": "Systemic Triazole Fungicide",
+          "dosage": "0.5 g/L of water",
+          "dosage_mr": "०.५ ग्रॅम/लिटर पाणी",
+          "application": "Older but effective option. Apply at booting to heading stage.",
+          "application_mr": "जुना पण प्रभावी पर्याय. बूटिंग ते हेडिंग अवस्थेत फवारणी."
+        }
+      ],
+      "prevention": [
+        "Plant rust-resistant varieties (check ICAR-IIWBR annual recommendations)",
+        "Early sowing (November) to escape late-season rust pressure",
+        "Avoid excessive nitrogen which promotes lush canopy and rust development",
+        "Monitor for rust alerts from local agricultural extension services",
+        "Destroy volunteer wheat and alternate hosts (Thalictrum spp.)"
+      ],
+      "prevention_mr": [
+        "गंज-प्रतिरोधक वाण लावा (ICAR-IIWBR वार्षिक शिफारसी तपासा)",
+        "उशिरा-हंगामातील गंज दबाव टाळण्यासाठी लवकर पेरणी (नोव्हेंबर)",
+        "अतिरिक्त नायट्रोजन टाळा",
+        "स्थानिक कृषी विस्तार सेवांकडून गंज सूचनांसाठी निरीक्षण करा",
+        "स्वयंसेवक गहू आणि पर्यायी यजमान नष्ट करा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Mineral Deficiencies & Remedies",
+      "title_mr": "मातीतील खनिज कमतरता आणि उपाय",
+      "is_soil_related": true,
+      "deficiencies": [
+        {
+          "mineral": "Potassium (K)",
+          "mineral_mr": "पोटॅशियम (K)",
+          "relation": "Potassium is the key mineral for rust resistance in wheat. K-deficient wheat shows 2–4x higher rust severity. K activates defense-related enzymes and strengthens cell walls.",
+          "relation_mr": "पोटॅशियम गव्हातील गंज प्रतिकारासाठी मुख्य खनिज. K-कमतरतेच्या गव्हात २-४ पट अधिक गंज तीव्रता.",
+          "remedy": "Apply 40–60 kg K2O/ha as MOP at sowing. For K-deficient soils, additional 20 kg K2O at tillering through foliar KNO3 spray.",
+          "remedy_mr": "पेरणीवेळी ४०-६० किलो K2O/हेक्टर MOP द्या. K-कमतरतेच्या जमिनीसाठी फुटवे अवस्थेत पर्णावर KNO3 फवारणीद्वारे अतिरिक्त २० किलो K2O."
+        },
+        {
+          "mineral": "Manganese (Mn)",
+          "mineral_mr": "मँगनीज (Mn)",
+          "relation": "Manganese is critical for lignin synthesis in wheat. Low Mn results in softer leaf tissue that rust fungi penetrate more easily.",
+          "relation_mr": "गव्हातील लिग्निन संश्लेषणासाठी मँगनीज महत्त्वाचे. कमी Mn मुळे मऊ पान ऊती तयार होतात.",
+          "remedy": "Foliar spray of 0.5% MnSO4 at CRI (Crown Root Initiation) and flag leaf stages.",
+          "remedy_mr": "CRI (तिपांकुळ मूळ सुरुवात) आणि ध्वज पान अवस्थेत ०.५% MnSO4 पर्णावर फवारणी."
+        },
+        {
+          "mineral": "Silicon (Si)",
+          "mineral_mr": "सिलिकॉन (Si)",
+          "relation": "Silicon forms physical barriers in wheat epidermal cells, reducing rust spore penetration. Particularly effective in Si-deficient light-textured soils.",
+          "relation_mr": "सिलिकॉन गव्हाच्या अधिचर्म पेशींमध्ये भौतिक अडथळे बनवतो, गंज बीजाणू प्रवेश कमी करतो.",
+          "remedy": "Apply Calcium Silicate at 1–2 tonnes/ha. Foliar Potassium Silicate (0.3%) spray at tillering and booting.",
+          "remedy_mr": "१-२ टन/हेक्टर कॅल्शियम सिलिकेट द्या. फुटवे आणि बूटिंग अवस्थेत ०.३% पोटॅशियम सिलिकेट पर्णावर फवारणी."
+        }
+      ]
+    }
+  },
+
+  "Wheat___Yellow_Rust": {
+    "disease_name_en": "Yellow Rust (Stripe Rust)",
+    "disease_name_mr": "पिवळा गंज (पट्टा गंज)",
+    "crop": "Wheat",
+    "crop_mr": "गहू",
+    "pathogen": "Puccinia striiformis f. sp. tritici (Fungus)",
+    "severity": "Very High",
+    "summary_en": "Yellow-orange rust pustules arranged in STRIPES along leaf veins — distinguishing feature from brown rust. Most damaging rust in cooler wheat-growing regions (10–15°C optimal). Can cause 40–100% yield loss in epidemics.",
+    "summary_mr": "पानांच्या शिरांवर पट्ट्यांमध्ये मांडलेल्या पिवळ्या-नारंगी गंज पुटकुळ्या. थंड गहू-उगवणाऱ्या प्रदेशांत सर्वात हानिकारक. ४०-१००% उत्पन्न हानी होऊ शकते.",
+
+    "medicines": {
+      "title_en": "Recommended Fungicides & Medicines",
+      "title_mr": "शिफारस केलेली बुरशीनाशके आणि औषधे",
+      "treatments": [
+        {
+          "name": "Propiconazole 25% EC (Tilt)",
+          "name_mr": "प्रोपिकोनॅझोल २५% EC (टिल्ट)",
+          "type": "Systemic Triazole Fungicide",
+          "dosage": "1 mL/L of water (500 mL/ha)",
+          "dosage_mr": "१ मिली/लिटर पाणी (५०० मिली/हेक्टर)",
+          "application": "EMERGENCY spray as soon as yellow stripes appear. Do not delay — stripe rust spreads extremely fast in cool weather. May need 2 sprays 15 days apart.",
+          "application_mr": "पिवळ्या पट्ट्या दिसताच आपत्कालीन फवारणी. उशीर करू नका — पट्टा गंज थंड हवामानात अत्यंत वेगाने पसरतो. १५ दिवसांच्या अंतराने २ फवारण्या लागू शकतात."
+        },
+        {
+          "name": "Tebuconazole 25.9% EC (Folicur)",
+          "name_mr": "टेबुकोनॅझोल २५.९% EC (फोलिकर)",
+          "type": "Systemic Triazole Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Longer residual activity than Propiconazole. Excellent choice for yellow rust. Apply at flag leaf stage.",
+          "application_mr": "प्रोपिकोनॅझोलपेक्षा अधिक काळ प्रभावी. पिवळ्या गंजासाठी उत्कृष्ट. ध्वज पान अवस्थेत फवारणी."
+        },
+        {
+          "name": "Azoxystrobin 23% SC (Amistar)",
+          "name_mr": "ॲझॉक्सिस्ट्रोबिन २३% SC (अमिस्टार)",
+          "type": "Strobilurin Fungicide",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "Preventive spray before rust arrives. Also provides greening effect and delays senescence.",
+          "application_mr": "गंज येण्यापूर्वी प्रतिबंधात्मक फवारणी. हिरवेपणा प्रभाव देखील देतो."
+        },
+        {
+          "name": "Propiconazole + Tebuconazole combination",
+          "name_mr": "प्रोपिकोनॅझोल + टेबुकोनॅझोल संयोजन",
+          "type": "Dual Triazole Combination",
+          "dosage": "1 mL/L of water",
+          "dosage_mr": "१ मिली/लिटर पाणी",
+          "application": "For severe epidemics where single fungicide is insufficient. Broadest spectrum against all wheat rusts.",
+          "application_mr": "तीव्र साथीचे रोग जिथे एकच बुरशीनाशक अपुरे आहे. सर्व गहू गंजांविरुद्ध सर्वात विस्तृत स्पेक्ट्रम."
+        }
+      ],
+      "prevention": [
+        "Plant yellow rust-resistant varieties (HIGHEST priority — this is the most effective measure)",
+        "Early sowing to escape cool-weather rust window",
+        "Avoid late nitrogen application which promotes infection",
+        "Monitor ICAR-IIWBR rust surveillance bulletins for regional alerts",
+        "Destroy volunteer wheat and grassy weeds that harbor rust"
+      ],
+      "prevention_mr": [
+        "पिवळा गंज-प्रतिरोधक वाण लावा (सर्वोच्च प्राधान्य — सर्वात प्रभावी उपाय)",
+        "थंड-हवामानातील गंज खिडकी टाळण्यासाठी लवकर पेरणी",
+        "उशिरा नायट्रोजन देणे टाळा",
+        "प्रादेशिक सूचनांसाठी ICAR-IIWBR गंज निरीक्षण बुलेटिन तपासा",
+        "स्वयंसेवक गहू आणि गंज आश्रय देणारे गवताचे तण नष्ट करा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Mineral Deficiencies & Remedies",
+      "title_mr": "मातीतील खनिज कमतरता आणि उपाय",
+      "is_soil_related": true,
+      "deficiencies": [
+        {
+          "mineral": "Potassium (K) — MOST IMPORTANT",
+          "mineral_mr": "पोटॅशियम (K) — सर्वात महत्त्वाचे",
+          "relation": "Potassium is the MOST critical mineral for stripe rust resistance. Research shows K application reduces yellow rust severity by 40–60%. K activates phenylalanine ammonia-lyase (PAL) and other defense enzymes.",
+          "relation_mr": "पट्टा गंज प्रतिकारासाठी पोटॅशियम सर्वात महत्त्वाचे खनिज. संशोधन दाखवते K ने पिवळा गंज तीव्रता ४०-६०% कमी होते.",
+          "remedy": "Apply 60–80 kg K2O/ha as MOP at sowing. Additional foliar spray of 2% KNO3 at flag leaf stage in rust-prone years.",
+          "remedy_mr": "पेरणीवेळी ६०-८० किलो K2O/हेक्टर MOP द्या. गंज-प्रवण वर्षांत ध्वज पान अवस्थेत २% KNO3 अतिरिक्त पर्णावर फवारणी."
+        },
+        {
+          "mineral": "Manganese (Mn)",
+          "mineral_mr": "मँगनीज (Mn)",
+          "relation": "Manganese is essential for photosynthesis and lignin biosynthesis. Mn-deficient wheat has weaker structural defenses against rust spore penetration.",
+          "relation_mr": "मँगनीज प्रकाश संश्लेषण आणि लिग्निन जैवसंश्लेषणासाठी आवश्यक. Mn-कमतरतेच्या गव्हात गंज बीजाणू प्रवेशाविरुद्ध कमकुवत संरचनात्मक संरक्षण.",
+          "remedy": "Foliar spray of 0.5% MnSO4 at CRI and booting stages. Soil application of 10–15 kg/ha MnSO4 for deficient soils.",
+          "remedy_mr": "CRI आणि बूटिंग अवस्थेत ०.५% MnSO4 पर्णावर फवारणी. कमतरतेच्या जमिनीसाठी १०-१५ किलो/हेक्टर MnSO4 माती अनुप्रयोग."
+        },
+        {
+          "mineral": "Zinc (Zn)",
+          "mineral_mr": "जस्त (Zn)",
+          "relation": "Zinc deficiency is widespread in Indian wheat-growing soils. Low Zn impairs protein synthesis and reduces overall plant immunity.",
+          "relation_mr": "भारतीय गहू-उगवणाऱ्या जमिनीत जस्ताची कमतरता व्यापक. कमी Zn मुळे प्रथिन संश्लेषण बिघडते.",
+          "remedy": "Apply ZnSO4 at 25 kg/ha as basal dose. Foliar spray of 0.5% ZnSO4 at tillering and flag leaf stages.",
+          "remedy_mr": "बेसल डोस म्हणून २५ किलो/हेक्टर ZnSO4 द्या. फुटवे आणि ध्वज पान अवस्थेत ०.५% ZnSO4 पर्णावर फवारणी."
+        }
+      ]
+    }
+  },
+
+  "Wheat___Healthy": {
+    "disease_name_en": "Healthy",
+    "disease_name_mr": "निरोगी",
+    "crop": "Wheat",
+    "crop_mr": "गहू",
+    "pathogen": "None",
+    "severity": "None",
+    "summary_en": "Your wheat crop is healthy! No disease detected.",
+    "summary_mr": "तुमचे गव्हाचे पीक निरोगी आहे! कोणताही रोग आढळला नाही.",
+
+    "medicines": {
+      "title_en": "Preventive Care",
+      "title_mr": "प्रतिबंधात्मक काळजी",
+      "treatments": [],
+      "prevention": [
+        "Monitor for rust pustules especially during cool, humid weather",
+        "Keep Propiconazole (Tilt) ready for emergency spray if rust appears",
+        "Follow ICAR-IIWBR rust surveillance advisories",
+        "Maintain balanced NPK fertilization based on soil test"
+      ],
+      "prevention_mr": [
+        "विशेषतः थंड, दमट हवामानात गंज पुटकुळ्यांसाठी निरीक्षण करा",
+        "गंज दिसल्यास आपत्कालीन फवारणीसाठी प्रोपिकोनॅझोल (टिल्ट) तयार ठेवा",
+        "ICAR-IIWBR गंज निरीक्षण सल्ल्यांचे पालन करा",
+        "माती परीक्षणानुसार संतुलित NPK खत व्यवस्थापन राखा"
+      ]
+    },
+
+    "soil_minerals": {
+      "title_en": "Soil Health Maintenance",
+      "title_mr": "माती आरोग्य देखभाल",
+      "is_soil_related": false,
+      "deficiencies": []
+    }
+  }
+}
