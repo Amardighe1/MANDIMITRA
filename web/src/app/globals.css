@@ -197,21 +197,21 @@ body.menu-open {
 }
 
 /* Safe-area insets for notched phones & Capacitor app */
-@supports (padding: env(safe-area-inset-bottom)) {
+@supports (padding: env(safe-area-inset-top)) {
   body {
+    padding-top: env(safe-area-inset-top);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
 /*
- * Capacitor app: StatusBar.setOverlaysWebView(false) handles the top safe area
- * natively — the system status bar gets its own space and the WebView starts
- * below it, just like every other Android app. No CSS padding needed for top.
- * Bottom nav bar safe area is handled via env(safe-area-inset-bottom) where needed.
+ * Capacitor app: extra safe-area handling.
+ * Bottom nav bar safe area is handled via body padding above.
  */
 body.capacitor-app {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* Already handled by @supports block above */
 }
 
 /* Tap highlight */

@@ -13,10 +13,16 @@ public class MainActivity extends BridgeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Ensure status bar is NOT overlapping the WebView content
         Window window = getWindow();
+
+        // CRITICAL: Tell Android the app content should NOT draw behind system bars.
+        // This guarantees the WebView starts BELOW the status bar.
+        WindowCompat.setDecorFitsSystemWindows(window, true);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // White status bar with dark icons
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(0xFFFFFFFF);
             window.getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
