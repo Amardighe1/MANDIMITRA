@@ -39,7 +39,7 @@ async def connect_db() -> AsyncIOMotorDatabase:
     if _db is not None:
         return _db
     logger.info("Connecting to MongoDB Atlas …")
-    _client = AsyncIOMotorClient(MONGODB_URI, serverSelectionTimeoutMS=5000)
+    _client = AsyncIOMotorClient(MONGODB_URI, serverSelectionTimeoutMS=15000)
     _db = _client[MONGODB_DB_NAME]
     # Quick ping to validate connection
     await _client.admin.command("ping")

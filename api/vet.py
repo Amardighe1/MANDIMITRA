@@ -667,7 +667,7 @@ async def list_verified_doctors(authorization: str = Header(None)):
         db = await get_db()
         docs = await db.profiles.find(
             {"role": "doctor", "verification_status": "active"},
-            {"_id": 0, "password_hash": 0, "id": 1, "full_name": 1, "specialization": 1,
+            {"_id": 0, "id": 1, "full_name": 1, "specialization": 1,
              "years_of_experience": 1, "veterinary_college": 1, "phone": 1, "address": 1}
         ).sort("full_name", 1).to_list(200)
         return {"doctors": docs}
