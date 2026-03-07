@@ -14,7 +14,7 @@
 
 const ENV_API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
-// Cloud backend URL (EC2 deployment) — used as default for web & Capacitor builds
+// Cloud backend URL (EC2 deployment) — used ONLY for Capacitor APK (direct HTTP)
 const CLOUD_API_URL = 'http://56.228.42.84:8000';
 
 function resolveApiBase(): string {
@@ -27,15 +27,12 @@ function resolveApiBase(): string {
   // 2) Build-time env var
   if (ENV_API_URL) return ENV_API_URL.replace(/\/+$/, '');
 
-  // 3) In production (Vercel or Capacitor), use cloud backend
-  if (typeof window !== 'undefined') {
-    const host = window.location?.hostname || '';
-    if ((window as any).Capacitor || host.includes('vercel.app') || host.includes('mandimitra')) {
-      return CLOUD_API_URL;
-    }
+  // 3) Capacitor APK — must call EC2 directly (no Vercel proxy)
+  if (typeof window !== 'undefined' && (window as any).Capacitor) {
+    return CLOUD_API_URL;
   }
 
-  // 4) Relative URLs (works in Next.js dev mode with proxy rewrites)
+  // 4) Vercel & dev: relative URLs — Vercel rewrites proxy /api/* to EC2
   return '';
 }
 
