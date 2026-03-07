@@ -28,10 +28,9 @@ export function ConnectionSetup() {
     if (saved) setServerUrl(saved);
 
     // Always verify the backend is reachable — don't rely on Capacitor detection
-    const healthUrl = apiUrl('/health');
+    const healthUrl = apiUrl('/');
 
-    // If apiUrl returns a relative path (empty base), the static export will
-    // serve an HTML page. We detect this by checking Content-Type.
+    // Ping the root endpoint which returns JSON health status.
     fetch(healthUrl, { method: 'GET', signal: AbortSignal.timeout(5000) })
       .then(async (r) => {
         const ct = r.headers.get('content-type') || '';
