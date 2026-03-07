@@ -108,17 +108,41 @@ function getDashboardPath(role: string): string {
   }
 }
 
-async function apiFetch(path: string, body: object) {
-  const res = await fetch(apiUrl(path), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.detail || data.message || 'Request failed');
+async function apiFetch(path: string, body: object, retries = 2) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000); // 30s timeout
+    try {
+      const res = await fetch(apiUrl(path), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.detail || data.message || 'Request failed');
+      }
+      return data;
+    } catch (err: any) {
+      clearTimeout(timeout);
+      const isTimeout = err.name === 'AbortError';
+      const isNetwork = err.message === 'Failed to fetch' || err.message?.includes('NetworkError');
+      if ((isTimeout || isNetwork) && attempt < retries) {
+        console.warn(`[Auth] Attempt ${attempt + 1} failed (${isTimeout ? 'timeout' : 'network'}), retrying...`);
+        continue;
+      }
+      if (isTimeout) {
+        throw new Error('सर्व्हर प्रतिसाद देत नाही. कृपया पुन्हा प्रयत्न करा.');
+      }
+      if (isNetwork) {
+        throw new Error('नेटवर्क कनेक्शन अयशस्वी. कृपया इंटरनेट तपासा.');
+      }
+      throw err;
+    }
   }
-  return data;
+  throw new Error('Request failed after retries');
 }
 
 // ---------------------------------------------------------------------------

@@ -5,9 +5,9 @@ const config: CapacitorConfig = {
   appName: 'MANDIMITRA',
   webDir: 'out',
   server: {
-    // Offline-first: UI is bundled inside the APK (no Vercel streaming)
-    // API calls still go to the Render backend via api-config.ts
+    url: 'https://mandimitra-rose.vercel.app',
     androidScheme: 'https',
+    allowNavigation: ['mandimitra-rose.vercel.app', '*.vercel.app'],
   },
   android: {
     backgroundColor: '#FFFFFF',

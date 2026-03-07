@@ -16,7 +16,7 @@ const roles = [
 ];
 
 export default function LoginPage() {
-  const { login, adminVerify, adminLogin, user, logout } = useAuth();
+  const { login, adminVerify, adminLogin, user, logout, loading: authLoading } = useAuth();
   const [role, setRole] = useState<Role>('farmer');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,11 +28,11 @@ export default function LoginPage() {
 
   // Clear any existing session when visiting login page
   useEffect(() => {
-    if (user) {
+    if (user && !authLoading) {
       logout();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user, authLoading]);
 
   const resetForm = () => {
     setEmail('');

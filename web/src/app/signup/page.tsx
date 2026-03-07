@@ -10,7 +10,7 @@ import { Leaf, User, Stethoscope, ShoppingCart, ArrowRight, Loader2, Eye, EyeOff
 type Role = 'farmer' | 'doctor' | 'buyer';
 
 export default function SignupPage() {
-  const { signup, user, logout } = useAuth();
+  const { signup, user, logout, loading: authLoading } = useAuth();
   const [role, setRole] = useState<Role>('farmer');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
@@ -36,11 +36,11 @@ export default function SignupPage() {
 
   // Clear any existing session when visiting signup page
   useEffect(() => {
-    if (user) {
+    if (user && !authLoading) {
       logout();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user, authLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
