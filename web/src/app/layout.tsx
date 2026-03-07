@@ -9,10 +9,6 @@ const CapacitorInit = dynamic(
   () => import('@/components/CapacitorInit').then((mod) => mod.CapacitorInit),
   { ssr: false }
 );
-const ConnectionSetup = dynamic(
-  () => import('@/components/ConnectionSetup').then((mod) => mod.ConnectionSetup),
-  { ssr: false }
-);
 const BottomNav = dynamic(
   () => import('@/components/layout/BottomNav').then((mod) => mod.BottomNav),
   { ssr: false }
@@ -49,7 +45,6 @@ export default function RootLayout({
     <html lang="mr" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <CapacitorInit />
-        <ConnectionSetup />
         <Providers>
           {children}
           <BottomNav />
