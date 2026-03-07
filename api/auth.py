@@ -222,7 +222,10 @@ async def signup(req: SignupRequest):
         if "duplicate" in msg.lower() or "E11000" in msg:
             raise HTTPException(409, "An account with this email already exists")
         logger.error(f"❌ Signup error: {e}")
-        raise HTTPException(500, f"Registration failed: {e}")
+        raise HTTPException(
+            503,
+            "नोंदणी अयशस्वी. सर्व्हर तात्पुरता अनुपलब्ध आहे. कृपया पुन्हा प्रयत्न करा. / Registration failed. Server temporarily unavailable."
+        )
 
 
 @router.post("/login")
@@ -267,7 +270,10 @@ async def login(req: LoginRequest):
         raise
     except Exception as e:
         logger.error(f"❌ Login error: {e}")
-        raise HTTPException(500, f"Login failed: {e}")
+        raise HTTPException(
+            503,
+            "\u0938\u0930\u094d\u0935\u094d\u0939\u0930 \u0924\u093e\u0924\u094d\u092a\u0941\u0930\u0924\u093e \u0905\u0928\u0941\u092a\u0932\u092c\u094d\u0927 \u0906\u0939\u0947. \u0915\u0943\u092a\u092f\u093e \u0915\u093e\u0939\u0940 \u0938\u0947\u0915\u0902\u0926\u093e\u0902\u0928\u0940 \u092a\u0941\u0928\u094d\u0939\u093e \u092a\u094d\u0930\u092f\u0924\u094d\u0928 \u0915\u0930\u093e. / Server temporarily unavailable. Please try again shortly."
+        )
 
 
 @router.post("/admin/verify")

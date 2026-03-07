@@ -24,7 +24,13 @@ MONGODB_URI = os.getenv("MONGODB_URI", "")
 MONGODB_DB_NAME = os.getenv("MONGODB_DB_NAME", "mandimitra")
 
 if not MONGODB_URI:
-    logger.error("MONGODB_URI not set in .env")
+    logger.error("MONGODB_URI not set in .env — database operations will fail")
+
+
+class DatabaseConfigError(Exception):
+    """Raised when the database is mis-configured (e.g. missing URI)."""
+    pass
+
 
 # ---------------------------------------------------------------------------
 # Singleton client  (Motor is async-safe, one client per process is fine)
@@ -38,12 +44,27 @@ async def connect_db() -> AsyncIOMotorDatabase:
     global _client, _db
     if _db is not None:
         return _db
+
+    if not MONGODB_URI or MONGODB_URI.strip() == "":
+        logger.error("MONGODB_URI is empty — cannot connect to database")
+        raise DatabaseConfigError(
+            "Database connection is not configured. Please set MONGODB_URI in environment variables."
+        )
+
     logger.info("Connecting to MongoDB Atlas …")
-    _client = AsyncIOMotorClient(MONGODB_URI, serverSelectionTimeoutMS=15000)
-    _db = _client[MONGODB_DB_NAME]
-    # Quick ping to validate connection
-    await _client.admin.command("ping")
-    logger.info(f"✅ Connected to MongoDB database: {MONGODB_DB_NAME}")
+    try:
+        _client = AsyncIOMotorClient(MONGODB_URI, serverSelectionTimeoutMS=15000)
+        _db = _client[MONGODB_DB_NAME]
+        # Quick ping to validate connection
+        await _client.admin.command("ping")
+        logger.info(f"✅ Connected to MongoDB database: {MONGODB_DB_NAME}")
+    except Exception as e:
+        _client = None
+        _db = None
+        logger.error(f"❌ MongoDB connection failed: {e}")
+        raise DatabaseConfigError(
+            "Unable to connect to the database. The server may be starting up — please try again in a moment."
+        ) from e
 
     # Ensure indexes
     await _ensure_indexes(_db)

@@ -19,8 +19,9 @@ import numpy as np
 import pandas as pd
 import requests
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 # ---------------------------------------------------------------------------
@@ -68,6 +69,24 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Global exception handler — never leak internal errors to client
+from api.database import DatabaseConfigError
+
+@app.exception_handler(DatabaseConfigError)
+async def db_config_error_handler(request: Request, exc: DatabaseConfigError):
+    return JSONResponse(
+        status_code=503,
+        content={"detail": "सर्व्हर तात्पुरता अनुपलब्ध आहे. कृपया काही सेकंदांनी पुन्हा प्रयत्न करा. / Server temporarily unavailable. Please retry shortly."},
+    )
+
+@app.exception_handler(Exception)
+async def generic_error_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled error on {request.method} {request.url.path}: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "अंतर्गत सर्व्हर त्रुटी. कृपया पुन्हा प्रयत्न करा. / Internal server error. Please try again."},
+    )
 
 # Static file serving for upload documents
 from fastapi.staticfiles import StaticFiles
