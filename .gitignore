@@ -19,6 +19,7 @@ kaggle.json
 
 # Model files (large binary files)
 models/
+!web/public/models/
 *.h5
 *.pkl
 *.pth
