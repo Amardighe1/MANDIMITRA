@@ -102,13 +102,6 @@ export default function CropAnalysisPage() {
   const [dragOver, setDragOver] = useState(false);
   const [inferenceMode, setInferenceMode] = useState<'cloud' | 'on-device' | ''>('');
 
-  // Preload TF.js model in background on mount
-  useEffect(() => {
-    preloadModel().then((ok) => {
-      if (ok) console.log('[CropDisease] On-device model ready');
-    });
-  }, []);
-
   useEffect(() => {
     if (!authLoading && (!user || user.role !== 'farmer')) {
       router.replace('/login');
@@ -151,49 +144,29 @@ export default function CropAnalysisPage() {
     setResult(null);
     setInferenceMode('');
 
-    // Strategy: try cloud API first (has Gemini advice), fall back to on-device
+    // Strategy: cloud API (Gemini Vision on EC2)
     const baseUrl = apiUrl('/api/crop-disease/analyze');
-    let usedCloud = false;
 
-    if (baseUrl) {
-      try {
-        const token = getToken();
-        const formData = new FormData();
-        formData.append('file', file);
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 15000); // 15s timeout
-        const res = await fetch(baseUrl, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-          body: formData,
-          signal: controller.signal,
-        });
-        clearTimeout(timeout);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || 'विश्लेषण अयशस्वी');
-        setResult(data);
-        setInferenceMode('cloud');
-        setShowDetails(true);
-        usedCloud = true;
-      } catch (cloudErr: any) {
-        console.warn('[CropDisease] Cloud API unavailable, falling back to on-device:', cloudErr.message);
-      }
-    }
-
-    // Fallback: on-device inference with TF.js
-    if (!usedCloud) {
-      try {
-        const localResult = await analyzeLocally(file);
-        setResult(localResult as any);
-        setInferenceMode('on-device');
-        setShowDetails(true);
-      } catch (localErr: any) {
-        setError(
-          baseUrl
-            ? `क्लाउड सर्व्हर अनुपलब्ध आणि ऑन-डिव्हाइस विश्लेषण अयशस्वी: ${localErr.message}`
-            : `ऑन-डिव्हाइस विश्लेषण अयशस्वी: ${localErr.message}`
-        );
-      }
+    try {
+      const token = getToken();
+      const formData = new FormData();
+      formData.append('file', file);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000); // 30s for Gemini Vision
+      const res = await fetch(baseUrl, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'विश्लेषण अयशस्वी');
+      setResult(data);
+      setInferenceMode('cloud');
+      setShowDetails(true);
+    } catch (err: any) {
+      setError(err.message || 'पीक विश्लेषण अयशस्वी. कृपया पुन्हा प्रयत्न करा.');
     }
 
     setLoading(false);
